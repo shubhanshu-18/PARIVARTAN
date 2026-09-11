@@ -23,6 +23,7 @@ import {
   Printer,
   ChevronRight,
   UserCheck,
+  Trash2,
 } from "lucide-react";
 
 export function AdminDashboard() {
@@ -36,6 +37,7 @@ export function AdminDashboard() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [deletingAssessmentId, setDeletingAssessmentId] = useState(null);
 
   // Load assessments and stats
   const loadDashboardData = async () => {
@@ -130,6 +132,34 @@ export function AdminDashboard() {
       showToast("Failed to download dossier PDF", "error");
     } finally {
       setIsGeneratingPdf(false);
+    }
+  };
+
+  const handleDeleteAssessment = async (assessment) => {
+    const applicant = assessment.applicantName || "this assessment";
+    if (
+      !window.confirm(
+        `Delete the assessment for ${applicant}? This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    setDeletingAssessmentId(assessment.id);
+    try {
+      await ApiService.deleteAssessment(assessment.id);
+      setAssessments((current) =>
+        current.filter((item) => item.id !== assessment.id),
+      );
+      if (selectedAssessment?.id === assessment.id) {
+        setSelectedAssessment(null);
+      }
+      showToast("Assessment deleted successfully", "success");
+    } catch (err) {
+      console.error("Error deleting assessment:", err);
+      showToast("Failed to delete assessment", "error");
+    } finally {
+      setDeletingAssessmentId(null);
     }
   };
 
@@ -405,6 +435,21 @@ export function AdminDashboard() {
                             title="Download official PDF"
                           >
                             <Download className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAssessment(item)}
+                            disabled={deletingAssessmentId === item.id}
+                            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Delete assessment"
+                            aria-label={`Delete assessment ${item.id}`}
+                          >
+                            <Trash2
+                              className={`w-3.5 h-3.5 ${
+                                deletingAssessmentId === item.id
+                                  ? "animate-pulse"
+                                  : ""
+                              }`}
+                            />
                           </button>
                         </div>
                       </td>

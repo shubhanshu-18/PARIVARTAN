@@ -658,6 +658,23 @@ router.get("/assessments", async (req, res, next) => {
   }
 });
 
+router.delete("/assessments/:id", async (req, res, next) => {
+  const { id } = req.params;
+  if (!id || id.length > 100) {
+    return res.status(400).json({ error: "A valid assessment ID is required" });
+  }
+
+  try {
+    const deleted = await db.deleteAssessment(id);
+    if (!deleted) {
+      return res.status(404).json({ error: "Assessment not found" });
+    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 9. Officer Admin Stats
 router.get("/admin/stats", async (req, res, next) => {
   try {

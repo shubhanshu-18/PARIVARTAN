@@ -231,6 +231,14 @@ export const ApiService = {
     return await res.json();
   },
 
+  async deleteAssessment(id) {
+    const res = await fetch(
+      `${API_BASE}/api/assessments/${encodeURIComponent(id)}`,
+      { method: "DELETE" },
+    );
+    if (!res.ok) throw new Error("Failed to delete assessment");
+  },
+
   async getAdminStats() {
     const res = await fetch(`${API_BASE}/api/admin/stats`);
     if (!res.ok) throw new Error("Failed to fetch admin stats");

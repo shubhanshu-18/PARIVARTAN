@@ -255,6 +255,13 @@ class SpatialDatabase {
     return rows.map((row) => row.payload);
   }
 
+  async deleteAssessment(id) {
+    const result = await pool.query("DELETE FROM assessments WHERE id = $1", [
+      id,
+    ]);
+    return result.rowCount > 0;
+  }
+
   async getAdminStats() {
     const assessments = await this.getAllAssessments();
     const total = assessments.length;
