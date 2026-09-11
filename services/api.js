@@ -232,10 +232,16 @@ export const ApiService = {
   },
 
   async deleteAssessment(id) {
-    const res = await fetch(
+    let res = await fetch(
       `${API_BASE}/api/assessments/${encodeURIComponent(id)}`,
       { method: "DELETE" },
     );
+    if (res.status === 404 || res.status === 405) {
+      res = await fetch(
+        `${API_BASE}/api/assessments/${encodeURIComponent(id)}/delete`,
+        { method: "POST" },
+      );
+    }
     if (!res.ok) throw new Error("Failed to delete assessment");
   },
 

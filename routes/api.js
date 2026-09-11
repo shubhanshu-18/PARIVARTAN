@@ -675,6 +675,24 @@ router.delete("/assessments/:id", async (req, res, next) => {
   }
 });
 
+// POST fallback for deployments or proxies that do not forward DELETE requests.
+router.post("/assessments/:id/delete", async (req, res, next) => {
+  const { id } = req.params;
+  if (!id || id.length > 100) {
+    return res.status(400).json({ error: "A valid assessment ID is required" });
+  }
+
+  try {
+    const deleted = await db.deleteAssessment(id);
+    if (!deleted) {
+      return res.status(404).json({ error: "Assessment not found" });
+    }
+    res.json({ deleted: true, id });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 9. Officer Admin Stats
 router.get("/admin/stats", async (req, res, next) => {
   try {
