@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_URL || "";
+const API_BASE = import.meta.env.VITE_API_URL || "MISSING_API_URL";
+console.log("API_BASE =", API_BASE);
 
 export const ApiService = {
   async getMarketIntelligence(lat, lng, category = "dairy", radius = 5) {
