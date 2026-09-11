@@ -22,7 +22,7 @@ app.use(
 // CORS setup
 app.use(
   cors({
-    origin: "*",
+    origin: "https://parivartan-tau.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
