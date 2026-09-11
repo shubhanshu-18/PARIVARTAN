@@ -669,7 +669,7 @@ router.delete("/assessments/:id", async (req, res, next) => {
     if (!deleted) {
       return res.status(404).json({ error: "Assessment not found" });
     }
-    res.status(204).send();
+    res.json({ deleted: true, id });
   } catch (error) {
     next(error);
   }
