@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 export function AdminDashboard() {
-  const { adminUser, logoutAdmin } = useAuth();
+  const { officerName, officerId, logoutOfficer } = useAuth();
   const { language, showToast } = useApp();
 
   const [assessments, setAssessments] = useState([]);
@@ -182,7 +182,7 @@ export function AdminDashboard() {
             Officer Appraisal & Sanctions Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Welcome, <strong>{adminUser?.email}</strong> • Direct
+            Welcome, <strong>{officerName}</strong> ({officerId}) • Direct
             facilitation desk for NBCFDC, NSFDC, NSKFDC and PMEGP credit-linked
             subsidies.
           </p>
@@ -201,10 +201,7 @@ export function AdminDashboard() {
           </button>
 
           <button
-            onClick={async () => {
-              await logoutAdmin();
-              window.location.href = "/admin/login";
-            }}
+            onClick={logoutOfficer}
             className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold transition-colors shadow-sm"
           >
             <LogOut className="w-3.5 h-3.5" />
