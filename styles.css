@@ -11,3 +11,79 @@ button:hover { background: #ea580c; }
 h1 { margin-top: 0; color: #0f4c81; } label { display: block; margin: 1rem 0; font-weight: 700; } input, select { display: block; width: 100%; margin-top: .4rem; padding: .7rem; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 1rem; }
 .modal-backdrop { position: fixed; inset: 0; background: #0008; display: grid; place-items: center; z-index: 2; }.modal { max-width: 420px; padding: 2rem; background: white; border-radius: 10px; }.notice { padding: .6rem; text-align: center; background: #fef3c7; color: #92400e; }
 footer { margin-top: 4rem; padding: 2rem; background: #172033; color: #cbd5e1; text-align: center; font-size: .85rem; }
+
+/* Keep the existing desktop layout intact while making dense surfaces usable on phones. */
+@media (max-width: 639px) {
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    min-height: 42px;
+  }
+
+  .mobile-step-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mobile-step-grid button {
+    min-width: 0;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .mobile-step-grid button > div:last-of-type {
+    max-width: 100%;
+  }
+
+  .mobile-step-grid button span {
+    max-width: 100%;
+  }
+
+  .overflow-x-auto {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 620px;
+  }
+
+  [class*="max-w-7xl"],
+  [class*="max-w-6xl"],
+  [class*="max-w-4xl"] {
+    max-width: 100%;
+  }
+
+  .fixed.inset-0 {
+    align-items: flex-start;
+    padding: 0.75rem;
+    overflow-y: auto;
+  }
+
+  .fixed.inset-0 > [class*="max-w-"] {
+    max-height: calc(100vh - 1.5rem);
+    overflow-y: auto;
+  }
+
+  footer {
+    margin-top: 2rem;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 389px) {
+  .mobile-step-grid button span {
+    font-size: 10px;
+  }
+
+  .mobile-step-grid button > div:first-child {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

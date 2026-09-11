@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
 import { t } from "../utils/translations";
@@ -14,6 +14,8 @@ import {
   Volume2,
   VolumeX,
   Award,
+  Menu,
+  X,
 } from "lucide-react";
 
 export function Navbar() {
@@ -31,6 +33,7 @@ export function Navbar() {
   } = useApp();
 
   const { isOfficer, setIsOfficer, officer, logoutOfficer } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleLanguage = () => {
     const next = language === "hi" ? "en" : "hi";
@@ -138,7 +141,7 @@ export function Navbar() {
         </div>
 
         {/* Action controls */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="hidden sm:flex items-center space-x-2 sm:space-x-3">
           {/* TTS Stop button if speaking */}
           {isSpeaking && (
             <button
@@ -207,7 +210,65 @@ export function Navbar() {
             </button>
           )}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
+          className="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-navy-800/90 border border-navy-700 text-slate-200"
+          aria-expanded={isMobileMenuOpen}
+          aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+        >
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="sm:hidden border-t border-navy-700/80 bg-navy-900 px-4 py-3 space-y-2">
+          {isSpeaking && (
+            <button
+              onClick={handleStopSpeaking}
+              className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-rose-600 text-white"
+            >
+              <VolumeX className="w-4 h-4" />
+              <span>Stop Voice</span>
+            </button>
+          )}
+          <button
+            onClick={toggleVoiceInput}
+            className={`w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold border ${
+              isListening
+                ? "bg-rose-600 border-rose-500 text-white"
+                : "bg-navy-800/90 border-navy-700 text-slate-200"
+            }`}
+          >
+            {isListening ? <Mic className="w-4 h-4" /> : <Mic className="w-4 h-4 text-orange-400" />}
+            <span>{isListening ? t("nav.voiceListening", language) : t("nav.voiceAssistant", language)}</span>
+          </button>
+          <button
+            onClick={toggleLanguage}
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-navy-800/90 border border-navy-700 text-slate-200"
+          >
+            <Globe2 className="w-4 h-4 text-sky-400" />
+            <span>{language === "hi" ? "English" : "हिंदी"}</span>
+          </button>
+          {isOfficer ? (
+            <button
+              onClick={logoutOfficer}
+              className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
+            >
+              Exit Officer View
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsOfficer(true)}
+              className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white border border-emerald-500/40"
+            >
+              <UserCheck className="w-4 h-4 text-emerald-200" />
+              <span>Officer Login</span>
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 }

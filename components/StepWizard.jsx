@@ -63,7 +63,7 @@ export function StepWizard() {
     <nav className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-2">
       {/* Container card */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-2 sm:p-3">
-        <div className="grid grid-cols-6 gap-1 sm:gap-2">
+        <div className="mobile-step-grid grid grid-cols-6 gap-1 sm:gap-2">
           {STEPS.map((step) => {
             const Icon = step.icon;
             const isCurrent = activeStep === step.id;
