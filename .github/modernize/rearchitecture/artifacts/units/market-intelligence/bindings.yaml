@@ -1,0 +1,3 @@
+unit: market-intelligence
+bindings: [{ framework: Express, target: db.getMarketIntelligence, must_appear_in_target: true }]
+runtime_config: [{ name: OVERPASS_URL, must_appear_in_target: true }]

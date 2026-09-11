@@ -1,0 +1,6 @@
+unit: report-pdf
+source_loc: routes/api.js:596
+side_effects: [{ action: create PDF attachment, must_preserve: true }]
+branches: [{ condition: invalid report payload, behavior: HTTP 500 JSON }]
+error_paths: [{ contract: PDF generation error response, must_preserve: true }]
+concurrency: { model: synchronous document generation, tx_boundary: none }

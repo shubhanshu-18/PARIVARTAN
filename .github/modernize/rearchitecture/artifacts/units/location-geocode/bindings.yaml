@@ -1,0 +1,3 @@
+unit: location-geocode
+bindings: [{ framework: Express, target: Nominatim API, must_appear_in_target: true }]
+runtime_config: [{ name: NOMINATIM_USER_AGENT, must_appear_in_target: true }]

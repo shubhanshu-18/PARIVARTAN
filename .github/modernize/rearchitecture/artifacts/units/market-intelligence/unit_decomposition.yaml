@@ -1,0 +1,3 @@
+unit: market-intelligence
+commit: false
+candidate_splits: [{ candidate: indicator-calculation, drivers: [domain-boundary], rationale: separate source retrieval from derived metrics }]

@@ -1,0 +1,3 @@
+unit: health
+bindings: [{ framework: Express, target: GET /api/health, must_appear_in_target: true }]
+runtime_config: []

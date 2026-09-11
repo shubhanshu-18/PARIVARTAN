@@ -1,0 +1,3 @@
+unit: businesses-nearby
+bindings: [{ framework: Express, target: Overpass API adapter, must_appear_in_target: true }]
+runtime_config: [{ name: OVERPASS_URL, must_appear_in_target: true }]

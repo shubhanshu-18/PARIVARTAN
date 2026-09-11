@@ -1,0 +1,8 @@
+unit: location-geocode
+source_loc: routes/api.js:107
+side_effects: [{ action: query Nominatim, must_preserve: true }]
+branches:
+  - { condition: short query, behavior: HTTP 400 }
+  - { condition: provider failure, behavior: HTTP 503 }
+error_paths: [{ contract: useful provider error, must_preserve: true }]
+concurrency: { model: async external request, tx_boundary: none }

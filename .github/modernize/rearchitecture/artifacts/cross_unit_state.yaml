@@ -1,0 +1,19 @@
+flows:
+  - source_loc: context/AppContext.jsx:50
+    from_unit: app-ui
+    to_units: [market-intelligence, advisory, schemes-match, financial-calculate, report-pdf]
+    state: profile
+    pairing: matched
+    must_preserve: true
+  - source_loc: context/AppContext.jsx:54
+    from_unit: financial-calculate
+    to_units: [report-pdf, app-ui]
+    state: financials
+    pairing: matched
+    must_preserve: true
+  - source_loc: context/AppContext.jsx:55
+    from_unit: assessments
+    to_units: [admin-stats, app-ui]
+    state: savedAssessmentId
+    pairing: matched
+    must_preserve: true

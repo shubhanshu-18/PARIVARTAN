@@ -1,0 +1,3 @@
+unit: assessments
+bindings: [{ framework: Express, target: SpatialDatabase.assessments, must_appear_in_target: true }]
+runtime_config: []

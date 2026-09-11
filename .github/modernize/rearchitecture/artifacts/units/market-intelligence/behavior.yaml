@@ -1,0 +1,7 @@
+unit: market-intelligence
+source_loc: routes/api.js:84
+side_effects: [{ action: synthesize observed competitor indicators, must_preserve: true }]
+branches:
+  - { condition: Overpass unavailable, behavior: HTTP 503 and dataMode unavailable }
+error_paths: [{ contract: explicit live-data outage, must_preserve: true }]
+concurrency: { model: async external request, tx_boundary: none }

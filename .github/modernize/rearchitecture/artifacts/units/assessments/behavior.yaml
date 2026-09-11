@@ -1,0 +1,6 @@
+unit: assessments
+source_loc: routes/api.js:577
+side_effects: [{ action: persist assessment in process memory, must_preserve: true }]
+branches: [{ condition: non-object payload, behavior: HTTP 400 }]
+error_paths: []
+concurrency: { model: synchronous in-memory mutation, tx_boundary: none }

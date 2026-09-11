@@ -1,0 +1,25 @@
+modules:
+  - source_loc: context/AppContext.jsx:13
+    kind: state-container
+    used_by_units: [app-ui]
+    fields:
+      - { name: activeStep, type: number }
+      - { name: profile, type: object }
+      - { name: marketData, type: object|null }
+      - { name: advisory, type: object|null }
+      - { name: financials, type: object|null }
+      - { name: matchedSchemes, type: array }
+    split_candidate: retain_as_context_boundary
+  - source_loc: db.js:3
+    kind: in-memory-domain-service
+    used_by_units: [businesses-list, businesses-nearby, market-intelligence, assessments, admin-stats]
+    fields:
+      - { name: businesses, type: array }
+      - { name: districts, type: array }
+      - { name: assessments, type: array }
+    split_candidate: persistence_adapter
+  - source_loc: routes/api.js:7
+    kind: router
+    used_by_units: [health, businesses-list, businesses-nearby, market-intelligence, location-geocode, financial-calculate, advisory, schemes-match, assessments, admin-stats, report-pdf]
+    fields: []
+    split_candidate: route-modules

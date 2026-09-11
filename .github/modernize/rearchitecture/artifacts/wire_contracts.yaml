@@ -1,0 +1,33 @@
+contracts:
+  - source_loc: routes/api.js:49
+    interface: GET /api/health
+    stability: frozen
+    target_contract: JSON object with status and service metadata
+  - source_loc: routes/api.js:64
+    interface: GET /api/businesses/nearby
+    stability: frozen
+    target_contract: JSON object containing dataMode, dataSources, and businesses with distanceKm
+  - source_loc: routes/api.js:84
+    interface: GET /api/market-intelligence
+    stability: frozen
+    target_contract: JSON market indicators; 400 for invalid coordinates and 503 when live source unavailable
+  - source_loc: routes/api.js:107
+    interface: GET /api/location/geocode
+    stability: frozen
+    target_contract: JSON results with displayName, lat, lng, and type
+  - source_loc: routes/api.js:129
+    interface: POST /api/financials/calculate
+    stability: frozen
+    target_contract: JSON summary, breakEvenChartData, and amortizationSchedule
+  - source_loc: routes/api.js:139
+    interface: POST /api/advisory
+    stability: frozen
+    target_contract: JSON advisory content with dataMode and disclaimer
+  - source_loc: routes/api.js:465
+    interface: POST /api/schemes/match
+    stability: frozen
+    target_contract: ranked scheme array with matchScore, matchReasons, and matchWarnings
+  - source_loc: routes/api.js:596
+    interface: POST /api/reports/pdf
+    stability: frozen
+    target_contract: application/pdf attachment

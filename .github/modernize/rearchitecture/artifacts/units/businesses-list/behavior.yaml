@@ -1,0 +1,6 @@
+unit: businesses-list
+source_loc: routes/api.js:59
+side_effects: [{ action: read business catalog, must_preserve: true }]
+branches: []
+error_paths: []
+concurrency: { model: request/response, tx_boundary: none }

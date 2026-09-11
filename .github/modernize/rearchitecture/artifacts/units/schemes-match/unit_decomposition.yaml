@@ -1,0 +1,3 @@
+unit: schemes-match
+commit: false
+candidate_splits: [{ candidate: scheme-catalog, drivers: [data-boundary], rationale: official records require independent refresh }]

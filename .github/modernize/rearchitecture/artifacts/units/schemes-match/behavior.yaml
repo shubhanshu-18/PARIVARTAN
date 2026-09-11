@@ -1,0 +1,6 @@
+unit: schemes-match
+source_loc: routes/api.js:465
+side_effects: [{ action: rank scheme catalog against profile, must_preserve: true }]
+branches: [{ condition: eligibility mismatch, behavior: add match warning }]
+error_paths: [{ contract: HTTP 500 JSON on matching failure, must_preserve: true }]
+concurrency: { model: synchronous evaluation, tx_boundary: none }

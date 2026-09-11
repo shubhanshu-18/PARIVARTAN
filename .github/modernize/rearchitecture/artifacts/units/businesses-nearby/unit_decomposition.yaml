@@ -1,0 +1,3 @@
+unit: businesses-nearby
+commit: false
+candidate_splits: [{ candidate: provider-adapter, drivers: [external-boundary], rationale: isolate OpenStreetMap protocol }]

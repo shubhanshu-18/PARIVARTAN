@@ -1,0 +1,6 @@
+unit: advisory
+source_loc: routes/api.js:139
+side_effects: [{ action: generate guidance from submitted profile, must_preserve: true }]
+branches: [{ condition: category-specific profile, behavior: choose category advisory }]
+error_paths: [{ contract: HTTP 500 JSON on generation failure, must_preserve: true }]
+concurrency: { model: synchronous rule evaluation, tx_boundary: none }

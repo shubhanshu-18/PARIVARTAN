@@ -1,0 +1,8 @@
+unit: businesses-nearby
+source_loc: routes/api.js:64
+side_effects: [{ action: query public business data, must_preserve: true }]
+branches:
+  - { condition: invalid coordinates, behavior: HTTP 400 }
+  - { condition: provider failure, behavior: HTTP 503 without fabricated businesses }
+error_paths: [{ contract: explicit unavailable response, must_preserve: true }]
+concurrency: { model: async external request, tx_boundary: none }

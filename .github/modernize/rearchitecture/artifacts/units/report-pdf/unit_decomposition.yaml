@@ -1,0 +1,3 @@
+unit: report-pdf
+commit: false
+candidate_splits: [{ candidate: report-sections, drivers: [document-boundary], rationale: profile, market, financial, and action sections are independently rendered }]

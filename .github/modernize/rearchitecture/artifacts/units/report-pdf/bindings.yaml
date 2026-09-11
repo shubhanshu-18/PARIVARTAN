@@ -1,0 +1,3 @@
+unit: report-pdf
+bindings: [{ framework: Express, target: PDFService, must_appear_in_target: true }]
+runtime_config: []

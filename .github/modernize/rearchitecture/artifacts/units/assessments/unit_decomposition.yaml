@@ -1,0 +1,3 @@
+unit: assessments
+commit: false
+candidate_splits: [{ candidate: persistence-adapter, drivers: [durability], rationale: process restart currently loses saved records }]

@@ -1,0 +1,3 @@
+unit: financial-calculate
+commit: false
+candidate_splits: [{ candidate: amortization, drivers: [calculation-boundary], rationale: schedule is independently verifiable }]

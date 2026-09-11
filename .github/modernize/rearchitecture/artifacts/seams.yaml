@@ -1,0 +1,11 @@
+seams:
+  - source: inferred
+    source_loc: routes/api.js:84
+    frozen_side: frontend consumers
+    frozen_side_rule: preserve response field meanings and expose live-source failure explicitly
+    protocol_shift: true
+    bridge_points:
+      - mapping_rule: map Overpass elements to businesses with id, name, category, categoryKey, lat, lng, source, and sourceUrl
+        edge_cases: omit elements without coordinates and return 503 when the provider fails
+        idempotency_retry: bounded AbortController timeout; repeated GETs are safe
+        fallback: no fabricated live businesses; UI shows unavailable state

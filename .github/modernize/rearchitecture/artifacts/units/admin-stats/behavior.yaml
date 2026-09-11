@@ -1,0 +1,6 @@
+unit: admin-stats
+source_loc: routes/api.js:591
+side_effects: [{ action: aggregate saved assessments, must_preserve: true }]
+branches: [{ condition: no assessments, behavior: return zeroed aggregates }]
+error_paths: []
+concurrency: { model: synchronous read, tx_boundary: none }

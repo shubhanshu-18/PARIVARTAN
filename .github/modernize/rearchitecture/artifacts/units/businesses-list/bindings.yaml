@@ -1,0 +1,3 @@
+unit: businesses-list
+bindings: [{ framework: Express, target: GET /api/businesses, must_appear_in_target: true }]
+runtime_config: []

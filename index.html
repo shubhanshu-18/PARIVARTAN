@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0F4C81" />
+    <meta
+      name="description"
+      content="PARIVARTAN - AI-Driven Hyper-Local Business Advisory & Financial Structuring Assistant for Rural Micro-Entrepreneurs. Smart India Hackathon 2026."
+    />
+    <title>
+      PARIVARTAN (परिवर्तन) | Rural Micro-Enterprise Advisory & Financial
+      Structuring
+    </title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                '"Plus Jakarta Sans"',
+                '"Noto Sans Devanagari"',
+                "system-ui",
+                "sans-serif",
+              ],
+              devanagari: ['"Noto Sans Devanagari"', "sans-serif"],
+            },
+            colors: {
+              navy: {
+                50: "#F0F4F8",
+                100: "#D9E2EC",
+                600: "#1B3B6F",
+                700: "#142952",
+                800: "#0E1D3A",
+                900: "#071026",
+                950: "#040917",
+              },
+              govblue: {
+                DEFAULT: "#0F4C81",
+                dark: "#0A3357",
+                light: "#EBF3FA",
+              },
+              govgreen: {
+                DEFAULT: "#0E7C3A",
+                dark: "#085326",
+                light: "#E6F4EA",
+              },
+              govsaffron: {
+                DEFAULT: "#E65100",
+                light: "#FFF3E0",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Leaflet Maps CDN -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased font-sans">
+    <div id="root"></div>
+    <script type="module" src="/main.jsx"></script>
+  </body>
+</html>

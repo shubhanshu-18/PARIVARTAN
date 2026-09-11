@@ -1,0 +1,73 @@
+units:
+  - name: app-ui
+    source_anchors: [app.jsx:19]
+    exported_signature: "App(): ReactElement"
+    dynamic_entrypoints: []
+    depends_on: [health, market-intelligence, financial-calculate, advisory, schemes-match, report-pdf]
+    shared_refs: [app-context, auth-context]
+  - name: health
+    source_anchors: [routes/api.js:49]
+    exported_signature: "GET /api/health -> JSON"
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs: [api-router]
+  - name: businesses-list
+    source_anchors: [routes/api.js:59]
+    exported_signature: "GET /api/businesses -> Business[]"
+    dynamic_entrypoints: []
+    depends_on: [db]
+    shared_refs: [api-router, db]
+  - name: businesses-nearby
+    source_anchors: [routes/api.js:64]
+    exported_signature: "GET /api/businesses/nearby -> nearby business JSON"
+    dynamic_entrypoints: []
+    depends_on: [db]
+    shared_refs: [api-router, db, external-data]
+  - name: market-intelligence
+    source_anchors: [routes/api.js:84]
+    exported_signature: "GET /api/market-intelligence -> market intelligence JSON"
+    dynamic_entrypoints: []
+    depends_on: [db, external-data]
+    shared_refs: [api-router, db, external-data]
+  - name: location-geocode
+    source_anchors: [routes/api.js:107]
+    exported_signature: "GET /api/location/geocode -> geocoded results"
+    dynamic_entrypoints: []
+    depends_on: [external-data]
+    shared_refs: [api-router, external-data]
+  - name: financial-calculate
+    source_anchors: [routes/api.js:129]
+    exported_signature: "POST /api/financials/calculate -> financial result"
+    dynamic_entrypoints: []
+    depends_on: [financial-engine]
+    shared_refs: [api-router, financial-engine]
+  - name: advisory
+    source_anchors: [routes/api.js:139]
+    exported_signature: "POST /api/advisory -> advisory JSON"
+    dynamic_entrypoints: []
+    depends_on: []
+    shared_refs: [api-router]
+  - name: schemes-match
+    source_anchors: [routes/api.js:465]
+    exported_signature: "POST /api/schemes/match -> ranked schemes"
+    dynamic_entrypoints: []
+    depends_on: [scheme-data]
+    shared_refs: [api-router, scheme-data]
+  - name: assessments
+    source_anchors: [routes/api.js:577]
+    exported_signature: "POST/GET /api/assessments -> assessment JSON"
+    dynamic_entrypoints: []
+    depends_on: [db]
+    shared_refs: [api-router, db]
+  - name: admin-stats
+    source_anchors: [routes/api.js:591]
+    exported_signature: "GET /api/admin/stats -> aggregate stats"
+    dynamic_entrypoints: []
+    depends_on: [db]
+    shared_refs: [api-router, db]
+  - name: report-pdf
+    source_anchors: [routes/api.js:596]
+    exported_signature: "POST /api/reports/pdf -> application/pdf"
+    dynamic_entrypoints: []
+    depends_on: [pdf-service]
+    shared_refs: [api-router, pdf-service]

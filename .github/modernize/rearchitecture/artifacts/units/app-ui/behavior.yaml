@@ -1,0 +1,8 @@
+unit: app-ui
+source_loc: app.jsx:19
+side_effects:
+  - { action: render assessment workflow, must_preserve: true }
+branches:
+  - { condition: isOfficer, behavior: render officer dashboard instead of wizard, must_preserve: true }
+error_paths: []
+concurrency: { model: browser event loop, tx_boundary: none }

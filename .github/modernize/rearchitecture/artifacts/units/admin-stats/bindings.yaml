@@ -1,0 +1,3 @@
+unit: admin-stats
+bindings: [{ framework: Express, target: SpatialDatabase.getAdminStats, must_appear_in_target: true }]
+runtime_config: []

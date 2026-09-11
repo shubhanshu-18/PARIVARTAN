@@ -1,0 +1,6 @@
+unit: financial-calculate
+source_loc: routes/api.js:129
+side_effects: [{ action: calculate EMI and amortization, must_preserve: true }]
+branches: [{ condition: invalid project cost, behavior: HTTP 400 }]
+error_paths: [{ contract: validation error JSON, must_preserve: true }]
+concurrency: { model: synchronous calculation, tx_boundary: none }

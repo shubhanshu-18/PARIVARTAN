@@ -1,0 +1,3 @@
+unit: advisory
+commit: false
+candidate_splits: [{ candidate: ai-provider, drivers: [external-boundary], rationale: future provider can replace rule engine without changing contract }]

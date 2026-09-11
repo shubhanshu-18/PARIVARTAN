@@ -1,0 +1,18 @@
+strategy: incremental_runtime_boundary
+user_intent:
+  cleanup_required: false
+  rationale: preserve existing SIH UI while replacing important demo outputs with live data where available
+must_rewrite:
+  - routes/api.js:64
+  - routes/api.js:84
+  - routes/api.js:107
+  - services/api.js:5
+  - context/AppContext.jsx:15
+copy_as_is:
+  - engine.js
+  - pdfservice.js
+legacy_allowed_to_remain:
+  - data/seedData.js
+  - utils/advisoryEngine.js
+defer_cleanup:
+  - Replace in-memory persistence with PostgreSQL/PostGIS after deployment requirements are confirmed.

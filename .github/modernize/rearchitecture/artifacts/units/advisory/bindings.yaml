@@ -1,0 +1,3 @@
+unit: advisory
+bindings: [{ framework: Express, target: POST /api/advisory, must_appear_in_target: true }]
+runtime_config: []
