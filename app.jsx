@@ -14,17 +14,25 @@ import { FinancialCalculatorView } from "./components/FinancialCalculatorView";
 import { SchemeRouterView } from "./components/SchemeRouterView";
 import { FeasibilityReportView } from "./components/FeasibilityReportView";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { AdminPortal } from "./components/AdminPortal";
 import { Shield } from "lucide-react";
 
 function AppContent() {
   const { activeStep, toast } = useApp();
   const { isOfficer } = useAuth();
+  const isAdminRoute = window.location.pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-900 selection:bg-orange-500 selection:text-white relative">
-      <Navbar />
-      <OfflineNotice />
-      <ConsentModal />
+      {isAdminRoute ? (
+        <AdminPortal />
+      ) : (
+        <>
+          <Navbar />
+          <OfflineNotice />
+          <ConsentModal />
+        </>
+      )}
 
       {/* Floating Global Toast Notification */}
       {toast && (
@@ -45,7 +53,7 @@ function AppContent() {
         </div>
       )}
 
-      <main className="flex-1 pb-16">
+      {!isAdminRoute && <main className="flex-1 pb-16">
         {isOfficer ? (
           <AdminDashboard />
         ) : (
@@ -61,9 +69,9 @@ function AppContent() {
             </div>
           </>
         )}
-      </main>
+      </main>}
 
-      <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 px-4 text-xs">
+      {!isAdminRoute && <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 px-4 text-xs">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
             <p className="font-bold text-slate-200">
@@ -80,7 +88,7 @@ function AppContent() {
             <span>NBCFDC • NSFDC • NSKFDC • PMEGP Verified</span>
           </span>
         </div>
-      </footer>
+      </footer>}
     </div>
   );
 }

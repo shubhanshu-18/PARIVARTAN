@@ -201,7 +201,9 @@ export function Navbar() {
             </div>
           ) : (
             <button
-              onClick={() => setIsOfficer(true)}
+              onClick={() => {
+                window.location.href = "/admin/login";
+              }}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-500/40 shadow-sm transition"
             >
               <UserCheck className="w-3.5 h-3.5 text-emerald-200" />
@@ -260,7 +262,9 @@ export function Navbar() {
             </button>
           ) : (
             <button
-              onClick={() => setIsOfficer(true)}
+              onClick={() => {
+                window.location.href = "/admin/login";
+              }}
               className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white border border-emerald-500/40"
             >
               <UserCheck className="w-4 h-4 text-emerald-200" />

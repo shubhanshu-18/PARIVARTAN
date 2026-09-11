@@ -262,6 +262,25 @@ class SpatialDatabase {
     return result.rowCount > 0;
   }
 
+  async findAdminByEmail(email) {
+    const { rows } = await pool.query(
+      "SELECT id, email, password_hash AS \"passwordHash\", role FROM admins WHERE LOWER(email) = LOWER($1)",
+      [email],
+    );
+    return rows[0] || null;
+  }
+
+  async createAdmin({ email, passwordHash }) {
+    const { rows } = await pool.query(
+      `INSERT INTO admins (email, password_hash)
+       VALUES ($1, $2)
+       ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, role = 'admin'
+       RETURNING id, email, role`,
+      [email, passwordHash],
+    );
+    return rows[0];
+  }
+
   async getAdminStats() {
     const assessments = await this.getAllAssessments();
     const total = assessments.length;

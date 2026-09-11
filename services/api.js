@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "MISSING_API_URL";
+const API_BASE = import.meta.env.VITE_API_URL || "";
 console.log("API_BASE =", API_BASE);
 
 export const ApiService = {
@@ -226,7 +226,9 @@ export const ApiService = {
   },
 
   async getAssessments() {
-    const res = await fetch(`${API_BASE}/api/assessments`);
+    const res = await fetch(`${API_BASE}/api/assessments`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error("Failed to fetch assessments");
     return await res.json();
   },
@@ -234,20 +236,50 @@ export const ApiService = {
   async deleteAssessment(id) {
     const res = await fetch(
       `${API_BASE}/api/assessments/${encodeURIComponent(id)}`,
-      { method: "DELETE" },
+      { method: "DELETE", credentials: "include" },
     );
     if (!res.ok) throw new Error("Failed to delete assessment");
   },
 
   async getAdminStats() {
-    const res = await fetch(`${API_BASE}/api/admin/stats`);
+    const res = await fetch(`${API_BASE}/api/admin/stats`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error("Failed to fetch admin stats");
     return await res.json();
+  },
+
+  async getAdminMe() {
+    const res = await fetch(`${API_BASE}/api/admin/me`, {
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("Failed to check admin session");
+    return await res.json();
+  },
+
+  async loginAdmin(email, password) {
+    const res = await fetch(`${API_BASE}/api/admin/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) throw new Error("Invalid credentials");
+    return await res.json();
+  },
+
+  async logoutAdmin() {
+    const res = await fetch(`${API_BASE}/api/admin/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) throw new Error("Failed to log out");
   },
 
   async downloadPdfReport(reportData) {
     const res = await fetch(`${API_BASE}/api/reports/pdf`, {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(reportData),
     });

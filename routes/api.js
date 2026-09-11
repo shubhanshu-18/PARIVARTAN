@@ -3,6 +3,14 @@ const db = require("../db");
 const engine = require("../engine");
 const pdfService = require("../pdfservice");
 const { schemes } = require("../data/schemes");
+const bcrypt = require("bcryptjs");
+const {
+  clearAdminCookie,
+  createAdminToken,
+  requireAdmin,
+  requireAuth,
+  setAdminCookie,
+} = require("../middleware/adminAuth");
 
 const router = express.Router();
 const overpassUrl =
@@ -10,6 +18,41 @@ const overpassUrl =
 const defaultMarketLocation = { lat: 23.2032, lng: 77.0844 };
 const overpassUserAgent =
   process.env.NOMINATIM_USER_AGENT || "parivartan-market-intelligence";
+
+router.post("/admin/login", async (req, res, next) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  if (!email || !password || email.length > 254 || password.length > 256) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  try {
+    const admin = await db.findAdminByEmail(email);
+    const valid = admin && (await bcrypt.compare(password, admin.passwordHash));
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+
+    setAdminCookie(res, createAdminToken(admin));
+    res.json({ user: { id: admin.id, email: admin.email, role: admin.role } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/admin/logout", (req, res) => {
+  clearAdminCookie(res);
+  res.status(204).send();
+});
+
+router.get("/admin/me", (req, res) => {
+  const token = req.headers.cookie;
+  if (!token) return res.json({ authenticated: false });
+  return requireAuth(req, res, () =>
+    res.json({
+      authenticated: true,
+      user: { id: req.user.sub, email: req.user.email, role: req.user.role },
+    }),
+  );
+});
 
 async function fetchJson(url, options = {}, timeoutMs = 10000) {
   const controller = new AbortController();
@@ -650,7 +693,7 @@ router.post("/assessments", async (req, res, next) => {
   }
 });
 
-router.get("/assessments", async (req, res, next) => {
+router.get("/assessments", requireAdmin, async (req, res, next) => {
   try {
     res.json(await db.getAllAssessments());
   } catch (error) {
@@ -658,7 +701,7 @@ router.get("/assessments", async (req, res, next) => {
   }
 });
 
-router.delete("/assessments/:id", async (req, res, next) => {
+router.delete("/assessments/:id", requireAdmin, async (req, res, next) => {
   const { id } = req.params;
   if (!id || id.length > 100) {
     return res.status(400).json({ error: "A valid assessment ID is required" });
@@ -676,7 +719,7 @@ router.delete("/assessments/:id", async (req, res, next) => {
 });
 
 // 9. Officer Admin Stats
-router.get("/admin/stats", async (req, res, next) => {
+router.get("/admin/stats", requireAdmin, async (req, res, next) => {
   try {
     res.json(await db.getAdminStats());
   } catch (error) {
@@ -685,7 +728,7 @@ router.get("/admin/stats", async (req, res, next) => {
 });
 
 // 10. PDF Report Generation
-router.post("/reports/pdf", (req, res) => {
+router.post("/reports/pdf", requireAdmin, (req, res) => {
   try {
     const pdfBuffer = pdfService.generateFeasibilityReport(req.body || {});
     res.type("application/pdf");

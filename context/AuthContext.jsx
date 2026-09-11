@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
+import { ApiService } from "../services/api";
 
 const AuthContext = createContext(null);
 
@@ -6,6 +13,39 @@ export function AuthProvider({ children }) {
   const [isOfficer, setIsOfficer] = useState(false);
   const [officer, setOfficer] = useState(null);
   const [loginError, setLoginError] = useState("");
+  const [adminUser, setAdminUser] = useState(null);
+  const [adminLoading, setAdminLoading] = useState(true);
+  const [adminError, setAdminError] = useState("");
+
+  useEffect(() => {
+    ApiService.getAdminMe()
+      .then((session) => {
+        if (session.authenticated && session.user?.role === "admin") {
+          setAdminUser(session.user);
+        }
+      })
+      .catch(() => {
+        setAdminUser(null);
+      })
+      .finally(() => setAdminLoading(false));
+  }, []);
+
+  const loginAdmin = async (email, password) => {
+    setAdminError("");
+    try {
+      const result = await ApiService.loginAdmin(email, password);
+      setAdminUser(result.user);
+      return true;
+    } catch {
+      setAdminError("Invalid email or password.");
+      return false;
+    }
+  };
+
+  const logoutAdmin = async () => {
+    await ApiService.logoutAdmin();
+    setAdminUser(null);
+  };
 
   const loginOfficer = (username, password) => {
     setLoginError("");
@@ -46,8 +86,13 @@ export function AuthProvider({ children }) {
       loginError,
       loginOfficer,
       logoutOfficer,
+      adminUser,
+      adminLoading,
+      adminError,
+      loginAdmin,
+      logoutAdmin,
     }),
-    [isOfficer, officer, loginError],
+    [isOfficer, officer, loginError, adminUser, adminLoading, adminError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

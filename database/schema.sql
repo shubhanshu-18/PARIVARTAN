@@ -49,6 +49,14 @@ CREATE TABLE IF NOT EXISTS assessments (
   payload JSONB NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS admins (
+  id BIGSERIAL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'admin' CHECK (role = 'admin'),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE INDEX IF NOT EXISTS businesses_location_idx
   ON businesses (lat, lng);
 CREATE INDEX IF NOT EXISTS assessments_created_at_idx

@@ -8,6 +8,13 @@ const apiRoutes = require("./routes/api");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = (
+  process.env.FRONTEND_ORIGIN ||
+  "https://parivartan-tau.vercel.app,http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 const frontendDistPath = path.join(__dirname, "dist");
 const frontendIndexPath = path.join(frontendDistPath, "index.html");
 
@@ -22,7 +29,11 @@ app.use(
 // CORS setup
 app.use(
   cors({
-    origin: "https://parivartan-tau.vercel.app",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Origin is not allowed by CORS"));
+    },
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
