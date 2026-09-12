@@ -123,15 +123,12 @@ export function Navbar() {
         {/* Logo & Brand Identity */}
         <div className="flex items-center space-x-3.5">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-bold shadow-md shadow-orange-950/40 border border-orange-400/30">
-            <span className="text-xl tracking-tight">प</span>
+            <span className="text-xl tracking-tight">G</span>
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
               <span className="text-xl font-extrabold tracking-tight text-white font-sans">
-                PARIVARTAN
-              </span>
-              <span className="text-sm font-semibold text-orange-400 font-devanagari">
-                (परिवर्तन)
+                Gram Sarthi AI
               </span>
             </div>
             <p className="text-[11px] text-slate-300 line-clamp-1 font-medium">
