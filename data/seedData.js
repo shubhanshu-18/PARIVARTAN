@@ -182,7 +182,7 @@ const businesses = [
   },
   {
     id: "BIZ-004",
-    name: "Bhopal Sanchi Parivartan Outlet",
+    name: "Bhopal Sanchi Gram Sarthi AI Outlet",
     category: "Dairy & Milk Products",
     categoryKey: "dairy",
     scale: "small",

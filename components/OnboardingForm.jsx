@@ -25,8 +25,13 @@ import {
   Briefcase,
 } from "lucide-react";
 
-const { lettersAndSpaces, locationText, digitsOnly, trimText, validateProfile } =
-  validation;
+const {
+  lettersAndSpaces,
+  locationText,
+  digitsOnly,
+  trimText,
+  validateProfile,
+} = validation;
 
 export function OnboardingForm() {
   const {
@@ -48,12 +53,12 @@ export function OnboardingForm() {
   const [locationMessage, setLocationMessage] = useState("");
   const locationRequestRef = useRef(0);
 
-  const districtsForState =
-    STATES_DISTRICTS[profile.state] || [];
+  const districtsForState = STATES_DISTRICTS[profile.state] || [];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     let cleanedValue = value;
+    // Allow typing letters and spaces without immediately stripping spaces mid-sentence
     if (name === "applicantName") cleanedValue = lettersAndSpaces(value);
     if (name === "village") cleanedValue = locationText(value);
     if (name === "expectedInvestment" || name === "capitalAvailable") {
@@ -74,6 +79,11 @@ export function OnboardingForm() {
   };
 
   const handleInputBlur = (name) => {
+    // Trim extra surrounding spaces on blur for clean submission
+    if (name === "applicantName" && profile.applicantName) {
+      const trimmed = profile.applicantName.replace(/\s+/g, " ").trim();
+      updateProfile({ applicantName: trimmed });
+    }
     const result = validateProfile(profile, { partial: true });
     if (result.errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: result.errors[name] }));
@@ -99,8 +109,13 @@ export function OnboardingForm() {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      setLocationMessage("This browser does not support location. Please select your location manually.");
-      showToast("This browser does not support location. Please select your location manually.", "warning");
+      setLocationMessage(
+        "This browser does not support location. Please select your location manually.",
+      );
+      showToast(
+        "This browser does not support location. Please select your location manually.",
+        "warning",
+      );
       return;
     }
 
@@ -122,14 +137,21 @@ export function OnboardingForm() {
           longitude > 180
         ) {
           setGpsLoading(false);
-          setLocationMessage("Unable to determine your location. Please select it manually.");
-          showToast("Unable to determine your location. Please select your location manually.", "warning");
+          setLocationMessage(
+            "Unable to determine your location. Please select it manually.",
+          );
+          showToast(
+            "Unable to determine your location. Please select your location manually.",
+            "warning",
+          );
           return;
         }
         const gpsLocation = {
           latitude,
           longitude,
-          accuracy: Number.isFinite(pos.coords.accuracy) ? pos.coords.accuracy : null,
+          accuracy: Number.isFinite(pos.coords.accuracy)
+            ? pos.coords.accuracy
+            : null,
           source: "gps",
         };
         setLocation(gpsLocation);
@@ -159,7 +181,8 @@ export function OnboardingForm() {
           );
           const districtMatch = stateMatch
             ? STATES_DISTRICTS[stateMatch].find(
-                (district) => normalize(district) === normalize(geocoded.district),
+                (district) =>
+                  normalize(district) === normalize(geocoded.district),
               )
             : null;
           const locality =
@@ -305,18 +328,18 @@ export function OnboardingForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* SECTION 1: BUSINESS IDEA & SECTOR */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
-          <div className="flex items-center space-x-2.5 pb-3 mb-4 border-b border-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
+          <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
+            <div className="w-8 h-8 rounded-lg bg-[#FFF7E6] text-[#F59E0B] border border-[#F59E0B]/20 flex items-center justify-center font-bold">
               <Building2 className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
+              <h2 className="text-sm font-bold text-[#17212B]">
                 {language === "hi"
                   ? "1. व्यवसाय विचार एवं क्षेत्र"
                   : "1. Business Concept & Sector"}
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#667085]">
                 {language === "hi"
                   ? "आप क्या उत्पाद या सेवा शुरू करना चाहते हैं?"
                   : "What enterprise product or service do you intend to launch?"}
@@ -327,9 +350,9 @@ export function OnboardingForm() {
           <div className="space-y-4">
             {/* Applicant Name */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.applicantName", language)}{" "}
-                <span className="text-rose-500">*</span>
+                <span className="text-[#DC2626]">*</span>
               </label>
               <input
                 type="text"
@@ -342,29 +365,34 @@ export function OnboardingForm() {
                     ? "उदा. सुनीता शर्मा / रमेश वर्मा"
                     : "e.g. Sunita Sharma"
                 }
-                className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition ${
-                  errors.applicantName ? "border-rose-400 bg-rose-50/40" : "border-slate-300"
-                } focus:outline-none focus:ring-2 focus:ring-govblue/30 focus:border-govblue`}
+                className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition bg-white ${
+                  errors.applicantName
+                    ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                    : "border-[#DCE4E8] hover:border-slate-400 focus:border-[#123B5D]"
+                } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15`}
               />
               {errors.applicantName && (
-                <p className="text-[11px] text-rose-600 mt-1">{errors.applicantName}</p>
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{errors.applicantName}</span>
+                </p>
               )}
             </div>
 
             {/* Business Idea with Voice Button */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-slate-800 flex items-center space-x-1">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-[#17212B] flex items-center space-x-1">
                   <span>{t("form.businessIdea", language)}</span>
-                  <span className="text-rose-500">*</span>
+                  <span className="text-[#DC2626]">*</span>
                 </label>
                 <button
                   type="button"
                   onClick={startVoiceDictation}
-                  className={`inline-flex items-center space-x-1 text-[11px] font-semibold px-2 py-0.5 rounded transition ${
+                  className={`inline-flex items-center space-x-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-md transition border ${
                     isListening
-                      ? "bg-rose-600 text-white animate-pulse"
-                      : "bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200"
+                      ? "bg-[#DC2626] border-[#DC2626] text-white animate-pulse"
+                      : "bg-[#FFF7E6] text-[#9A6500] hover:bg-[#FDE8C3] border-[#F59E0B]/30"
                   }`}
                 >
                   <Mic className="w-3 h-3" />
@@ -384,15 +412,15 @@ export function OnboardingForm() {
                 onChange={handleInputChange}
                 onBlur={() => handleInputBlur("businessIdea")}
                 placeholder={t("form.businessIdeaPlaceholder", language)}
-                className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition ${
+                className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition bg-white ${
                   errors.businessIdea
-                    ? "border-rose-400 bg-rose-50/40 focus:ring-rose-200"
-                    : "border-slate-300 focus:ring-govblue/30 focus:border-govblue"
-                }`}
+                    ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                    : "border-[#DCE4E8] hover:border-slate-400 focus:border-[#123B5D]"
+                } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15`}
               />
               {errors.businessIdea && (
-                <p className="text-[11px] text-rose-600 flex items-center space-x-1 mt-1">
-                  <AlertCircle className="w-3 h-3" />
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
                   <span>{errors.businessIdea}</span>
                 </p>
               )}
@@ -400,9 +428,9 @@ export function OnboardingForm() {
 
             {/* Category Cards Selector */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-2">
+              <label className="block text-xs font-bold text-[#17212B] mb-2">
                 {t("form.category", language)}{" "}
-                <span className="text-rose-500">*</span>
+                <span className="text-[#DC2626]">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
                 {CATEGORIES.map((cat) => {
@@ -412,20 +440,20 @@ export function OnboardingForm() {
                       type="button"
                       key={cat.key}
                       onClick={() => handleCategorySelect(cat.key)}
-                      className={`p-3 rounded-lg border text-left transition flex flex-col justify-between ${
+                      className={`p-3 rounded-xl border text-left transition flex flex-col justify-between ${
                         isSelected
-                          ? "border-govblue bg-blue-50/80 ring-2 ring-govblue/20 text-govblue shadow-xs"
-                          : "border-slate-200 bg-white hover:border-slate-300 text-slate-700"
+                          ? "border-[#123B5D] bg-[#EEF4FA] ring-2 ring-[#123B5D]/20 text-[#123B5D] shadow-sm font-semibold"
+                          : "border-[#DCE4E8] bg-white hover:border-[#123B5D]/40 text-[#17212B]"
                       }`}
                     >
                       <span className="block text-xs font-bold leading-snug">
                         {language === "hi" ? cat.labelHi : cat.label}
                       </span>
-                      <span className="block text-[10px] text-slate-500 mt-1 line-clamp-1">
+                      <span className="block text-[10px] text-[#667085] mt-1.5 line-clamp-1">
                         {cat.desc}
                       </span>
                       {isSelected && (
-                        <CheckCircle className="w-3.5 h-3.5 text-govblue mt-1.5 self-end" />
+                        <CheckCircle className="w-3.5 h-3.5 text-[#123B5D] mt-2 self-end stroke-[2.5]" />
                       )}
                     </button>
                   );
@@ -436,18 +464,18 @@ export function OnboardingForm() {
         </div>
 
         {/* SECTION 2: LOCATION & GEOLOCATION */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
-          <div className="flex items-center space-x-2.5 pb-3 mb-4 border-b border-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
+          <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF4FA] text-[#123B5D] border border-[#123B5D]/20 flex items-center justify-center font-bold">
               <MapPin className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
+              <h2 className="text-sm font-bold text-[#17212B]">
                 {language === "hi"
                   ? "2. स्थान एवं जीपीएस मैपिंग"
                   : "2. Location & Spatial Mapping"}
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#667085]">
                 {language === "hi"
                   ? "हाइपर-लोकल प्रतियोगी घनत्व एवं ग्रामीण बाज़ार पहुंच का निर्धारण"
                   : "Enables 1-5km radius competitor matching and mandi distance calculation"}
@@ -458,14 +486,14 @@ export function OnboardingForm() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             {/* State */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.state", language)}
               </label>
               <select
                 name="state"
                 value={profile.state}
                 onChange={handleStateChange}
-                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-govblue/30"
+                className="w-full px-3 py-2 text-xs rounded-lg border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]"
               >
                 <option value="">Select state</option>
                 {Object.keys(STATES_DISTRICTS).map((st) => (
@@ -478,14 +506,14 @@ export function OnboardingForm() {
 
             {/* District */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.district", language)}
               </label>
               <select
                 name="district"
                 value={profile.district}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-govblue/30"
+                className="w-full px-3 py-2 text-xs rounded-lg border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]"
               >
                 <option value="">Select district</option>
                 {districtsForState.map((d) => (
@@ -498,7 +526,7 @@ export function OnboardingForm() {
 
             {/* Village / Town */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.village", language)}
               </label>
               <input
@@ -508,35 +536,46 @@ export function OnboardingForm() {
                 onChange={handleInputChange}
                 onBlur={() => handleInputBlur("village")}
                 placeholder={t("form.villagePlaceholder", language)}
-                className={`w-full px-3 py-2 text-xs rounded-lg border ${
-                  errors.village ? "border-rose-400 bg-rose-50/40" : "border-slate-300"
-                } focus:outline-none focus:ring-2 focus:ring-govblue/30`}
+                className={`w-full px-3 py-2 text-xs rounded-lg border transition bg-white ${
+                  errors.village
+                    ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                    : "border-[#DCE4E8] hover:border-slate-400"
+                } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]`}
               />
               {errors.village && (
-                <p className="text-[11px] text-rose-600 mt-1">{errors.village}</p>
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{errors.village}</span>
+                </p>
               )}
             </div>
           </div>
 
           {/* GPS Detector button */}
-          <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="text-[11px] text-slate-600 flex items-center space-x-1.5">
-              <Compass className="w-3.5 h-3.5 text-slate-400" />
+          <div className="mt-4 pt-3 border-t border-[#DCE4E8]/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="text-[11px] text-[#667085] flex items-center space-x-1.5">
+              <Compass className="w-3.5 h-3.5 text-[#667085]" />
               <span>
                 Coordinates:{" "}
-                <strong className="text-slate-800">
+                <strong className="text-[#17212B]">
                   {location
                     ? `${location.latitude.toFixed(4)}°N, ${location.longitude.toFixed(4)}°E`
                     : "Not detected"}
                 </strong>
               </span>
               {locationMessage && (
-                <span className={gpsSuccess ? "text-emerald-700" : "text-amber-700"}>
+                <span
+                  className={
+                    gpsSuccess
+                      ? "text-[#167C5A] font-semibold"
+                      : "text-[#F59E0B] font-semibold"
+                  }
+                >
                   {locationMessage}
                 </span>
               )}
               {gpsSuccess && (
-                <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[10px] border border-emerald-200">
+                <span className="text-[#167C5A] font-semibold bg-[#E8F6F1] px-2 py-0.5 rounded text-[10px] border border-[#167C5A]/30">
                   {t("form.locationDetected", language)}
                 </span>
               )}
@@ -546,10 +585,10 @@ export function OnboardingForm() {
               type="button"
               onClick={detectLocation}
               disabled={gpsLoading}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 flex items-center space-x-1.5 transition disabled:opacity-50"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 border border-[#DCE4E8] hover:border-[#123B5D] text-[#123B5D] flex items-center space-x-1.5 transition shadow-xs disabled:opacity-50"
             >
               <Compass
-                className={`w-3.5 h-3.5 text-govblue ${gpsLoading ? "animate-spin" : ""}`}
+                className={`w-3.5 h-3.5 text-[#123B5D] ${gpsLoading ? "animate-spin" : ""}`}
               />
               <span>
                 {gpsLoading
@@ -561,18 +600,18 @@ export function OnboardingForm() {
         </div>
 
         {/* SECTION 3: CAPITAL & LOAN REQUIREMENT */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
-          <div className="flex items-center space-x-2.5 pb-3 mb-4 border-b border-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
+          <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
+            <div className="w-8 h-8 rounded-lg bg-[#E8F6F1] text-[#167C5A] border border-[#167C5A]/20 flex items-center justify-center font-bold">
               <IndianRupee className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
+              <h2 className="text-sm font-bold text-[#17212B]">
                 {language === "hi"
                   ? "3. पूंजी निवेश एवं ऋण आवश्यकता"
                   : "3. Project Cost & Loan Structuring"}
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#667085]">
                 {language === "hi"
                   ? "स्वयं की पूंजी और बैंक ऋण की सटीक गणना"
                   : "Define own promoter margin equity and required institutional debt"}
@@ -583,12 +622,12 @@ export function OnboardingForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Total Project Outlay */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.expectedInvestment", language)}{" "}
-                <span className="text-rose-500">*</span>
+                <span className="text-[#DC2626]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">
+                <span className="absolute left-3 top-2.5 text-xs text-[#667085] font-bold">
                   ₹
                 </span>
                 <input
@@ -600,33 +639,34 @@ export function OnboardingForm() {
                   step="5000"
                   min="5000"
                   max="10000000"
-                  className={`w-full pl-7 pr-3 py-2 text-xs rounded-lg border ${
+                  className={`w-full pl-7 pr-3 py-2 text-xs rounded-lg border transition bg-white ${
                     errors.expectedInvestment
-                      ? "border-rose-400 bg-rose-50/40"
-                      : "border-slate-300 focus:ring-govblue/30"
-                  }`}
+                      ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                      : "border-[#DCE4E8] hover:border-slate-400"
+                  } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]`}
                 />
               </div>
-              <span className="text-[10px] text-slate-500 mt-1 block">
+              <span className="text-[10px] text-[#667085] mt-1 block">
                 {language === "hi"
                   ? "मशीनरी, शेड, टूल्स एवं कच्चा माल मिलाकर"
                   : "Total equipment, workspace, and initial raw material"}
               </span>
               {errors.expectedInvestment && (
-                <p className="text-[11px] text-rose-600 mt-1">
-                  {errors.expectedInvestment}
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{errors.expectedInvestment}</span>
                 </p>
               )}
             </div>
 
             {/* Available Capital */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-1">
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                 {t("form.capitalAvailable", language)}{" "}
-                <span className="text-rose-500">*</span>
+                <span className="text-[#DC2626]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">
+                <span className="absolute left-3 top-2.5 text-xs text-[#667085] font-bold">
                   ₹
                 </span>
                 <input
@@ -637,48 +677,49 @@ export function OnboardingForm() {
                   onBlur={() => handleInputBlur("capitalAvailable")}
                   step="1000"
                   min="0"
-                  className={`w-full pl-7 pr-3 py-2 text-xs rounded-lg border ${
+                  className={`w-full pl-7 pr-3 py-2 text-xs rounded-lg border transition bg-white ${
                     errors.capitalAvailable
-                      ? "border-rose-400 bg-rose-50/40"
-                      : "border-slate-300 focus:ring-govblue/30"
-                  }`}
+                      ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                      : "border-[#DCE4E8] hover:border-slate-400"
+                  } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]`}
                 />
               </div>
-              <span className="text-[10px] text-slate-500 mt-1 block">
+              <span className="text-[10px] text-[#667085] mt-1 block">
                 {t("form.capitalHint", language)}
               </span>
               {errors.capitalAvailable && (
-                <p className="text-[11px] text-rose-600 mt-1">
-                  {errors.capitalAvailable}
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{errors.capitalAvailable}</span>
                 </p>
               )}
             </div>
           </div>
 
           {/* Realtime summary pill */}
-          <div className="mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="mt-4 p-3.5 bg-[#F7F9F7] border border-[#DCE4E8] rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs">
             <div>
-              <span className="text-slate-500 block text-[11px]">
+              <span className="text-[#667085] block text-[11px]">
                 Own Margin Share:
               </span>
-              <strong className="text-slate-900 font-bold text-sm">
+              <strong className="text-[#17212B] font-bold text-sm">
                 ₹{Number(profile.capitalAvailable || 0).toLocaleString("en-IN")}{" "}
                 ({marginPercent}%)
               </strong>
             </div>
             <div>
-              <span className="text-slate-500 block text-[11px]">
+              <span className="text-[#667085] block text-[11px]">
                 Calculated Loan Required:
               </span>
-              <strong className="text-govblue font-bold text-sm">
+              <strong className="text-[#123B5D] font-bold text-sm">
                 ₹{loanRequired.toLocaleString("en-IN")} ({100 - marginPercent}%)
               </strong>
             </div>
             <div>
-              <span className="text-slate-500 block text-[11px]">
+              <span className="text-[#667085] block text-[11px]">
                 Subsidy Potential:
               </span>
-              <span className="font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded text-[11px]">
+              <span className="font-semibold text-[#167C5A] bg-[#E8F6F1] px-2.5 py-0.5 rounded-md text-[11px] border border-[#167C5A]/30">
                 Up to 15% - 35% under NBCFDC / PMEGP
               </span>
             </div>
@@ -686,18 +727,18 @@ export function OnboardingForm() {
         </div>
 
         {/* SECTION 4: BENEFICIARY PROFILE & DEMOGRAPHICS */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
-          <div className="flex items-center space-x-2.5 pb-3 mb-4 border-b border-slate-100">
-            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
+          <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF4FA] text-[#123B5D] border border-[#123B5D]/20 flex items-center justify-center font-bold">
               <Users className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
+              <h2 className="text-sm font-bold text-[#17212B]">
                 {language === "hi"
                   ? "4. सामाजिक वर्ग एवं लाभार्थी विवरण"
                   : "4. Beneficiary Category & Demographics"}
               </h2>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-[#667085]">
                 {language === "hi"
                   ? "MoSJE योजनाओं (NBCFDC, NSFDC, NSKFDC) में अधिकतम ब्याज छूट एवं पात्रता हेतु"
                   : "Determines concessional interest rates and statutory subsidy eligibility"}
@@ -708,9 +749,9 @@ export function OnboardingForm() {
           <div className="space-y-4">
             {/* Social Category Radios */}
             <div>
-              <label className="block text-xs font-bold text-slate-800 mb-2">
+              <label className="block text-xs font-bold text-[#17212B] mb-2">
                 {t("form.beneficiaryCategory", language)}{" "}
-                <span className="text-rose-500">*</span>
+                <span className="text-[#DC2626]">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {BENEFICIARY_CATEGORIES.map((cat) => {
@@ -718,10 +759,10 @@ export function OnboardingForm() {
                   return (
                     <label
                       key={cat.key}
-                      className={`p-3 rounded-lg border cursor-pointer transition flex items-start space-x-2.5 ${
+                      className={`p-3 rounded-xl border cursor-pointer transition flex items-start space-x-2.5 ${
                         isChecked
-                          ? "border-purple-600 bg-purple-50/60 ring-1 ring-purple-500/20"
-                          : "border-slate-200 hover:border-slate-300 bg-white"
+                          ? "border-[#123B5D] bg-[#EEF4FA] ring-1 ring-[#123B5D]/30"
+                          : "border-[#DCE4E8] hover:border-slate-300 bg-white"
                       }`}
                     >
                       <input
@@ -730,13 +771,13 @@ export function OnboardingForm() {
                         value={cat.key}
                         checked={isChecked}
                         onChange={handleInputChange}
-                        className="mt-0.5 text-purple-600 focus:ring-purple-500"
+                        className="mt-0.5 text-[#123B5D] focus:ring-[#123B5D]"
                       />
                       <div>
-                        <strong className="block text-xs font-bold text-slate-900">
+                        <strong className="block text-xs font-bold text-[#17212B]">
                           {language === "hi" ? cat.labelHi : cat.label}
                         </strong>
-                        <span className="block text-[10px] text-purple-800 font-medium mt-0.5">
+                        <span className="block text-[10px] text-[#123B5D] font-medium mt-0.5">
                           {cat.schemeFocus}
                         </span>
                       </div>
@@ -750,14 +791,14 @@ export function OnboardingForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {/* Gender */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1">
+                <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                   {t("form.gender", language)}
                 </label>
                 <div className="flex items-center space-x-4 pt-1">
                   {["female", "male", "other"].map((g) => (
                     <label
                       key={g}
-                      className="flex items-center space-x-1.5 text-xs text-slate-700 cursor-pointer"
+                      className="flex items-center space-x-1.5 text-xs text-[#17212B] cursor-pointer"
                     >
                       <input
                         type="radio"
@@ -765,7 +806,7 @@ export function OnboardingForm() {
                         value={g}
                         checked={profile.gender === g}
                         onChange={handleInputChange}
-                        className="text-govblue focus:ring-govblue"
+                        className="text-[#123B5D] focus:ring-[#123B5D]"
                       />
                       <span className="capitalize">
                         {g === "female"
@@ -781,14 +822,14 @@ export function OnboardingForm() {
 
               {/* Experience */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 mb-1">
+                <label className="block text-xs font-bold text-[#17212B] mb-1.5">
                   {t("form.experience", language)}
                 </label>
                 <select
                   name="experience"
                   value={profile.experience}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white focus:ring-govblue/30"
+                  className="w-full px-3 py-2 text-xs rounded-lg border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]"
                 >
                   <option value="beginner">
                     {t("form.expNone", language)}
@@ -809,13 +850,13 @@ export function OnboardingForm() {
                   name="isFirstTimeEntrepreneur"
                   checked={profile.isFirstTimeEntrepreneur}
                   onChange={handleInputChange}
-                  className="rounded text-govblue focus:ring-govblue w-4 h-4"
+                  className="rounded text-[#123B5D] focus:ring-[#123B5D] w-4 h-4"
                 />
-                <span className="text-xs font-semibold text-slate-800">
+                <span className="text-xs font-semibold text-[#17212B]">
                   {t("form.firstTime", language)}
                 </span>
               </label>
-              <span className="block text-[10px] text-slate-500 ml-6">
+              <span className="block text-[10px] text-[#667085] ml-6">
                 {language === "hi"
                   ? "स्टैंड-अप इंडिया एवं पीएमईजीपी योजनाओं में प्रथम उद्यमियों को विशेष प्राथमिकता दी जाती है।"
                   : "First-time greenfield founders receive special concessions under Stand-Up India & PMEGP."}
@@ -825,19 +866,19 @@ export function OnboardingForm() {
         </div>
 
         {/* SUBMIT BUTTON BAR */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-4 z-20">
-          <div className="text-xs text-slate-600 text-center sm:text-left">
-            <span className="font-semibold text-slate-800">
+        <div className="bg-white rounded-xl shadow-card border border-[#DCE4E8] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-4 z-20">
+          <div className="text-xs text-[#667085] text-center sm:text-left">
+            <span className="font-semibold text-[#17212B]">
               Ready to compute local viability:
             </span>
-            <span className="text-slate-500 block text-[11px]">
+            <span className="text-[#667085] block text-[11px]">
               Proceeds to Step 2: 5km Competitor Mapping & Opportunity Scoring
             </span>
           </div>
 
           <button
             type="submit"
-            className="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold bg-govblue hover:bg-govblue-dark text-white shadow-md shadow-govblue/20 flex items-center justify-center space-x-2 transition"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold bg-[#123B5D] hover:bg-[#0D2E49] text-white shadow-sm flex items-center justify-center space-x-2 transition"
           >
             <span>{t("form.continue", language)}</span>
             <ArrowRight className="w-4 h-4" />

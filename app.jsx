@@ -69,7 +69,7 @@ function AppContent() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
             <p className="font-bold text-slate-200">
-              Parivartan (परिवर्तन) — AI-Driven Hyper-Local Business Advisory &
+              Gram Sarthi AI — AI-Driven Hyper-Local Business Advisory &
               Financial Structuring
             </p>
             <p className="text-[11px] text-slate-400 mt-0.5">

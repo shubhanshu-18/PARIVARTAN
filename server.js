@@ -113,7 +113,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(`🏛️  PARIVARTAN API Server (SIH 2026 - PS 26091)`);
+  console.log(`🏛️  Gram Sarthi AI API Server (SIH 2026 - PS 26091)`);
   console.log(
     `🚀  Port: ${PORT} | Mode: ${process.env.NODE_ENV || "development"}`,
   );

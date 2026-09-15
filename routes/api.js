@@ -16,7 +16,7 @@ const overpassUrl =
   process.env.OVERPASS_URL || "https://overpass-api.de/api/interpreter";
 const defaultMarketLocation = { lat: 23.2032, lng: 77.0844 };
 const overpassUserAgent =
-  process.env.NOMINATIM_USER_AGENT || "parivartan-market-intelligence";
+  process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-market-intelligence";
 
 async function fetchJson(url, options = {}, timeoutMs = 10000) {
   const controller = new AbortController();
@@ -75,7 +75,7 @@ router.get("/health", (req, res) => {
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
-    service: "Parivartan Rural Enterprise Advisory API",
+    service: "Gram Sarthi AI Rural Enterprise Advisory API",
     version: "2.0.0",
   });
 });
@@ -201,7 +201,7 @@ router.get("/location/geocode", async (req, res) => {
   try {
     const encoded = encodeURIComponent(query);
     const results = await fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encoded}`, {
-      headers: { "User-Agent": process.env.NOMINATIM_USER_AGENT || "parivartan-development" },
+      headers: { "User-Agent": process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-development" },
     });
 
     res.json({
@@ -232,7 +232,7 @@ router.get("/location/reverse-geocode", async (req, res) => {
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
       {
         headers: {
-          "User-Agent": process.env.NOMINATIM_USER_AGENT || "parivartan-production",
+          "User-Agent": process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-production",
         },
       },
     );
@@ -828,7 +828,7 @@ router.post("/reports/pdf", (req, res) => {
     res.type("application/pdf");
     res.set({
       "Content-Disposition":
-        'attachment; filename="parivartan-feasibility-dossier.pdf"',
+        'attachment; filename="gram-sarthi-ai-feasibility-dossier.pdf"',
       "Content-Length": pdfBuffer.byteLength,
     });
     res.send(Buffer.from(pdfBuffer));

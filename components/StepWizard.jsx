@@ -60,10 +60,10 @@ export function StepWizard() {
   const { activeStep, setActiveStep, language } = useApp();
 
   return (
-    <nav className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-2">
+    <nav className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2">
       {/* Container card */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-2 sm:p-3">
-        <div className="mobile-step-grid grid grid-cols-6 gap-1 sm:gap-2">
+      <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-2 sm:p-2.5">
+        <div className="mobile-step-grid grid grid-cols-6 gap-1.5 sm:gap-2">
           {STEPS.map((step) => {
             const Icon = step.icon;
             const isCurrent = activeStep === step.id;
@@ -73,12 +73,12 @@ export function StepWizard() {
               <button
                 key={step.id}
                 onClick={() => setActiveStep(step.id)}
-                className={`relative flex flex-col sm:flex-row items-center justify-center p-2 rounded-lg transition text-left group ${
+                className={`relative flex flex-col sm:flex-row items-center justify-center p-2 rounded-lg transition text-left group border ${
                   isCurrent
-                    ? "bg-govblue text-white shadow-sm ring-2 ring-govblue/30"
+                    ? "bg-[#123B5D] text-white border-[#123B5D] shadow-sm ring-2 ring-[#123B5D]/20"
                     : isCompleted
-                      ? "bg-emerald-50 text-emerald-900 hover:bg-emerald-100/70 border border-emerald-200/60"
-                      : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/60"
+                      ? "bg-[#E8F6F1] text-[#105D44] hover:bg-[#D3EFE5] border-[#A9DDCB]"
+                      : "bg-[#F7F9F7] text-[#667085] hover:bg-slate-100/80 border-[#DCE4E8]"
                 }`}
                 title={`Step ${step.id}: ${step.shortEn}`}
               >
@@ -86,10 +86,10 @@ export function StepWizard() {
                 <div
                   className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0 sm:mr-2 text-xs font-bold transition ${
                     isCurrent
-                      ? "bg-orange-500 text-white shadow-inner"
+                      ? "bg-[#F59E0B] text-[#17212B] shadow-inner font-extrabold"
                       : isCompleted
-                        ? "bg-emerald-600 text-white"
-                        : "bg-slate-200 text-slate-700"
+                        ? "bg-[#167C5A] text-white"
+                        : "bg-[#E2E8F0] text-[#475569]"
                   }`}
                 >
                   {isCompleted ? (
@@ -101,16 +101,24 @@ export function StepWizard() {
 
                 {/* Text Label */}
                 <div className="text-center sm:text-left min-w-0">
-                  <span className="block text-[11px] sm:text-xs font-bold tracking-tight truncate">
+                  <span
+                    className={`block text-[11px] sm:text-xs font-bold tracking-tight truncate ${
+                      isCurrent
+                        ? "text-white"
+                        : isCompleted
+                          ? "text-[#105D44]"
+                          : "text-[#17212B]"
+                    }`}
+                  >
                     {language === "hi" ? step.shortHi : step.shortEn}
                   </span>
                   <span
                     className={`hidden lg:block text-[10px] truncate ${
                       isCurrent
-                        ? "text-blue-100"
+                        ? "text-blue-200"
                         : isCompleted
-                          ? "text-emerald-700"
-                          : "text-slate-400"
+                          ? "text-[#167C5A]"
+                          : "text-[#667085]"
                     }`}
                   >
                     {step.id === 1 &&
@@ -134,7 +142,7 @@ export function StepWizard() {
 
                 {/* Micro accent pip */}
                 {isCurrent && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-1 bg-orange-500 rounded-full sm:hidden"></span>
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-1 bg-[#F59E0B] rounded-full sm:hidden"></span>
                 )}
               </button>
             );

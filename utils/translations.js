@@ -113,8 +113,8 @@ export const BENEFICIARY_CATEGORIES = [
 export const translations = {
   en: {
     // App
-    "app.title": "PARIVARTAN",
-    "app.subtitle": "परिवर्तन",
+    "app.title": "Gram Sarthi AI",
+    "app.subtitle": "ग्राम सारथी AI",
     "app.tagline":
       "AI-Driven Hyper-Local Business Advisory & Financial Structuring",
     "app.sihBadge": "Smart India Hackathon 2026 | PS ID: 26091",
@@ -267,8 +267,8 @@ export const translations = {
   },
   hi: {
     // App
-    "app.title": "परिवर्तन",
-    "app.subtitle": "PARIVARTAN",
+    "app.title": "ग्राम सारथी AI",
+    "app.subtitle": "Gram Sarthi AI",
     "app.tagline":
       "ग्रामीण सूक्ष्म उद्यमियों के लिए AI-संचालित बाज़ार सलाह एवं वित्तीय संरचना",
     "app.sihBadge": "स्मार्ट इंडिया हैकाथॉन 2026 | समस्या क्रमांक: 26091",

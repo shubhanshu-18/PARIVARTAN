@@ -17,22 +17,26 @@ export function WelcomeSplash() {
   if (!visible) return null;
 
   return (
-    <div className="welcome-splash" role="status" aria-label="Opening Gram Sarthi AI">
+    <div
+      className="welcome-splash"
+      role="status"
+      aria-label="Opening Gram Sarthi AI"
+    >
       <div className="welcome-splash-glow" aria-hidden="true" />
       <div className="welcome-splash-content">
         <div className="welcome-splash-mark" aria-hidden="true">
-          <span>G</span>
+          <span>P</span>
           <i className="welcome-splash-orbit welcome-splash-orbit-one" />
           <i className="welcome-splash-orbit welcome-splash-orbit-two" />
         </div>
         <div className="welcome-splash-title">
-          <Sparkles size={13} aria-hidden="true" />
+          <Sparkles size={14} aria-hidden="true" />
           <span>Gram Sarthi AI</span>
         </div>
-        <p>Your local business journey starts here</p>
+        <p>AI-Driven Hyper-Local Business Advisory & Financial Structuring</p>
         <div className="welcome-splash-location">
           <MapPin size={12} aria-hidden="true" />
-          <span>Hyper-local guidance for India</span>
+          <span>Rural Micro-Enterprise Platform • SIH 2026</span>
         </div>
       </div>
     </div>

@@ -109,26 +109,26 @@ export function FinancialCalculatorView() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-5 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+      <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-2">
-              <Calculator className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E8F6F1] text-[#167C5A] border border-[#167C5A]/30 mb-2">
+              <Calculator className="w-3.5 h-3.5 text-[#167C5A]" />
               <span>
                 Step 4 of 6 • Capital Outlay & Loan Structuring Engine
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-navy-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-[#123B5D] tracking-tight">
               {t("financial.title", language)}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-[#667085] mt-1">
               {t("financial.subtitle", language)}
             </p>
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className="text-xs px-3 py-1.5 rounded-lg font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center space-x-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-700" />
+            <span className="text-xs px-3 py-1.5 rounded-lg font-bold bg-[#E8F6F1] text-[#105D44] border border-[#167C5A]/30 flex items-center space-x-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#167C5A]" />
               <span>Bank Viability: {fin.debtServiceCoverageRatio}x DSCR</span>
             </span>
           </div>
@@ -138,79 +138,79 @@ export function FinancialCalculatorView() {
       {/* 6 KEY FINANCIAL KPI CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Project Cost */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#DCE4E8] shadow-subtle">
+          <span className="text-[11px] font-bold text-[#667085] uppercase tracking-wider block">
             {t("financial.projectCost", language)}
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-slate-900">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#17212B]">
             ₹{Number(fin.projectCost || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-slate-500 mt-1 block">
+          <span className="text-[10px] text-[#667085] mt-1 block">
             Total capital outlay
           </span>
         </div>
 
         {/* Promoter Contribution */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#DCE4E8] shadow-subtle">
+          <span className="text-[11px] font-bold text-[#667085] uppercase tracking-wider block">
             {t("financial.promoterMargin", language)}
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-slate-900">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#17212B]">
             ₹{Number(fin.promoterContribution || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-emerald-700 font-semibold mt-1 block">
+          <span className="text-[10.5px] text-[#167C5A] font-bold mt-1 block">
             {fin.promoterSharePercent}% own margin
           </span>
         </div>
 
         {/* Government Subsidy */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#DCE4E8] shadow-subtle">
+          <span className="text-[11px] font-bold text-[#667085] uppercase tracking-wider block">
             Govt Subsidy
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-emerald-700">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#167C5A]">
             ₹{Number(fin.governmentSubsidyAmount || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-slate-500 mt-1 block">
+          <span className="text-[10px] text-[#667085] mt-1 block">
             {assumptions.subsidyPercent}% capital grant
           </span>
         </div>
 
         {/* Net Bank Loan Required */}
-        <div className="bg-white rounded-xl p-4 border border-govblue/30 shadow-sm bg-blue-50/30">
-          <span className="text-[11px] font-bold text-govblue uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#123B5D]/30 shadow-subtle bg-[#EEF4FA]/40">
+          <span className="text-[11px] font-bold text-[#123B5D] uppercase tracking-wider block">
             {t("financial.loanAmount", language)}
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-govblue">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#123B5D]">
             ₹{Number(fin.loanAmount || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-slate-500 mt-1 block">
+          <span className="text-[10px] text-[#667085] mt-1 block">
             @ {fin.annualInterestRate}% p.a.
           </span>
         </div>
 
         {/* Monthly EMI */}
-        <div className="bg-white rounded-xl p-4 border border-orange-200 shadow-sm bg-orange-50/20">
-          <span className="text-[11px] font-bold text-orange-800 uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#F59E0B]/30 shadow-subtle bg-[#FFF7E6]/40">
+          <span className="text-[11px] font-bold text-[#9A6500] uppercase tracking-wider block">
             {t("financial.monthlyEmi", language)}
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-orange-600">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#9A6500]">
             ₹{Number(fin.monthlyEmi || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-slate-500 mt-1 block">
+          <span className="text-[10px] text-[#667085] mt-1 block">
             {fin.tenureMonths} mos ({fin.moratoriumMonths}m grace)
           </span>
         </div>
 
         {/* Monthly Net Profit */}
-        <div className="bg-white rounded-xl p-4 border border-emerald-200 shadow-sm bg-emerald-50/30">
-          <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">
+        <div className="bg-white rounded-xl p-4 border border-[#167C5A]/30 shadow-subtle bg-[#E8F6F1]/40">
+          <span className="text-[11px] font-bold text-[#167C5A] uppercase tracking-wider block">
             {t("financial.netProfit", language)}
           </span>
-          <div className="mt-1.5 text-lg sm:text-xl font-extrabold text-emerald-700">
+          <div className="mt-1.5 text-lg sm:text-xl font-black text-[#167C5A]">
             ₹{Number(fin.monthlyNetProfitAfterEMI || 0).toLocaleString("en-IN")}
           </div>
-          <span className="text-[10px] text-slate-500 mt-1 block">
+          <span className="text-[10px] text-[#667085] mt-1 block">
             After full EMI debit
           </span>
         </div>
@@ -219,18 +219,18 @@ export function FinancialCalculatorView() {
       {/* INTERACTIVE ASSUMPTION SLIDERS & BREAK-EVEN CHART */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Left Col: Interactive Controls & Sliders */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="bg-white rounded-xl border border-[#DCE4E8] shadow-subtle p-5 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#DCE4E8]/70">
             <div className="flex items-center space-x-2">
-              <Sliders className="w-4 h-4 text-govblue" />
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+              <Sliders className="w-4 h-4 text-[#123B5D]" />
+              <h3 className="text-xs font-bold text-[#17212B] uppercase tracking-wide">
                 {t("financial.adjustAssumptions", language)}
               </h3>
             </div>
             <button
               type="button"
               onClick={() => handleRecalculate()}
-              className="text-[11px] font-bold text-govblue hover:underline"
+              className="text-[11px] font-bold text-[#123B5D] hover:underline"
             >
               Reset to Base
             </button>
@@ -240,10 +240,10 @@ export function FinancialCalculatorView() {
             {/* Project Outlay Slider */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Total Project Cost:
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#17212B]">
                   ₹{assumptions.projectCost.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -256,17 +256,17 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("projectCost", e.target.value)
                 }
-                className="w-full accent-govblue cursor-pointer"
+                className="w-full accent-[#123B5D] cursor-pointer"
               />
             </div>
 
             {/* Promoter Margin % */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Promoter Equity Margin:
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#167C5A]">
                   {assumptions.promoterSharePercent}% (₹
                   {Math.round(
                     assumptions.projectCost *
@@ -284,17 +284,17 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("promoterSharePercent", e.target.value)
                 }
-                className="w-full accent-emerald-600 cursor-pointer"
+                className="w-full accent-[#167C5A] cursor-pointer"
               />
             </div>
 
             {/* Interest Rate Slider */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Annual Concessional Rate:
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#123B5D]">
                   {assumptions.annualInterestRate}% p.a.
                 </span>
               </div>
@@ -307,17 +307,17 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("annualInterestRate", e.target.value)
                 }
-                className="w-full accent-govblue cursor-pointer"
+                className="w-full accent-[#123B5D] cursor-pointer"
               />
             </div>
 
             {/* Tenure Months */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Repayment Tenure:
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#17212B]">
                   {assumptions.tenureMonths} Months (
                   {Math.round(assumptions.tenureMonths / 12)} Years)
                 </span>
@@ -331,17 +331,17 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("tenureMonths", e.target.value)
                 }
-                className="w-full accent-govblue cursor-pointer"
+                className="w-full accent-[#123B5D] cursor-pointer"
               />
             </div>
 
             {/* Moratorium Months */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Moratorium (Grace Period):
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#F59E0B]">
                   {assumptions.moratoriumMonths} Months
                 </span>
               </div>
@@ -354,17 +354,17 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("moratoriumMonths", e.target.value)
                 }
-                className="w-full accent-orange-500 cursor-pointer"
+                className="w-full accent-[#F59E0B] cursor-pointer"
               />
             </div>
 
             {/* Revenue Assumption */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-slate-700 font-semibold">
+                <span className="text-[#17212B] font-semibold">
                   Est. Monthly Gross Revenue:
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-black text-[#167C5A]">
                   ₹{assumptions.estimatedMonthlyRevenue.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -377,33 +377,37 @@ export function FinancialCalculatorView() {
                 onChange={(e) =>
                   handleSliderChange("estimatedMonthlyRevenue", e.target.value)
                 }
-                className="w-full accent-emerald-600 cursor-pointer"
+                className="w-full accent-[#167C5A] cursor-pointer"
               />
             </div>
           </div>
         </div>
 
         {/* Right Col: Break-Even Chart & Viability Assessment */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6 flex flex-col justify-between">
+        <div className="bg-white rounded-xl border border-[#DCE4E8] shadow-subtle p-5 sm:p-6 flex flex-col justify-between">
           <div>
-            <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-slate-100">
-              <BarChart3 className="w-4 h-4 text-emerald-600" />
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+            <div className="flex items-center space-x-2 pb-3 mb-4 border-b border-[#DCE4E8]/70">
+              <BarChart3 className="w-4 h-4 text-[#167C5A]" />
+              <h3 className="text-xs font-bold text-[#17212B] uppercase tracking-wide">
                 {t("financial.breakEvenChart", language)}
               </h3>
             </div>
 
             {/* Pure SVG Responsive Break-Even Visualizer */}
-            <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-              <div className="flex items-center justify-between text-[11px] text-slate-500 mb-2">
+            <div className="bg-[#F7F9F7] rounded-xl p-4 border border-[#DCE4E8]">
+              <div className="flex items-center justify-between text-[11px] text-[#667085] mb-2">
                 <div className="flex items-center space-x-3">
                   <span className="flex items-center">
-                    <span className="w-2.5 h-2.5 bg-emerald-600 rounded-sm mr-1"></span>
-                    <span>Revenue</span>
+                    <span className="w-2.5 h-2.5 bg-[#167C5A] rounded-sm mr-1.5"></span>
+                    <span className="font-semibold text-[#17212B]">
+                      Revenue
+                    </span>
                   </span>
                   <span className="flex items-center">
-                    <span className="w-2.5 h-2.5 bg-rose-500 rounded-sm mr-1"></span>
-                    <span>Total Cost (Fixed + EMI)</span>
+                    <span className="w-2.5 h-2.5 bg-[#DC2626] rounded-sm mr-1.5"></span>
+                    <span className="font-semibold text-[#17212B]">
+                      Total Cost (Opex + EMI)
+                    </span>
                   </span>
                 </div>
                 <span>Capacity: 20% to 100%</span>
@@ -420,7 +424,7 @@ export function FinancialCalculatorView() {
                   y1="20"
                   x2="350"
                   y2="20"
-                  stroke="#E2E8F0"
+                  stroke="#DCE4E8"
                   strokeWidth="1"
                   strokeDasharray="3,3"
                 />
@@ -429,7 +433,7 @@ export function FinancialCalculatorView() {
                   y1="60"
                   x2="350"
                   y2="60"
-                  stroke="#E2E8F0"
+                  stroke="#DCE4E8"
                   strokeWidth="1"
                   strokeDasharray="3,3"
                 />
@@ -438,7 +442,7 @@ export function FinancialCalculatorView() {
                   y1="100"
                   x2="350"
                   y2="100"
-                  stroke="#E2E8F0"
+                  stroke="#DCE4E8"
                   strokeWidth="1"
                   strokeDasharray="3,3"
                 />
@@ -447,7 +451,7 @@ export function FinancialCalculatorView() {
                   y1="120"
                   x2="350"
                   y2="120"
-                  stroke="#94A3B8"
+                  stroke="#667085"
                   strokeWidth="1.5"
                 />
 
@@ -471,8 +475,8 @@ export function FinancialCalculatorView() {
                         y={120 - costHeight}
                         width="18"
                         height={costHeight}
-                        fill="#F43F5E"
-                        rx="2"
+                        fill="#DC2626"
+                        rx="3"
                         opacity="0.85"
                       />
                       {/* Revenue bar (Emerald) */}
@@ -481,8 +485,8 @@ export function FinancialCalculatorView() {
                         y={120 - revHeight}
                         width="18"
                         height={revHeight}
-                        fill="#059669"
-                        rx="2"
+                        fill="#167C5A"
+                        rx="3"
                       />
                       {/* Label */}
                       <text
@@ -490,7 +494,8 @@ export function FinancialCalculatorView() {
                         y="134"
                         fontSize="9"
                         textAnchor="middle"
-                        fill="#64748B"
+                        fill="#667085"
+                        fontWeight="600"
                       >
                         {d.capacityPercent}%
                       </text>
@@ -499,26 +504,26 @@ export function FinancialCalculatorView() {
                 })}
               </svg>
 
-              <div className="mt-2 text-center text-[11px] text-slate-600 font-medium">
+              <div className="mt-2 text-center text-[11px] text-[#667085] font-medium">
                 Enterprise achieves profitability at approx.{" "}
-                <strong className="text-emerald-700">
+                <strong className="text-[#167C5A]">
                   {fin.breakEvenDaysPerMonth || 8} operational days / month
                 </strong>
               </div>
             </div>
 
             {/* DSCR Bankability Assessment */}
-            <div className="mt-4 p-3.5 rounded-lg bg-emerald-50/70 border border-emerald-200 text-xs">
+            <div className="mt-4 p-3.5 rounded-xl bg-[#E8F6F1] border border-[#A9DDCB] text-xs">
               <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-emerald-900">
+                <span className="font-bold text-[#105D44]">
                   Debt Service Coverage Ratio (DSCR):{" "}
                   {fin.debtServiceCoverageRatio}x
                 </span>
-                <span className="px-2 py-0.5 rounded bg-emerald-600 text-white font-extrabold text-[10px] uppercase">
+                <span className="px-2.5 py-0.5 rounded-md bg-[#167C5A] text-white font-black text-[10px] uppercase">
                   {fin.dscrRating}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-600">
+              <p className="text-[11px] text-[#105D44]/90">
                 Banks require a minimum 1.5x DSCR for micro-enterprise credit
                 sanction. Your projected cash generation covers debt obligations
                 comfortably with a safety cushion.
@@ -529,20 +534,20 @@ export function FinancialCalculatorView() {
       </div>
 
       {/* COLLAPSIBLE AMORTIZATION SCHEDULE TABLE */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#DCE4E8] shadow-subtle overflow-hidden">
         <button
           type="button"
           onClick={() => setShowAmortization(!showAmortization)}
           className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition"
         >
           <div className="flex items-center space-x-2">
-            <Calendar className="w-4 h-4 text-govblue" />
-            <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">
+            <Calendar className="w-4 h-4 text-[#123B5D]" />
+            <span className="text-xs font-bold text-[#17212B] uppercase tracking-wide">
               {t("financial.amortizationTable", language)} ({fin.tenureMonths}{" "}
               Months Loan Lifecycle)
             </span>
           </div>
-          <div className="flex items-center space-x-1 text-xs text-govblue font-semibold">
+          <div className="flex items-center space-x-1 text-xs text-[#123B5D] font-bold">
             <span>
               {showAmortization ? "Hide Schedule" : "View Full EMI Breakdown"}
             </span>
@@ -555,10 +560,10 @@ export function FinancialCalculatorView() {
         </button>
 
         {showAmortization && (
-          <div className="p-4 border-t border-slate-100 overflow-x-auto max-h-96">
+          <div className="p-4 border-t border-[#DCE4E8] overflow-x-auto max-h-96">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 text-[11px] font-bold uppercase">
+                <tr className="bg-[#F7F9F7] border-b border-[#DCE4E8] text-[#667085] text-[11px] font-bold uppercase">
                   <th className="py-2 px-3">Month</th>
                   <th className="py-2 px-3">Repayment Phase</th>
                   <th className="py-2 px-3">Opening Principal</th>
@@ -568,18 +573,18 @@ export function FinancialCalculatorView() {
                   <th className="py-2 px-3">Closing Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-[#DCE4E8]/60 text-[#17212B]">
                 {schedule.map((row) => (
-                  <tr key={row.month} className="hover:bg-slate-50/50">
-                    <td className="py-2 px-3 font-bold text-slate-900">
+                  <tr key={row.month} className="hover:bg-[#F7F9F7]/60">
+                    <td className="py-2 px-3 font-bold text-[#17212B]">
                       M-{row.month}
                     </td>
                     <td className="py-2 px-3">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           row.phase === "Moratorium"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-blue-100 text-govblue"
+                            ? "bg-[#FFF7E6] text-[#9A6500] border border-[#F59E0B]/30"
+                            : "bg-[#EEF4FA] text-[#123B5D] border border-[#123B5D]/20"
                         }`}
                       >
                         {row.phase}
@@ -588,13 +593,13 @@ export function FinancialCalculatorView() {
                     <td className="py-2 px-3">
                       ₹{row.openingBalance.toLocaleString("en-IN")}
                     </td>
-                    <td className="py-2 px-3 font-semibold text-emerald-700">
+                    <td className="py-2 px-3 font-semibold text-[#167C5A]">
                       ₹{row.principalPaid.toLocaleString("en-IN")}
                     </td>
-                    <td className="py-2 px-3 text-slate-500">
+                    <td className="py-2 px-3 text-[#667085]">
                       ₹{row.interestPaid.toLocaleString("en-IN")}
                     </td>
-                    <td className="py-2 px-3 font-bold text-slate-900">
+                    <td className="py-2 px-3 font-bold text-[#17212B]">
                       ₹{row.totalPayment.toLocaleString("en-IN")}
                     </td>
                     <td className="py-2 px-3">
@@ -609,10 +614,10 @@ export function FinancialCalculatorView() {
       </div>
 
       {/* NAVIGATION BAR */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-card border border-[#DCE4E8] p-4 flex items-center justify-between">
         <button
           onClick={() => setActiveStep(3)}
-          className="px-4 py-2.5 rounded-lg text-xs font-bold border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center space-x-1.5 transition"
+          className="px-4 py-2.5 rounded-lg text-xs font-bold border border-[#DCE4E8] text-[#17212B] hover:bg-slate-50 flex items-center space-x-1.5 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("form.back", language)}</span>
@@ -623,9 +628,9 @@ export function FinancialCalculatorView() {
             setActiveStep(5);
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="px-6 py-2.5 rounded-lg text-xs font-bold bg-govblue hover:bg-govblue-dark text-white shadow-md shadow-govblue/20 flex items-center space-x-2 transition"
+          className="px-6 py-2.5 rounded-lg text-xs font-bold bg-[#123B5D] hover:bg-[#0D2E49] text-white shadow-sm flex items-center space-x-2 transition"
         >
-          <span>Continue to Government Scheme Match →</span>
+          <span>Continue to Government Scheme Match</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

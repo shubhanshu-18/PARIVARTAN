@@ -103,22 +103,22 @@ export function SchemeRouterView() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200">
-            <Landmark className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="inline-flex items-center space-x-2 bg-[#167C5A]/10 text-[#167C5A] text-xs font-bold px-3 py-1 rounded-full border border-[#167C5A]/20">
+            <Landmark className="w-3.5 h-3.5 text-[#167C5A]" />
             <span>
               {language === "hi"
                 ? "मंत्रालय एवं निगम योजना मिलान"
                 : "MoSJE & Central Scheme Router"}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17212B] tracking-tight">
             {language === "hi"
               ? "सरकारी योजना मिलान एवं अनुदान रूटिंग"
               : "Government Scheme Matching & Subsidy Router"}
           </h1>
-          <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+          <p className="text-sm text-[#667085] max-w-2xl leading-relaxed">
             {language === "hi"
               ? `${profile.applicantName || "उद्यमी"} (${profile.beneficiaryCategory}, ${profile.state}) के लिए ₹${Number(profile.expectedInvestment || 140000).toLocaleString("en-IN")} की परियोजना लागत हेतु भारत सरकार की कल्याणकारी योजनाओं का मिलान किया गया है।`
               : `Matched specialized welfare and MSME financing schemes for ${profile.applicantName || "Entrepreneur"} (${profile.beneficiaryCategory}, ${profile.district}, ${profile.state}) based on ₹${Number(profile.expectedInvestment || 140000).toLocaleString("en-IN")} project outlay.`}
@@ -131,13 +131,13 @@ export function SchemeRouterView() {
             className={`inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium text-sm transition-all border shadow-sm ${
               speaking
                 ? "bg-amber-100 text-amber-900 border-amber-300 animate-pulse"
-                : "bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200"
+                : "bg-white text-[#17212B] hover:bg-slate-50 border-[#DCE4E8] hover:border-slate-300 shadow-sm"
             }`}
           >
             {speaking ? (
               <VolumeX className="w-4 h-4 text-amber-700" />
             ) : (
-              <Volume2 className="w-4 h-4 text-blue-600" />
+              <Volume2 className="w-4 h-4 text-[#123B5D]" />
             )}
             <span>
               {speaking
@@ -154,16 +154,16 @@ export function SchemeRouterView() {
 
       {/* Hero: Top Recommended Scheme */}
       {topScheme && (
-        <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-3xl text-white p-6 sm:p-8 shadow-xl border border-blue-900 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#123B5D] via-[#0E2F4A] to-[#123B5D] rounded-3xl text-white p-6 sm:p-8 shadow-xl border border-blue-900/50 relative overflow-hidden">
           {/* Subtle background ornamentation */}
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#F59E0B]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-[#167C5A]/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-6">
             {/* Top Bar: Best Match Badge & Compatibility Score */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-blue-800/60">
-              <div className="inline-flex items-center space-x-2 bg-orange-500/20 text-orange-300 border border-orange-500/40 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-                <Award className="w-4 h-4 text-orange-400" />
+            <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+              <div className="inline-flex items-center space-x-2 bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/40 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+                <Award className="w-4 h-4 text-[#F59E0B]" />
                 <span>
                   {language === "hi"
                     ? "सर्वोत्तम अनुशंसित योजना"
@@ -216,7 +216,7 @@ export function SchemeRouterView() {
             {/* 4 Key Parameter Pill Boxes */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 pt-2">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex items-center space-x-2 text-orange-300 text-xs font-semibold">
+                <div className="flex items-center space-x-2 text-amber-300 text-xs font-semibold">
                   <Percent className="w-3.5 h-3.5" />
                   <span>
                     {language === "hi" ? "सरकारी अनुदान" : "Capital Subsidy"}
@@ -380,14 +380,14 @@ export function SchemeRouterView() {
             <div className="bg-white/5 rounded-2xl p-5 border border-white/10 space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-white flex items-center space-x-2">
-                  <FileText className="w-4 h-4 text-blue-400" />
+                  <FileText className="w-4 h-4 text-blue-300" />
                   <span>
                     {language === "hi"
                       ? "आवश्यक दस्तावेज चेकलिस्ट (जांचें आपके पास क्या है)"
                       : "Required Documents Checklist (Check What You Have)"}
                   </span>
                 </h4>
-                <span className="text-xs text-blue-300 bg-blue-900/50 px-2.5 py-1 rounded-full border border-blue-700/50">
+                <span className="text-xs text-emerald-300 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-500/40">
                   {Object.values(checkedDocs).filter(Boolean).length} /{" "}
                   {(topScheme.documentsRequired || []).length}{" "}
                   {language === "hi" ? "तैयार" : "ready"}
@@ -412,7 +412,7 @@ export function SchemeRouterView() {
                       onClick={() => toggleDoc(doc)}
                       className={`flex items-start space-x-2.5 text-left p-2.5 rounded-xl text-xs transition-all border ${
                         isChecked
-                          ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-200"
+                          ? "bg-emerald-950/50 border-emerald-500/50 text-emerald-200"
                           : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
                       }`}
                     >
@@ -433,8 +433,8 @@ export function SchemeRouterView() {
             </div>
 
             {/* Disclaimer & Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-blue-800/60">
-              <p className="text-[11px] text-slate-400 max-w-lg leading-snug">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-white/10">
+              <p className="text-[11px] text-slate-300 max-w-lg leading-snug">
                 {topScheme.disclaimer ||
                   "Official rates and quotas are disbursed via State Channelising Agencies (SCAs) and approved nodal banks."}
               </p>
@@ -460,8 +460,8 @@ export function SchemeRouterView() {
                   onClick={() => applySchemeToFinancials(topScheme)}
                   className={`inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md ${
                     selectedSchemeId === topScheme.id
-                      ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                      : "bg-orange-500 text-white hover:bg-orange-600"
+                      ? "bg-[#167C5A] text-white hover:bg-[#126449] border border-emerald-400/40"
+                      : "bg-[#F59E0B] text-slate-900 hover:bg-[#D97706] font-extrabold shadow-sm"
                   }`}
                 >
                   <ShieldCheck className="w-4 h-4" />
@@ -485,18 +485,18 @@ export function SchemeRouterView() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">
+            <h3 className="text-xl font-bold text-[#17212B]">
               {language === "hi"
                 ? "अन्य वैकल्पिक सरकारी योजनाएं"
                 : "Other Eligible Government Schemes"}
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#667085]">
               {language === "hi"
                 ? "आपकी योग्यता अनुसार रैंक की गई अन्य केंद्रीय एवं राज्य योजनाएं"
                 : "Ranked by suitability score and financing limits for your enterprise"}
             </p>
           </div>
-          <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+          <span className="text-xs font-bold text-[#123B5D] bg-[#123B5D]/5 px-3 py-1.5 rounded-full border border-[#123B5D]/15">
             {schemes.length}{" "}
             {language === "hi" ? "योजनाएं उपलब्ध" : "Schemes Evaluated"}
           </span>
@@ -512,7 +512,7 @@ export function SchemeRouterView() {
                 key={scheme.id || idx}
                 className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-sm ${
                   isSelected
-                    ? "border-emerald-500 ring-2 ring-emerald-500/20"
+                    ? "border-[#167C5A] ring-2 ring-[#167C5A]/20"
                     : "border-slate-200 hover:border-slate-300"
                 }`}
               >
@@ -520,38 +520,38 @@ export function SchemeRouterView() {
                   {/* Top line with title and score */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
-                      <div className="flex items-center space-x-2 text-[11px] font-semibold text-slate-500">
+                      <div className="flex items-center space-x-2 text-[11px] font-semibold text-[#667085]">
                         <span>
                           {scheme.agency || scheme.implementing_agency}
                         </span>
                         <span>•</span>
                         <span>{scheme.id}</span>
                       </div>
-                      <h4 className="text-lg font-bold text-slate-900 mt-0.5">
+                      <h4 className="text-lg font-bold text-[#17212B] mt-0.5">
                         {language === "hi" && scheme.nameHindi
                           ? scheme.nameHindi
                           : scheme.name}
                       </h4>
                       {language === "hi" && scheme.nameHindi && (
-                        <p className="text-xs text-slate-500">{scheme.name}</p>
+                        <p className="text-xs text-[#667085]">{scheme.name}</p>
                       )}
                     </div>
 
                     <div className="flex items-center space-x-3 self-start sm:self-center">
                       <div className="text-right">
-                        <span className="text-xs text-slate-400 block">
+                        <span className="text-xs text-[#667085] block">
                           {language === "hi" ? "मिलान" : "Match"}
                         </span>
-                        <span className="text-lg font-extrabold text-blue-700">
+                        <span className="text-lg font-black text-[#123B5D]">
                           {scheme.matchScore || 70}%
                         </span>
                       </div>
                       <button
                         onClick={() => applySchemeToFinancials(scheme)}
-                        className={`text-xs font-semibold px-3.5 py-1.5 rounded-xl border transition-all ${
+                        className={`text-xs font-bold px-4 py-2 rounded-xl border transition-all ${
                           isSelected
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                            : "bg-slate-50 hover:bg-blue-50 border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-800"
+                            ? "bg-[#167C5A] text-white border-[#167C5A] shadow-sm"
+                            : "bg-white hover:bg-slate-50 border-[#DCE4E8] text-[#17212B]"
                         }`}
                       >
                         {isSelected
@@ -566,29 +566,29 @@ export function SchemeRouterView() {
                   </div>
 
                   {/* Highlights Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/80 p-3 rounded-xl text-xs border border-slate-100">
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                      <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                         {language === "hi" ? "अनुदान" : "Subsidy"}
                       </span>
-                      <span className="font-bold text-slate-800 text-sm">
+                      <span className="font-extrabold text-[#17212B] text-sm">
                         {scheme.subsidyPercent}%
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                      <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                         {language === "hi" ? "ब्याज दर" : "Interest"}
                       </span>
-                      <span className="font-bold text-slate-800 text-sm">
+                      <span className="font-extrabold text-[#167C5A] text-sm">
                         {scheme.interestRate || scheme.interest_rate_percent}%
                         p.a.
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                      <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                         {language === "hi" ? "अधिकतम सीमा" : "Max Outlay"}
                       </span>
-                      <span className="font-bold text-slate-800 text-sm">
+                      <span className="font-extrabold text-[#17212B] text-sm">
                         ₹
                         {(
                           scheme.maxCost ||
@@ -598,10 +598,10 @@ export function SchemeRouterView() {
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                      <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                         {language === "hi" ? "अवधि" : "Max Tenure"}
                       </span>
-                      <span className="font-bold text-slate-800 text-sm">
+                      <span className="font-extrabold text-[#17212B] text-sm">
                         {scheme.maxTenureMonths ||
                           scheme.max_tenure_months ||
                           60}
@@ -616,9 +616,9 @@ export function SchemeRouterView() {
                       {scheme.matchReasons.slice(0, 2).map((r, i) => (
                         <p
                           key={i}
-                          className="text-xs text-emerald-700 flex items-center space-x-1.5"
+                          className="text-xs text-[#167C5A] flex items-center space-x-1.5"
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#167C5A] shrink-0" />
                           <span>{r.replace(/^✓\s*/, "")}</span>
                         </p>
                       ))}
@@ -631,7 +631,7 @@ export function SchemeRouterView() {
                       onClick={() =>
                         setExpandedSchemeId(isExpanded ? null : scheme.id)
                       }
-                      className="text-xs font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center space-x-1"
+                      className="text-xs font-semibold text-[#123B5D] hover:underline inline-flex items-center space-x-1"
                     >
                       <span>
                         {isExpanded
@@ -654,7 +654,7 @@ export function SchemeRouterView() {
                         href={scheme.officialUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-slate-500 hover:text-blue-700 inline-flex items-center space-x-1"
+                        className="text-xs text-[#667085] hover:text-[#123B5D] inline-flex items-center space-x-1"
                       >
                         <span>
                           {language === "hi"
@@ -669,21 +669,21 @@ export function SchemeRouterView() {
                   {/* Expanded Section */}
                   {isExpanded && (
                     <div className="pt-4 border-t border-slate-200 space-y-4 text-xs">
-                      <p className="text-slate-600 leading-relaxed">
+                      <p className="text-[#667085] leading-relaxed">
                         {scheme.description || scheme.purpose}
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-slate-50 p-3.5 rounded-xl space-y-2 border border-slate-200">
-                          <h5 className="font-bold text-slate-800 flex items-center space-x-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <h5 className="font-bold text-[#17212B] flex items-center space-x-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#167C5A]" />
                             <span>
                               {language === "hi"
                                 ? "पात्रता आवश्यकताएं"
                                 : "Eligibility"}
                             </span>
                           </h5>
-                          <ul className="space-y-1 text-slate-600">
+                          <ul className="space-y-1 text-[#667085]">
                             {(
                               scheme.eligibilityCriteria || [
                                 "Standard eligibility applies as per agency guidelines",
@@ -701,15 +701,15 @@ export function SchemeRouterView() {
                         </div>
 
                         <div className="bg-slate-50 p-3.5 rounded-xl space-y-2 border border-slate-200">
-                          <h5 className="font-bold text-slate-800 flex items-center space-x-1.5">
-                            <FileText className="w-3.5 h-3.5 text-blue-600" />
+                          <h5 className="font-bold text-[#17212B] flex items-center space-x-1.5">
+                            <FileText className="w-3.5 h-3.5 text-[#123B5D]" />
                             <span>
                               {language === "hi"
                                 ? "दस्तावेज सूची"
                                 : "Documents Required"}
                             </span>
                           </h5>
-                          <ul className="space-y-1 text-slate-600">
+                          <ul className="space-y-1 text-[#667085]">
                             {(
                               scheme.documentsRequired || [
                                 "Identity proof",
@@ -744,34 +744,34 @@ export function SchemeRouterView() {
       </div>
 
       {/* District & Ministry Direct Contact Support Callout */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-[#123B5D]/5 rounded-2xl p-6 border border-[#123B5D]/15 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1.5 text-center md:text-left">
-          <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-800 uppercase tracking-wide">
-            <PhoneCall className="w-3.5 h-3.5 text-blue-600" />
+          <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#123B5D] uppercase tracking-wide">
+            <PhoneCall className="w-3.5 h-3.5 text-[#123B5D]" />
             <span>
               {language === "hi"
                 ? "सहायता केंद्र एवं जिला उद्योग केंद्र (DIC)"
                 : "Institutional Assistance & DIC Desk"}
             </span>
           </div>
-          <h4 className="text-base font-bold text-slate-900">
+          <h4 className="text-base font-bold text-[#17212B]">
             {language === "hi"
               ? "बिचौलियों से सावधान रहें — सरकारी योजनाओं के लिए कोई शुल्क नहीं लगता"
               : "Zero Brokerage / Direct Government Facilitation"}
           </h4>
-          <p className="text-xs text-slate-600 max-w-2xl">
+          <p className="text-xs text-[#667085] max-w-2xl">
             {language === "hi"
               ? `सीहोर जिला उद्योग केंद्र (DIC) अथवा निकटतम ग्रामीण बैंक शाखा में अपनी व्यवहार्यता रिपोर्ट लेकर जाएं। सामाजिक न्याय एवं अधिकारिता मंत्रालय हेल्पलाइन: 1800-11-2001 (टोल-फ्री).`
-              : `Visit the District Industries Centre (DIC), ${profile.district || "Sehore"} or your local Gramin Bank branch with your PARIVARTAN appraisal dossier. National MoSJE toll-free: 1800-11-2001.`}
+              : `Visit the District Industries Centre (DIC), ${profile.district || "Sehore"} or your local Gramin Bank branch with your Gram Sarthi AI appraisal dossier. National MoSJE toll-free: 1800-11-2001.`}
           </p>
         </div>
 
         <div className="shrink-0 flex items-center space-x-3">
-          <div className="text-center px-4 py-2 bg-white rounded-xl border border-blue-200 shadow-sm">
-            <span className="text-[10px] text-slate-500 font-bold block">
+          <div className="text-center px-4 py-2.5 bg-white rounded-xl border border-[#DCE4E8] shadow-sm">
+            <span className="text-[10px] text-[#667085] font-bold block uppercase tracking-wider">
               {language === "hi" ? "टोल फ्री नंबर" : "National Helpline"}
             </span>
-            <span className="text-sm font-extrabold text-blue-800">
+            <span className="text-sm font-black text-[#123B5D]">
               1800-11-2001
             </span>
           </div>
@@ -782,7 +782,7 @@ export function SchemeRouterView() {
       <div className="flex items-center justify-between pt-4 border-t border-slate-200">
         <button
           onClick={() => setActiveStep(4)}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#17212B] text-sm font-semibold transition-colors shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>
@@ -794,7 +794,7 @@ export function SchemeRouterView() {
 
         <button
           onClick={() => setActiveStep(6)}
-          className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all"
+          className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-[#123B5D] hover:bg-[#0E2F4A] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all"
         >
           <span>
             {language === "hi"

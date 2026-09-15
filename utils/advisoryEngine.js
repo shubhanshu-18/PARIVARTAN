@@ -304,7 +304,7 @@ export function generateAdvisory(profile = {}, marketData = {}) {
       timeline: "Days 15 - 25",
       impact: "High",
       detail:
-        "Include this Parivartan Feasibility Dossier and 10% promoter contribution deposit receipt.",
+        "Include this Gram Sarthi AI Feasibility Dossier and 10% promoter contribution deposit receipt.",
     },
     {
       priority: 4,

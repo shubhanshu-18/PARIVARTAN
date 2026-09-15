@@ -23,7 +23,8 @@ export function trimText(value, maxLength = 200) {
 }
 
 export function lettersAndSpaces(value) {
-  return text(value).replace(/[^\p{L}\s]/gu, "").replace(/\s+/g, " ").trim();
+  // Retain letters and whitespace while typing, only stripping illegal symbols
+  return text(value).replace(/[^\p{L}\s]/gu, "");
 }
 
 export function locationText(value) {
@@ -40,15 +41,17 @@ export function digitsOnly(value) {
 export function validateProfile(profile = {}) {
   const errors = {};
   const value = { ...profile };
-  const name = lettersAndSpaces(profile.applicantName);
+  const rawName = text(profile.applicantName);
+  const name = rawName.replace(/\s+/g, " ").trim();
   value.applicantName = name;
   if (!name) errors.applicantName = "Please enter your name";
-  else if (!/^\p{L}+(?:\s+\p{L}+)*$/u.test(name)) {
+  else if (!/^[\p{L}]+(?:\s+[\p{L}]+)*$/u.test(name)) {
     errors.applicantName = "Name can contain letters and spaces only";
   }
 
   value.businessIdea = trimText(profile.businessIdea, 200);
-  if (value.businessIdea.length < 3) errors.businessIdea = "Please enter a business idea";
+  if (value.businessIdea.length < 3)
+    errors.businessIdea = "Please enter a business idea";
   if (!CATEGORY_KEYS.includes(profile.businessCategory)) {
     errors.businessCategory = "Choose a valid business category";
   }
@@ -57,10 +60,12 @@ export function validateProfile(profile = {}) {
   const cost = Number(profile.expectedInvestment);
   const capital = Number(profile.capitalAvailable);
   if (!Number.isInteger(cost) || cost < 5000 || cost > 10000000) {
-    errors.expectedInvestment = "Project cost must be a whole number from ₹5,000 to ₹1 crore";
+    errors.expectedInvestment =
+      "Project cost must be a whole number from ₹5,000 to ₹1 crore";
   }
   if (!Number.isInteger(capital) || capital < 0) {
-    errors.capitalAvailable = "Available capital must be a non-negative whole number";
+    errors.capitalAvailable =
+      "Available capital must be a non-negative whole number";
   } else if (Number.isInteger(cost) && capital > cost) {
     errors.capitalAvailable = "Available capital cannot exceed project cost";
   }

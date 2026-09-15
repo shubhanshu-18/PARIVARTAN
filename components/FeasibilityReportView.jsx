@@ -158,7 +158,7 @@ export function FeasibilityReportView() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `PARIVARTAN_Feasibility_${(profile.applicantName || "Applicant").replace(/\s+/g, "_")}.pdf`;
+      a.download = `Gram_Sarthi_AI_Feasibility_${(profile.applicantName || "Applicant").replace(/\s+/g, "_")}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -194,8 +194,8 @@ export function FeasibilityReportView() {
     } else {
       const text =
         language === "hi"
-          ? `परिवर्तन मूल्यांकन रिपोर्ट: ${profile.applicantName || "उद्यमी"} के ${profile.businessIdea} के लिए समग्र व्यवहार्यता स्कोर ${overallFeasibilityScore} प्रतिशत है। परियोजना की कुल लागत ₹${fin.projectCost.toLocaleString("en-IN")} है, जिसमें ऋण राशि ₹${fin.loanAmount.toLocaleString("en-IN")} और अनुमानित मासिक ईएमआई ₹${fin.monthlyEmi.toLocaleString("en-IN")} है। ऋण सेवा कवरेज अनुपात ${fin.debtServiceCoverageRatio} है, जो उत्कृष्ट बैंक क्षमता दर्शाता है।`
-          : `PARIVARTAN Project Appraisal Dossier for ${profile.applicantName || "Entrepreneur"}'s ${profile.businessIdea}. Overall feasibility score is ${overallFeasibilityScore} out of 100, classified as Grade A Highly Bankable. Total project outlay is ₹${fin.projectCost.toLocaleString("en-IN")} with loan requirement of ₹${fin.loanAmount.toLocaleString("en-IN")} and monthly EMI of ₹${fin.monthlyEmi.toLocaleString("en-IN")}. DSCR ratio is ${fin.debtServiceCoverageRatio}, indicating strong debt service safety.`;
+          ? `ग्राम सारथी AI मूल्यांकन रिपोर्ट: ${profile.applicantName || "उद्यमी"} के ${profile.businessIdea} के लिए समग्र व्यवहार्यता स्कोर ${overallFeasibilityScore} प्रतिशत है। परियोजना की कुल लागत ₹${fin.projectCost.toLocaleString("en-IN")} है, जिसमें ऋण राशि ₹${fin.loanAmount.toLocaleString("en-IN")} और अनुमानित मासिक ईएमआई ₹${fin.monthlyEmi.toLocaleString("en-IN")} है। ऋण सेवा कवरेज अनुपात ${fin.debtServiceCoverageRatio} है, जो उत्कृष्ट बैंक क्षमता दर्शाता है।`
+          : `Gram Sarthi AI Project Appraisal Dossier for ${profile.applicantName || "Entrepreneur"}'s ${profile.businessIdea}. Overall feasibility score is ${overallFeasibilityScore} out of 100, classified as Grade A Highly Bankable. Total project outlay is ₹${fin.projectCost.toLocaleString("en-IN")} with loan requirement of ₹${fin.loanAmount.toLocaleString("en-IN")} and monthly EMI of ₹${fin.monthlyEmi.toLocaleString("en-IN")}. DSCR ratio is ${fin.debtServiceCoverageRatio}, indicating strong debt service safety.`;
 
       SpeechHelper.speak(text, {
         lang: language,
@@ -208,11 +208,11 @@ export function FeasibilityReportView() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 print:p-0 print:max-w-none">
       {/* Top Header & Export Toolbar */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:p-0">
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:p-0">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center space-x-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+            <span className="inline-flex items-center space-x-1.5 bg-[#167C5A]/10 text-[#167C5A] text-xs font-bold px-3 py-1 rounded-full border border-[#167C5A]/20">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#167C5A]" />
               <span>
                 {language === "hi"
                   ? "बैंक मूल्यांकन हेतु सत्यापित"
@@ -220,18 +220,18 @@ export function FeasibilityReportView() {
               </span>
             </span>
             {savedAssessmentId && (
-              <span className="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+              <span className="text-xs font-mono font-bold text-[#667085] bg-slate-100 px-2.5 py-1 rounded-full border border-[#DCE4E8]">
                 {savedAssessmentId}
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17212B] tracking-tight">
             {language === "hi"
               ? "परियोजना व्यवहार्यता एवं बैंक ऋण मूल्यांकन"
               : "Comprehensive Project Feasibility Dossier"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#667085] max-w-2xl leading-relaxed">
             {language === "hi"
               ? `सामाजिक न्याय एवं अधिकारिता मंत्रालय (MoSJE) एवं भारतीय रिजर्व बैंक (RBI) प्राथमिकता प्राप्त क्षेत्र ऋण (PSL) मानकों के अनुरूप तैयार औपचारिक रिपोर्ट।`
               : `Prepared under Ministry of Social Justice and Empowerment (MoSJE) guidelines and RBI Priority Sector Lending (PSL) frameworks for rapid branch appraisal.`}
@@ -242,32 +242,32 @@ export function FeasibilityReportView() {
         <div className="flex flex-wrap items-center gap-2.5 print:hidden">
           <button
             onClick={toggleSpeech}
-            className={`p-2.5 rounded-xl border text-sm transition-all ${
+            className={`p-2.5 rounded-xl border text-sm transition-all shadow-sm ${
               speaking
                 ? "bg-amber-100 text-amber-900 border-amber-300 animate-pulse"
-                : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                : "bg-white hover:bg-slate-50 text-[#17212B] border-[#DCE4E8]"
             }`}
             title="Listen to summary"
           >
             {speaking ? (
               <VolumeX className="w-4 h-4 text-amber-700" />
             ) : (
-              <Volume2 className="w-4 h-4 text-blue-600" />
+              <Volume2 className="w-4 h-4 text-[#123B5D]" />
             )}
           </button>
 
           <button
             onClick={handlePrint}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition-all"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#17212B] text-xs font-bold shadow-sm transition-all"
           >
-            <Printer className="w-4 h-4 text-slate-600" />
+            <Printer className="w-4 h-4 text-[#667085]" />
             <span>{language === "hi" ? "प्रिंट करें" : "Print View"}</span>
           </button>
 
           <button
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-[#123B5D] hover:bg-[#0E2F4A] disabled:opacity-50 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all"
           >
             <FileDown
               className={`w-4 h-4 ${isGeneratingPdf ? "animate-bounce" : ""}`}
@@ -286,7 +286,7 @@ export function FeasibilityReportView() {
       </div>
 
       {/* Main Score & Recommendation Banner */}
-      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-blue-900 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#123B5D] via-[#0E2F4A] to-[#123B5D] rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-blue-900/50 relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Circular Feasibility Score Metric */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 bg-white/5 rounded-2xl border border-white/10 text-center">
@@ -307,7 +307,7 @@ export function FeasibilityReportView() {
                   cx="60"
                   cy="60"
                   r="50"
-                  stroke="#10B981"
+                  stroke="#167C5A"
                   strokeWidth="10"
                   fill="transparent"
                   strokeDasharray={314.159}
@@ -329,7 +329,7 @@ export function FeasibilityReportView() {
             </div>
 
             <div className="mt-4 space-y-1">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+              <div className="inline-flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
                 <Award className="w-3.5 h-3.5 text-emerald-400" />
                 <span>
                   {language === "hi"
@@ -347,16 +347,16 @@ export function FeasibilityReportView() {
 
           {/* 4-way Component Breakdown */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-blue-800/60">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-orange-400" />
+                <Sparkles className="w-4 h-4 text-[#F59E0B]" />
                 <span>
                   {language === "hi"
                     ? "4-आयामी व्यवहार्यता विश्लेषण"
                     : "4-Pillar Appraisal Metrics"}
                 </span>
               </h3>
-              <span className="text-xs text-blue-300">
+              <span className="text-xs text-blue-200">
                 {language === "hi"
                   ? "बैंक एवं सरकारी मानक"
                   : "Institutional Standards"}
@@ -376,9 +376,9 @@ export function FeasibilityReportView() {
                     {oppScore}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-800 rounded-full h-2">
+                <div className="w-full bg-white/10 rounded-full h-2">
                   <div
-                    className="bg-emerald-500 h-2 rounded-full"
+                    className="bg-[#167C5A] h-2 rounded-full"
                     style={{ width: `${oppScore}%` }}
                   />
                 </div>
@@ -402,9 +402,9 @@ export function FeasibilityReportView() {
                     {fin.debtServiceCoverageRatio}x
                   </span>
                 </div>
-                <div className="w-full bg-slate-800 rounded-full h-2">
+                <div className="w-full bg-white/10 rounded-full h-2">
                   <div
-                    className="bg-emerald-500 h-2 rounded-full"
+                    className="bg-[#167C5A] h-2 rounded-full"
                     style={{
                       width: `${Math.min(100, (fin.debtServiceCoverageRatio / 2.5) * 100)}%`,
                     }}
@@ -425,13 +425,13 @@ export function FeasibilityReportView() {
                       ? "पूंजी संरचना एवं अनुदान"
                       : "Capital Structure & Subsidy"}
                   </span>
-                  <span className="font-extrabold text-orange-400">
+                  <span className="font-extrabold text-[#F59E0B]">
                     {schemeScore}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-800 rounded-full h-2">
+                <div className="w-full bg-white/10 rounded-full h-2">
                   <div
-                    className="bg-orange-500 h-2 rounded-full"
+                    className="bg-[#F59E0B] h-2 rounded-full"
                     style={{ width: `${schemeScore}%` }}
                   />
                 </div>
@@ -449,14 +449,14 @@ export function FeasibilityReportView() {
                       ? "लाभ सीमा एवं ब्रेक-इवन"
                       : "Break-Even Utilization"}
                   </span>
-                  <span className="font-extrabold text-blue-400">
+                  <span className="font-extrabold text-blue-300">
                     {fin.breakEvenDaysPerMonth}{" "}
                     {language === "hi" ? "दिन" : "Days"}
                   </span>
                 </div>
-                <div className="w-full bg-slate-800 rounded-full h-2">
+                <div className="w-full bg-white/10 rounded-full h-2">
                   <div
-                    className="bg-blue-500 h-2 rounded-full"
+                    className="bg-blue-400 h-2 rounded-full"
                     style={{ width: "75%" }}
                   />
                 </div>
@@ -476,9 +476,9 @@ export function FeasibilityReportView() {
         {/* Left 2 Cols: Comprehensive Fact Sheet */}
         <div className="lg:col-span-2 space-y-6">
           {/* 1. Entrepreneur & Venture Fact Sheet */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
-              <UserCheck className="w-5 h-5 text-blue-600" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="flex items-center space-x-2 text-[#17212B] font-bold text-base pb-3 border-b border-slate-100">
+              <UserCheck className="w-5 h-5 text-[#123B5D]" />
               <span>
                 {language === "hi"
                   ? "उद्यमी एवं व्यवसाय विवरण"
@@ -488,50 +488,50 @@ export function FeasibilityReportView() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "उद्यमी का नाम" : "Applicant Name"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[#17212B] text-sm">
                   {profile.applicantName || "Sunita Sharma"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "लाभार्थी श्रेणी" : "Social Category"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[#17212B] text-sm">
                   {profile.beneficiaryCategory} ({profile.gender})
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "स्थान" : "Location"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[#17212B] text-sm">
                   {profile.district}, {profile.state}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "व्यवसाय विचार" : "Proposed Enterprise"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[#17212B] text-sm">
                   {profile.businessIdea}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "श्रेणी" : "Category"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm uppercase">
+                <span className="font-bold text-[#17212B] text-sm uppercase">
                   {profile.businessCategory}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">
+                <span className="text-[#667085] block">
                   {language === "hi" ? "उद्यम अनुभव" : "Entrepreneur Type"}
                 </span>
-                <span className="font-bold text-slate-800 text-sm">
+                <span className="font-bold text-[#17212B] text-sm">
                   {profile.isFirstTimeEntrepreneur
                     ? language === "hi"
                       ? "नया उद्यमी (Greenfield)"
@@ -543,24 +543,24 @@ export function FeasibilityReportView() {
           </div>
 
           {/* 2. Financial Structuring & Means of Finance */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center space-x-2 text-slate-900 font-bold text-base">
-                <IndianRupee className="w-5 h-5 text-emerald-600" />
+              <div className="flex items-center space-x-2 text-[#17212B] font-bold text-base">
+                <IndianRupee className="w-5 h-5 text-[#167C5A]" />
                 <span>
                   {language === "hi"
                     ? "वित्तीय संरचना एवं वित्त पोषण साधन"
                     : "Means of Finance & Capital Outlay"}
                 </span>
               </div>
-              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span className="text-xs font-bold text-[#167C5A] bg-[#167C5A]/10 px-2.5 py-1 rounded-full border border-[#167C5A]/20">
                 100% Balanced
               </span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-semibold">
+                <thead className="bg-slate-50 text-[#667085] uppercase font-bold text-[10px] tracking-wider">
                   <tr>
                     <th className="py-2.5 px-3 rounded-l-lg">
                       {language === "hi" ? "घटक" : "Component"}
@@ -573,7 +573,7 @@ export function FeasibilityReportView() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tbody className="divide-y divide-slate-100 text-[#17212B]">
                   <tr>
                     <td className="py-2.5 px-3 font-medium">
                       {language === "hi"
@@ -594,10 +594,10 @@ export function FeasibilityReportView() {
                         : "Government Capital Subsidy"}{" "}
                       ({bestScheme.name})
                     </td>
-                    <td className="py-2.5 px-3 font-semibold text-emerald-600">
+                    <td className="py-2.5 px-3 font-semibold text-[#167C5A]">
                       {bestScheme.subsidyPercent}%
                     </td>
-                    <td className="py-2.5 px-3 text-right font-bold text-emerald-600">
+                    <td className="py-2.5 px-3 text-right font-bold text-[#167C5A]">
                       ₹{fin.governmentSubsidyAmount.toLocaleString("en-IN")}
                     </td>
                   </tr>
@@ -607,24 +607,24 @@ export function FeasibilityReportView() {
                         ? "शुद्ध बैंक ऋण आवश्यकता"
                         : "Net Bank Term Loan Required"}
                     </td>
-                    <td className="py-2.5 px-3 font-semibold text-blue-700">
+                    <td className="py-2.5 px-3 font-semibold text-[#123B5D]">
                       {100 -
                         fin.promoterSharePercent -
                         bestScheme.subsidyPercent}
                       %
                     </td>
-                    <td className="py-2.5 px-3 text-right font-bold text-blue-700">
+                    <td className="py-2.5 px-3 text-right font-bold text-[#123B5D]">
                       ₹{fin.loanAmount.toLocaleString("en-IN")}
                     </td>
                   </tr>
-                  <tr className="bg-slate-50/80 font-extrabold text-slate-900">
+                  <tr className="bg-slate-50 font-extrabold text-[#17212B]">
                     <td className="py-3 px-3 rounded-l-lg">
                       {language === "hi"
                         ? "कुल परियोजना लागत"
                         : "Total Project Cost (Outlay)"}
                     </td>
                     <td className="py-3 px-3">100%</td>
-                    <td className="py-3 px-3 text-right rounded-r-lg text-sm">
+                    <td className="py-3 px-3 text-right rounded-r-lg text-sm font-black text-[#123B5D]">
                       ₹{fin.projectCost.toLocaleString("en-IN")}
                     </td>
                   </tr>
@@ -633,36 +633,36 @@ export function FeasibilityReportView() {
             </div>
 
             {/* Repayment & Debt Metrics Table */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 bg-slate-50 p-4 rounded-xl text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 bg-slate-50/80 p-4 rounded-xl text-xs border border-slate-100">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                   {language === "hi" ? "मासिक ईएमआई" : "Monthly EMI"}
                 </span>
-                <span className="font-extrabold text-slate-900 text-sm">
+                <span className="font-black text-[#17212B] text-sm">
                   ₹{fin.monthlyEmi.toLocaleString("en-IN")}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                   {language === "hi" ? "ब्याज दर" : "Interest Rate"}
                 </span>
-                <span className="font-extrabold text-slate-900 text-sm">
+                <span className="font-extrabold text-[#167C5A] text-sm">
                   {fin.annualInterestRate}% p.a.
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                   {language === "hi" ? "अवधि / अनुग्रह" : "Tenure / Grace"}
                 </span>
-                <span className="font-extrabold text-slate-900 text-sm">
+                <span className="font-extrabold text-[#17212B] text-sm">
                   {fin.tenureMonths}m (+{fin.moratoriumMonths}m)
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
+                <span className="text-[#667085] block text-[10px] uppercase font-bold tracking-wider">
                   {language === "hi" ? "मासिक शुद्ध लाभ" : "Net Monthly Profit"}
                 </span>
-                <span className="font-extrabold text-emerald-600 text-sm">
+                <span className="font-black text-[#167C5A] text-sm">
                   ₹{fin.monthlyNetProfitAfterEMI.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -670,9 +670,9 @@ export function FeasibilityReportView() {
           </div>
 
           {/* 3. 30-60-90 Day Execution Roadmap */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div className="flex items-center space-x-2 text-slate-900 font-bold text-base pb-3 border-b border-slate-100">
-              <Clock className="w-5 h-5 text-orange-500" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="flex items-center space-x-2 text-[#17212B] font-bold text-base pb-3 border-b border-slate-100">
+              <Clock className="w-5 h-5 text-[#F59E0B]" />
               <span>
                 {language === "hi"
                   ? "30-60-90 दिवसीय क्रियान्वयन रोडमैप"
@@ -681,17 +681,17 @@ export function FeasibilityReportView() {
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex items-start space-x-3 p-3 rounded-xl bg-orange-50/60 border border-orange-200/80">
-                <span className="px-2 py-1 rounded bg-orange-200 text-orange-900 font-bold text-[10px] uppercase shrink-0">
+              <div className="flex items-start space-x-3 p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/60">
+                <span className="px-2.5 py-1 rounded-md bg-amber-200/70 text-amber-900 font-bold text-[10px] uppercase tracking-wider shrink-0">
                   Days 1 - 30
                 </span>
                 <div>
-                  <h5 className="font-bold text-slate-900">
+                  <h5 className="font-bold text-[#17212B]">
                     {language === "hi"
                       ? "दस्तावेज़ीकरण एवं ऋण आवेदन"
                       : "Formal Documentation & Loan Filing"}
                   </h5>
-                  <p className="text-slate-600 mt-0.5">
+                  <p className="text-[#667085] mt-0.5 leading-relaxed">
                     {language === "hi"
                       ? "तहसीलदार से जाति व आय प्रमाण पत्र प्राप्त करें। मशीनरी के 2 अधिकृत कोटेशन लें एवं सीहोर जिला उद्योग केंद्र (DIC) अथवा नोडल बैंक में आवेदन जमा करें।"
                       : "Secure caste & income certificates from Tehsildar; obtain two equipment quotations; submit formal application under NBCFDC scheme at DIC Sehore or nearest Grameen Bank branch."}
@@ -699,17 +699,17 @@ export function FeasibilityReportView() {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-3 rounded-xl bg-blue-50/60 border border-blue-200/80">
-                <span className="px-2 py-1 rounded bg-blue-200 text-blue-900 font-bold text-[10px] uppercase shrink-0">
+              <div className="flex items-start space-x-3 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/60">
+                <span className="px-2.5 py-1 rounded-md bg-blue-200/70 text-[#123B5D] font-bold text-[10px] uppercase tracking-wider shrink-0">
                   Days 31 - 60
                 </span>
                 <div>
-                  <h5 className="font-bold text-slate-900">
+                  <h5 className="font-bold text-[#17212B]">
                     {language === "hi"
                       ? "परिसंपत्ति खरीद एवं कार्यशाला स्थापना"
                       : "Procurement & Infrastructure Setup"}
                   </h5>
-                  <p className="text-slate-600 mt-0.5">
+                  <p className="text-[#667085] mt-0.5 leading-relaxed">
                     {language === "hi"
                       ? "ऋण संस्वीकृति एवं प्रथम वितरण के पश्चात उपकरण खरीद करें। बिजली कनेक्शन व ग्राम पंचायत व्यापार एनओसी पूर्ण करें।"
                       : "Upon sanction, procure verified chilling equipment / tooling; finalize commercial power connection and Gram Panchayat business registration (Udyam Aadhaar)."}
@@ -717,17 +717,17 @@ export function FeasibilityReportView() {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-3 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
-                <span className="px-2 py-1 rounded bg-emerald-200 text-emerald-900 font-bold text-[10px] uppercase shrink-0">
+              <div className="flex items-start space-x-3 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60">
+                <span className="px-2.5 py-1 rounded-md bg-emerald-200/70 text-[#167C5A] font-bold text-[10px] uppercase tracking-wider shrink-0">
                   Days 61 - 90
                 </span>
                 <div>
-                  <h5 className="font-bold text-slate-900">
+                  <h5 className="font-bold text-[#17212B]">
                     {language === "hi"
                       ? "उत्पादन आरंभ एवं स्थानीय बाज़ार आपूर्ति"
                       : "Commercial Operations & Market Launch"}
                   </h5>
-                  <p className="text-slate-600 mt-0.5">
+                  <p className="text-[#667085] mt-0.5 leading-relaxed">
                     {language === "hi"
                       ? "दुकानों व ढाबों के साथ आपूर्ति अनुबंध शुरू करें। डिजिटल यूपीआई भुगतान क्यूआर कोड स्थापित करें एवं प्रथम ईएमआई का भुगतान सुनिश्चित करें।"
                       : "Initiate daily procurement and supply contracts with local sweet shops & retail points; deploy UPI QR code; commence regular EMI repayment after 3-month moratorium."}
@@ -741,9 +741,9 @@ export function FeasibilityReportView() {
         {/* Right 1 Col: Official Verification, Bank Remarks & Checklist */}
         <div className="space-y-6">
           {/* Bank Appraisal Recommendation Card */}
-          <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-md border border-slate-800 space-y-4">
-            <div className="flex items-center space-x-2 text-emerald-400 font-bold text-sm">
-              <FileCheck className="w-5 h-5" />
+          <div className="bg-[#123B5D] text-white rounded-2xl p-6 shadow-md border border-blue-900/50 space-y-4">
+            <div className="flex items-center space-x-2 text-emerald-300 font-bold text-sm">
+              <FileCheck className="w-5 h-5 text-emerald-400" />
               <span>
                 {language === "hi"
                   ? "शाखा प्रबंधक / अधिकारी मूल्यांकन टिप्पणी"
@@ -751,15 +751,18 @@ export function FeasibilityReportView() {
               </span>
             </div>
 
-            <div className="space-y-2 text-xs text-slate-300 leading-relaxed bg-white/5 p-3.5 rounded-xl border border-white/10">
-              <p className="font-semibold text-white">
+            <div className="space-y-2 text-xs text-slate-200 leading-relaxed bg-white/5 p-3.5 rounded-xl border border-white/10">
+              <p className="font-bold text-white">
                 Recommendation: SANCTION RECOMMENDED (अनुशंसित)
               </p>
               <p>
                 The proposal exhibits a robust DSCR of{" "}
-                <strong>{fin.debtServiceCoverageRatio}x</strong>, exceeding the
-                mandatory RBI benchmark of 1.33x. Promoter has committed{" "}
-                <strong>{fin.promoterSharePercent}%</strong> equity margin.
+                <strong className="text-emerald-300">
+                  {fin.debtServiceCoverageRatio}x
+                </strong>
+                , exceeding the mandatory RBI benchmark of 1.33x. Promoter has
+                committed <strong>{fin.promoterSharePercent}%</strong> equity
+                margin.
               </p>
               <p>
                 Qualifies under <strong>Priority Sector Lending (PSL)</strong> -
@@ -767,7 +770,7 @@ export function FeasibilityReportView() {
               </p>
             </div>
 
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-blue-200">
               <span>MoSJE Scheme:</span>
               <span className="font-bold text-white">
                 {bestScheme.id || "NBCFDC-01"}
@@ -776,54 +779,54 @@ export function FeasibilityReportView() {
           </div>
 
           {/* Essential Documents Checklist Status */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <h4 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-blue-600" />
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-3">
+            <h4 className="text-sm font-bold text-[#17212B] flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 text-[#167C5A]" />
               <span>
                 {language === "hi"
                   ? "आवश्यक संस्वीकृति चेकलिस्ट"
                   : "Sanction Prerequisite Checklist"}
               </span>
             </h4>
-            <div className="space-y-2 text-xs text-slate-600">
+            <div className="space-y-2 text-xs text-[#667085]">
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-[#167C5A]" />
                 <span>Aadhaar Card of Applicant</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-[#167C5A]" />
                 <span>{profile.beneficiaryCategory} Caste Certificate</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-[#167C5A]" />
                 <span>Income Certificate / Ration Card</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-[#167C5A]" />
                 <span>Proforma Invoice / Quotations</span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-[#167C5A]" />
                 <span>Bank Account Passbook</span>
               </div>
             </div>
           </div>
 
           {/* Official Verification Sign-off Box */}
-          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 text-xs text-slate-500">
-            <div className="flex items-center justify-between font-bold text-slate-700">
+          <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 space-y-3 text-xs text-[#667085]">
+            <div className="flex items-center justify-between font-bold text-[#17212B]">
               <span>
                 {language === "hi"
                   ? "आधिकारिक मुहर एवं हस्ताक्षर"
                   : "Institutional Stamp & Sign-off"}
               </span>
-              <Building2 className="w-4 h-4 text-slate-400" />
+              <Building2 className="w-4 h-4 text-[#667085]" />
             </div>
-            <div className="h-16 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-[10px] text-slate-400 uppercase tracking-widest font-mono">
+            <div className="h-16 border-2 border-dashed border-[#DCE4E8] rounded-xl flex items-center justify-center text-[10px] text-[#667085] uppercase tracking-widest font-mono">
               Branch Manager / DIC Officer Stamp
             </div>
-            <p className="text-[10px] text-slate-400 text-center">
-              PARIVARTAN SIH26091 • AI Feasibility Engine
+            <p className="text-[10px] text-[#667085] text-center">
+              Gram Sarthi AI SIH26091 • AI Feasibility Engine
             </p>
           </div>
         </div>
@@ -833,7 +836,7 @@ export function FeasibilityReportView() {
       <div className="flex items-center justify-between pt-6 border-t border-slate-200 print:hidden">
         <button
           onClick={() => setActiveStep(5)}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#17212B] text-sm font-semibold transition-colors shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>
@@ -843,9 +846,9 @@ export function FeasibilityReportView() {
 
         <button
           onClick={resetAll}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#17212B] text-sm font-semibold transition-colors shadow-sm"
         >
-          <RefreshCw className="w-4 h-4 text-slate-500" />
+          <RefreshCw className="w-4 h-4 text-[#667085]" />
           <span>
             {language === "hi"
               ? "नया मूल्यांकन शुरू करें"

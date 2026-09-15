@@ -54,7 +54,7 @@ class PDFService {
     doc.setFontSize(15);
     doc.setFont("helvetica", "bold");
     doc.text(
-      "PARIVARTAN (परिवर्तन) — ENTERPRISE FEASIBILITY DOSSIER",
+      "GRAM SARTHI AI — ENTERPRISE FEASIBILITY DOSSIER",
       105,
       11,
       { align: "center" },
@@ -260,7 +260,7 @@ class PDFService {
     doc.setFontSize(7.5);
     doc.setTextColor(100, 116, 139);
     doc.text(
-      "Parivartan SIH 2026 Project Dossier — Confidential & Certified for DIC / Bank Appraisal — Page 1 of 2",
+      "Gram Sarthi AI SIH 2026 Project Dossier — Confidential & Certified for DIC / Bank Appraisal — Page 1 of 2",
       105,
       290,
       { align: "center" },
@@ -281,7 +281,7 @@ class PDFService {
     doc.setFontSize(10.5);
     doc.setFont("helvetica", "bold");
     doc.text(
-      "PARIVARTAN — AI ADVISORY MATRIX & IMPLEMENTATION ROADMAP",
+      "GRAM SARTHI AI — AI ADVISORY MATRIX & IMPLEMENTATION ROADMAP",
       105,
       10,
       { align: "center" },
@@ -458,7 +458,7 @@ class PDFService {
     doc.setFontSize(7.5);
     doc.setTextColor(100, 116, 139);
     doc.text(
-      "Parivartan SIH 2026 Project Dossier — Confidential & Certified for DIC / Bank Appraisal — Page 2 of 2",
+      "Gram Sarthi AI SIH 2026 Project Dossier — Confidential & Certified for DIC / Bank Appraisal — Page 2 of 2",
       105,
       290,
       { align: "center" },

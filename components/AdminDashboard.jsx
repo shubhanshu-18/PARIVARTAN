@@ -122,7 +122,7 @@ export function AdminDashboard() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `PARIVARTAN_Dossier_${assessment.id}_${(assessment.applicantName || "Applicant").replace(/\s+/g, "_")}.pdf`;
+      a.download = `Gram_Sarthi_AI_Dossier_${assessment.id}_${(assessment.applicantName || "Applicant").replace(/\s+/g, "_")}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -167,14 +167,14 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Officer Command Bar */}
-      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-gradient-to-br from-[#123B5D] via-[#0E2F4A] to-[#123B5D] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-900/50 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center space-x-1.5 bg-orange-500/20 text-orange-300 text-xs font-bold px-3 py-1 rounded-full border border-orange-500/30">
-              <Shield className="w-3.5 h-3.5 text-orange-400" />
+            <span className="inline-flex items-center space-x-1.5 bg-[#F59E0B]/20 text-[#F59E0B] text-xs font-bold px-3 py-1 rounded-full border border-[#F59E0B]/30">
+              <Shield className="w-3.5 h-3.5 text-[#F59E0B]" />
               <span>MoSJE Field Verification & Sanction Portal</span>
             </span>
-            <span className="text-xs font-mono text-slate-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
+            <span className="text-xs font-mono text-slate-300 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
               Station: Sehore DIC (MP)
             </span>
           </div>
@@ -193,7 +193,7 @@ export function AdminDashboard() {
           <button
             onClick={loadDashboardData}
             disabled={isLoading}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors"
           >
             <RefreshCw
               className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`}
@@ -203,7 +203,7 @@ export function AdminDashboard() {
 
           <button
             onClick={logoutOfficer}
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors shadow-sm"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Exit Officer Mode</span>
@@ -214,92 +214,92 @@ export function AdminDashboard() {
       {/* 4 Aggregate KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Appraisals */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-[#667085] text-xs font-bold uppercase tracking-wider">
             <span>Total Field Appraisals</span>
-            <Users className="w-4 h-4 text-blue-600" />
+            <Users className="w-4 h-4 text-[#123B5D]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900">
+          <div className="text-2xl sm:text-3xl font-black text-[#17212B]">
             {assessments.length}
           </div>
-          <div className="text-[11px] text-emerald-600 font-semibold flex items-center space-x-1">
-            <CheckCircle2 className="w-3 h-3" />
+          <div className="text-[11px] text-[#167C5A] font-semibold flex items-center space-x-1">
+            <CheckCircle2 className="w-3 h-3 text-[#167C5A]" />
             <span>100% automated KYC & Feasibility check</span>
           </div>
         </div>
 
         {/* Total Project Outlay */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-[#667085] text-xs font-bold uppercase tracking-wider">
             <span>Cumulative Capital Outlay</span>
-            <IndianRupee className="w-4 h-4 text-emerald-600" />
+            <IndianRupee className="w-4 h-4 text-[#167C5A]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900">
+          <div className="text-2xl sm:text-3xl font-black text-[#17212B]">
             ₹{(totalOutlay / 100000).toFixed(2)}L
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[11px] text-[#667085]">
             Total project expenditure proposed
           </div>
         </div>
 
         {/* Total Loan Demand */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-[#667085] text-xs font-bold uppercase tracking-wider">
             <span>Net Bank Loan Demand</span>
-            <Landmark className="w-4 h-4 text-purple-600" />
+            <Landmark className="w-4 h-4 text-[#123B5D]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-blue-700">
+          <div className="text-2xl sm:text-3xl font-black text-[#123B5D]">
             ₹{(totalLoanDemand / 100000).toFixed(2)}L
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[11px] text-[#667085]">
             Priority Sector Lending (PSL) target
           </div>
         </div>
 
         {/* Avg DSCR & Feasibility */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-2">
+          <div className="flex items-center justify-between text-[#667085] text-xs font-bold uppercase tracking-wider">
             <span>Avg Feasibility & DSCR</span>
-            <Award className="w-4 h-4 text-orange-500" />
+            <Award className="w-4 h-4 text-[#F59E0B]" />
           </div>
           <div className="flex items-baseline space-x-2">
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600">
+            <span className="text-2xl sm:text-3xl font-black text-[#167C5A]">
               {avgFeasibility}%
             </span>
-            <span className="text-sm font-bold text-slate-600">
+            <span className="text-sm font-bold text-[#667085]">
               ({avgDscr}x DSCR)
             </span>
           </div>
-          <div className="text-[11px] text-emerald-600 font-semibold">
+          <div className="text-[11px] text-[#167C5A] font-semibold">
             Prudential credit standard satisfied
           </div>
         </div>
       </div>
 
       {/* Search, Filter & Assessment Dossier Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden space-y-4">
         {/* Table Filter Toolbar */}
-        <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#667085] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(trimText(e.target.value, 100))}
               placeholder="Search by name, enterprise, ref ID, or district..."
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-[#DCE4E8] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/20 focus:border-[#123B5D] transition-all"
             />
           </div>
 
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 text-xs text-slate-500">
-              <Filter className="w-3.5 h-3.5" />
+            <div className="flex items-center space-x-2 text-xs text-[#667085] font-semibold">
+              <Filter className="w-3.5 h-3.5 text-[#123B5D]" />
               <span>Category:</span>
             </div>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-xs font-semibold px-3 py-2 rounded-xl border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/20 focus:border-[#123B5D]"
             >
               <option value="ALL">All Sectors ({assessments.length})</option>
               <option value="dairy">Dairy & Milk</option>
@@ -314,7 +314,7 @@ export function AdminDashboard() {
         {/* Table Content */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 uppercase font-semibold border-b border-slate-200">
+            <thead className="bg-slate-50 text-[#667085] uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
               <tr>
                 <th className="py-3 px-4">Ref ID & Date</th>
                 <th className="py-3 px-4">Entrepreneur</th>
@@ -325,10 +325,10 @@ export function AdminDashboard() {
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-slate-100 text-[#17212B]">
               {filteredAssessments.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-slate-400">
+                  <td colSpan="7" className="py-12 text-center text-[#667085]">
                     No enterprise assessments found matching your query.
                   </td>
                 </tr>
@@ -348,10 +348,10 @@ export function AdminDashboard() {
                     >
                       {/* Ref ID & Date */}
                       <td className="py-3.5 px-4">
-                        <span className="font-mono font-bold text-slate-900 block">
+                        <span className="font-mono font-bold text-[#17212B] block">
                           {item.id}
                         </span>
-                        <span className="text-[10px] text-slate-400">
+                        <span className="text-[10px] text-[#667085]">
                           {item.submittedAt
                             ? new Date(item.submittedAt).toLocaleDateString(
                                 "en-IN",
@@ -362,10 +362,10 @@ export function AdminDashboard() {
 
                       {/* Entrepreneur */}
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-900">
+                        <div className="font-bold text-[#17212B]">
                           {item.applicantName || "Entrepreneur"}
                         </div>
-                        <div className="text-[10px] text-slate-500">
+                        <div className="text-[10px] text-[#667085]">
                           {item.beneficiaryCategory} •{" "}
                           {item.district || "Sehore"}, {item.state || "MP"}
                         </div>
@@ -374,25 +374,25 @@ export function AdminDashboard() {
                       {/* Enterprise Idea */}
                       <td className="py-3.5 px-4 max-w-xs">
                         <div
-                          className="font-medium text-slate-900 truncate"
+                          className="font-medium text-[#17212B] truncate"
                           title={item.businessIdea}
                         >
                           {item.businessIdea}
                         </div>
-                        <span className="inline-block px-2 py-0.5 mt-0.5 rounded text-[10px] uppercase font-bold bg-slate-100 text-slate-600">
+                        <span className="inline-block px-2 py-0.5 mt-0.5 rounded text-[10px] uppercase font-bold bg-slate-100 text-[#667085] border border-slate-200">
                           {item.businessCategory}
                         </span>
                       </td>
 
                       {/* Outlay / Loan */}
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-900">
+                        <div className="font-bold text-[#17212B]">
                           ₹
                           {Number(
                             item.expectedInvestment || 140000,
                           ).toLocaleString("en-IN")}
                         </div>
-                        <div className="text-[10px] text-blue-700 font-semibold">
+                        <div className="text-[10px] text-[#123B5D] font-bold">
                           Loan: ₹{Number(loan).toLocaleString("en-IN")}
                         </div>
                       </td>
@@ -400,19 +400,19 @@ export function AdminDashboard() {
                       {/* Matched Scheme */}
                       <td className="py-3.5 px-4 max-w-xs">
                         <div
-                          className="font-semibold text-slate-900 truncate"
+                          className="font-semibold text-[#17212B] truncate"
                           title={scheme.name}
                         >
                           {scheme.name || "NBCFDC Micro Finance"}
                         </div>
-                        <div className="text-[10px] text-emerald-600 font-bold">
+                        <div className="text-[10px] text-[#167C5A] font-bold">
                           {scheme.subsidyPercent || 15}% Capital Subsidy
                         </div>
                       </td>
 
                       {/* Score & DSCR */}
                       <td className="py-3.5 px-4">
-                        <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+                        <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#167C5A]/10 text-[#167C5A] font-bold border border-[#167C5A]/20">
                           <span>{item.overallScore || 84}%</span>
                           <span>•</span>
                           <span>{item.dscr || 2.14}x</span>
@@ -424,7 +424,7 @@ export function AdminDashboard() {
                         <div className="inline-flex items-center space-x-2">
                           <button
                             onClick={() => setSelectedAssessment(item)}
-                            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-blue-700 transition-colors"
+                            className="p-1.5 rounded-lg border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#123B5D] transition-colors shadow-sm"
                             title="Inspect full dossier"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -432,7 +432,7 @@ export function AdminDashboard() {
                           <button
                             onClick={() => handleDownloadDossierPdf(item)}
                             disabled={isGeneratingPdf}
-                            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-emerald-700 transition-colors"
+                            className="p-1.5 rounded-lg border border-[#DCE4E8] bg-white hover:bg-slate-50 text-[#167C5A] transition-colors shadow-sm"
                             title="Download official PDF"
                           >
                             <Download className="w-3.5 h-3.5" />
@@ -440,7 +440,7 @@ export function AdminDashboard() {
                           <button
                             onClick={() => handleDeleteAssessment(item)}
                             disabled={deletingAssessmentId === item.id}
-                            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="p-1.5 rounded-lg border border-[#DCE4E8] bg-white hover:bg-rose-50 text-rose-600 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Delete assessment"
                             aria-label={`Delete assessment ${item.id}`}
                           >
@@ -471,14 +471,14 @@ export function AdminDashboard() {
             <div className="flex items-center justify-between pb-4 border-b border-slate-200">
               <div className="space-y-1">
                 <div className="flex items-center space-x-2">
-                  <span className="font-mono text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                  <span className="font-mono text-xs font-bold text-[#667085] bg-slate-100 px-2 py-0.5 rounded border border-[#DCE4E8]">
                     {selectedAssessment.id}
                   </span>
-                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-xs font-bold text-[#167C5A] bg-[#167C5A]/10 px-2.5 py-0.5 rounded-full border border-[#167C5A]/20">
                     Sanction Recommended
                   </span>
                 </div>
-                <h3 className="text-xl font-extrabold text-slate-900">
+                <h3 className="text-xl font-extrabold text-[#17212B]">
                   {selectedAssessment.applicantName} •{" "}
                   {selectedAssessment.businessIdea}
                 </h3>
@@ -492,23 +492,23 @@ export function AdminDashboard() {
             </div>
 
             {/* Modal Profile Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50/80 p-4 rounded-2xl text-xs border border-slate-100">
               <div>
-                <span className="text-slate-400 block">Category</span>
-                <span className="font-bold text-slate-900">
+                <span className="text-[#667085] block font-semibold">Category</span>
+                <span className="font-bold text-[#17212B]">
                   {selectedAssessment.beneficiaryCategory} (
                   {selectedAssessment.gender})
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">Location</span>
-                <span className="font-bold text-slate-900">
+                <span className="text-[#667085] block font-semibold">Location</span>
+                <span className="font-bold text-[#17212B]">
                   {selectedAssessment.district}, {selectedAssessment.state}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">Project Outlay</span>
-                <span className="font-bold text-slate-900">
+                <span className="text-[#667085] block font-semibold">Project Outlay</span>
+                <span className="font-bold text-[#17212B]">
                   ₹
                   {Number(
                     selectedAssessment.expectedInvestment || 140000,
@@ -516,8 +516,8 @@ export function AdminDashboard() {
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block">DSCR Safety</span>
-                <span className="font-bold text-emerald-600">
+                <span className="text-[#667085] block font-semibold">DSCR Safety</span>
+                <span className="font-black text-[#167C5A]">
                   {selectedAssessment.dscr || 2.14}x (Grade A)
                 </span>
               </div>
@@ -525,23 +525,23 @@ export function AdminDashboard() {
 
             {/* Scheme & Financial Summary */}
             <div className="space-y-3">
-              <h4 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                <Landmark className="w-4 h-4 text-blue-600" />
+              <h4 className="text-sm font-bold text-[#17212B] flex items-center space-x-2">
+                <Landmark className="w-4 h-4 text-[#123B5D]" />
                 <span>Recommended Scheme & Concessions</span>
               </h4>
-              <div className="bg-blue-50/60 border border-blue-200 rounded-2xl p-4 text-xs space-y-2">
-                <div className="flex justify-between items-center font-bold text-blue-900">
+              <div className="bg-[#123B5D]/5 border border-[#123B5D]/15 rounded-2xl p-4 text-xs space-y-2">
+                <div className="flex justify-between items-center font-bold text-[#123B5D]">
                   <span>
                     {selectedAssessment.matchedSchemes?.[0]?.name ||
                       "NBCFDC Micro Finance Scheme"}
                   </span>
-                  <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                  <span className="text-[#167C5A] bg-[#167C5A]/10 px-2.5 py-0.5 rounded-full border border-[#167C5A]/20">
                     {selectedAssessment.matchedSchemes?.[0]?.subsidyPercent ||
                       15}
                     % Subsidy
                   </span>
                 </div>
-                <p className="text-slate-600">
+                <p className="text-[#667085]">
                   Concessional credit facility compliant with MoSJE lending
                   rules for rural entrepreneurs. Zero collateral needed.
                 </p>
@@ -552,14 +552,14 @@ export function AdminDashboard() {
             <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200">
               <button
                 onClick={() => setSelectedAssessment(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-[#17212B] hover:bg-slate-50 border border-[#DCE4E8] transition-colors"
               >
                 Close
               </button>
               <button
                 onClick={() => handleDownloadDossierPdf(selectedAssessment)}
                 disabled={isGeneratingPdf}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-sm"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#123B5D] hover:bg-[#0E2F4A] text-white text-xs font-bold transition-all shadow-sm"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download Dossier PDF</span>
