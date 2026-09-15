@@ -49,7 +49,7 @@ export function OnboardingForm() {
   const locationRequestRef = useRef(0);
 
   const districtsForState =
-    STATES_DISTRICTS[profile.state] || STATES_DISTRICTS["Madhya Pradesh"];
+    STATES_DISTRICTS[profile.state] || [];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -63,6 +63,11 @@ export function OnboardingForm() {
     updateProfile({
       [name]: type === "checkbox" ? checked : cleanedValue,
     });
+    if (name === "district") {
+      setLocation(null);
+      setGpsSuccess(false);
+      setLocationMessage("");
+    }
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
@@ -89,6 +94,7 @@ export function OnboardingForm() {
     });
     setLocation(null);
     setGpsSuccess(false);
+    setLocationMessage("");
   };
 
   const detectLocation = () => {
@@ -461,6 +467,7 @@ export function OnboardingForm() {
                 onChange={handleStateChange}
                 className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-govblue/30"
               >
+                <option value="">Select state</option>
                 {Object.keys(STATES_DISTRICTS).map((st) => (
                   <option key={st} value={st}>
                     {st}
@@ -480,6 +487,7 @@ export function OnboardingForm() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-govblue/30"
               >
+                <option value="">Select district</option>
                 {districtsForState.map((d) => (
                   <option key={d} value={d}>
                     {d}
