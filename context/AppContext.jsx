@@ -53,6 +53,7 @@ export function AppProvider({ children }) {
   const [financials, setFinancials] = useState(null);
   const [matchedSchemes, setMatchedSchemes] = useState([]);
   const [savedAssessmentId, setSavedAssessmentId] = useState(null);
+  const [location, setLocation] = useState(null);
 
   // Network monitor
   useEffect(() => {
@@ -175,6 +176,8 @@ export function AppProvider({ children }) {
       setMatchedSchemes,
       savedAssessmentId,
       setSavedAssessmentId,
+      location,
+      setLocation,
       runAssessmentPipeline,
       resetAll,
     }),
@@ -195,6 +198,7 @@ export function AppProvider({ children }) {
       financials,
       matchedSchemes,
       savedAssessmentId,
+      location,
       runAssessmentPipeline,
       resetAll,
     ],

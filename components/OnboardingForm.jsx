@@ -7,6 +7,7 @@ import {
   BENEFICIARY_CATEGORIES,
 } from "../utils/translations";
 import { SpeechHelper } from "../speech";
+import { ApiService } from "../services/api";
 import * as validation from "../utils/validation-client";
 import {
   Building2,
@@ -37,11 +38,14 @@ export function OnboardingForm() {
     runAssessmentPipeline,
     isListening,
     setIsListening,
+    location,
+    setLocation,
   } = useApp();
 
   const [errors, setErrors] = useState({});
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsSuccess, setGpsSuccess] = useState(false);
+  const [locationMessage, setLocationMessage] = useState("");
 
   const districtsForState =
     STATES_DISTRICTS[profile.state] || STATES_DISTRICTS["Madhya Pradesh"];
@@ -76,40 +80,86 @@ export function OnboardingForm() {
 
   const handleStateChange = (e) => {
     const newState = e.target.value;
-    const newDistricts = STATES_DISTRICTS[newState] || [];
     updateProfile({
       state: newState,
-      district: newDistricts[0] || "",
+      district: "",
+      lat: null,
+      lng: null,
     });
+    setLocation(null);
+    setGpsSuccess(false);
   };
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      showToast("Geolocation is not supported by your browser", "warning");
+      setLocationMessage("This browser does not support location. Please select your location manually.");
+      showToast("This browser does not support location. Please select your location manually.", "warning");
       return;
     }
 
     setGpsLoading(true);
+    setGpsSuccess(false);
+    setLocationMessage("Detecting your location...");
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
+        const latitude = Number(pos.coords.latitude);
+        const longitude = Number(pos.coords.longitude);
+        if (
+          !Number.isFinite(latitude) ||
+          latitude < -90 ||
+          latitude > 90 ||
+          !Number.isFinite(longitude) ||
+          longitude < -180 ||
+          longitude > 180
+        ) {
+          setGpsLoading(false);
+          setLocationMessage("Unable to determine your location. Please select it manually.");
+          showToast("Unable to determine your location. Please select your location manually.", "warning");
+          return;
+        }
+        const gpsLocation = {
+          latitude,
+          longitude,
+          accuracy: Number.isFinite(pos.coords.accuracy) ? pos.coords.accuracy : null,
+          source: "gps",
+        };
+        setLocation(gpsLocation);
+        updateProfile({ lat: latitude, lng: longitude });
         setGpsLoading(false);
         setGpsSuccess(true);
-        updateProfile({
-          lat: Number(pos.coords.latitude.toFixed(4)),
-          lng: Number(pos.coords.longitude.toFixed(4)),
-        });
-        showToast(
-          language === "hi"
-            ? `स्थान दर्ज: ${pos.coords.latitude.toFixed(2)}°N, ${pos.coords.longitude.toFixed(2)}°E`
-            : `GPS Captured: ${pos.coords.latitude.toFixed(2)}°N, ${pos.coords.longitude.toFixed(2)}°E`,
-          "success",
-        );
+        setLocationMessage("Location detected successfully.");
+        showToast("Location detected successfully.", "success");
+        try {
+          const geocoded = await ApiService.reverseGeocode(latitude, longitude);
+          const stateMatch = Object.keys(STATES_DISTRICTS).find(
+            (state) => state.toLowerCase() === String(geocoded.state || "").toLowerCase(),
+          );
+          const districtMatch = stateMatch
+            ? STATES_DISTRICTS[stateMatch].find(
+                (district) => district.toLowerCase() === String(geocoded.district || "").toLowerCase(),
+              )
+            : null;
+          updateProfile({
+            ...(stateMatch ? { state: stateMatch } : {}),
+            ...(districtMatch ? { district: districtMatch } : {}),
+            ...(geocoded.village ? { village: geocoded.village } : {}),
+          });
+        } catch {
+          setLocationMessage("Location detected, but the readable address could not be found.");
+        }
       },
       (err) => {
         setGpsLoading(false);
-        showToast("GPS unavailable. Using selected district center.", "info");
+        const message =
+          err.code === 1
+            ? "Location permission was denied. Please allow location access or select your location manually."
+            : err.code === 3
+              ? "Location request timed out. Please try again."
+              : "Unable to determine your location. Please select your location manually.";
+        setLocationMessage(message);
+        showToast(message, "warning");
       },
-      { timeout: 8000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
   };
 
@@ -428,9 +478,16 @@ export function OnboardingForm() {
               <span>
                 Coordinates:{" "}
                 <strong className="text-slate-800">
-                  {profile.lat}°N, {profile.lng}°E
+                  {location
+                    ? `${location.latitude.toFixed(4)}°N, ${location.longitude.toFixed(4)}°E`
+                    : "Not detected"}
                 </strong>
               </span>
+              {locationMessage && (
+                <span className={gpsSuccess ? "text-emerald-700" : "text-amber-700"}>
+                  {locationMessage}
+                </span>
+              )}
               {gpsSuccess && (
                 <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[10px] border border-emerald-200">
                   {t("form.locationDetected", language)}

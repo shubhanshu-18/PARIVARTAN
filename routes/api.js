@@ -203,6 +203,43 @@ router.get("/location/geocode", async (req, res) => {
     const results = await fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encoded}`, {
       headers: { "User-Agent": process.env.NOMINATIM_USER_AGENT || "parivartan-development" },
     });
+
+    router.get("/location/reverse-geocode", async (req, res) => {
+      const lat = Number(req.query.lat);
+      const lng = Number(req.query.lng);
+      if (
+        !Number.isFinite(lat) ||
+        lat < -90 ||
+        lat > 90 ||
+        !Number.isFinite(lng) ||
+        lng < -180 ||
+        lng > 180
+      ) {
+        return res.status(400).json({ error: "Valid latitude and longitude are required" });
+      }
+      try {
+        const result = await fetchJson(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+          {
+            headers: {
+              "User-Agent": process.env.NOMINATIM_USER_AGENT || "parivartan-production",
+            },
+          },
+        );
+        const address = result.address || {};
+        res.json({
+          latitude: lat,
+          longitude: lng,
+          displayName: result.display_name || "",
+          state: address.state || "",
+          district: address.state_district || address.district || "",
+          city: address.city || address.town || address.village || address.hamlet || "",
+          village: address.village || address.hamlet || address.town || address.city || "",
+        });
+      } catch (error) {
+        res.status(503).json({ error: "Reverse geocoding is currently unavailable" });
+      }
+    });
     res.json({
       dataMode: "live",
       dataSource: { name: "Nominatim / OpenStreetMap", url: "https://nominatim.openstreetmap.org/" },

@@ -71,55 +71,6 @@ export const CATEGORIES = [
   },
 ];
 
-export const STATES_DISTRICTS = {
-  "Madhya Pradesh": [
-    "Sehore",
-    "Bhopal",
-    "Dewas",
-    "Indore",
-    "Hoshangabad",
-    "Vidisha",
-    "Raisen",
-    "Ujjain",
-  ],
-  Rajasthan: [
-    "Jaipur",
-    "Jodhpur",
-    "Udaipur",
-    "Ajmer",
-    "Kota",
-    "Barmer",
-    "Nagaur",
-  ],
-  "Uttar Pradesh": [
-    "Varanasi",
-    "Lucknow",
-    "Agra",
-    "Gorakhpur",
-    "Meerut",
-    "Prayagraj",
-    "Firozabad",
-  ],
-  Maharashtra: [
-    "Pune",
-    "Nashik",
-    "Aurangabad",
-    "Solapur",
-    "Kolhapur",
-    "Ahmednagar",
-  ],
-  Bihar: [
-    "Patna",
-    "Gaya",
-    "Muzaffarpur",
-    "Bhagalpur",
-    "Darbhanga",
-    "Begusarai",
-  ],
-  Gujarat: ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Anand"],
-  "West Bengal": ["Kolkata", "Howrah", "Murshidabad", "Nadia", "Birbhum"],
-};
-
 export const BENEFICIARY_CATEGORIES = [
   {
     key: "OBC",
@@ -472,3 +423,5 @@ export const translations = {
 export function t(key, lang = "hi") {
   return translations[lang]?.[key] || translations["en"]?.[key] || key;
 }
+import { STATES_DISTRICTS } from "../data/indiaLocations";
+export { STATES_DISTRICTS };

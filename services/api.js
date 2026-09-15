@@ -2,6 +2,20 @@ const API_BASE = import.meta.env.VITE_API_URL || "MISSING_API_URL";
 console.log("API_BASE =", API_BASE);
 
 export const ApiService = {
+  async reverseGeocode(latitude, longitude) {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90 ||
+        !Number.isFinite(lng) || lng < -180 || lng > 180) {
+      throw new Error("Invalid coordinates");
+    }
+    const res = await fetch(
+      `${API_BASE}/api/location/reverse-geocode?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`,
+    );
+    if (!res.ok) throw new Error("Reverse geocoding unavailable");
+    return await res.json();
+  },
+
   async getMarketIntelligence(lat, lng, category = "dairy", radius = 5) {
     try {
       const marketLat = Number.isFinite(Number(lat)) ? Number(lat) : 23.2032;
