@@ -1,3 +1,5 @@
+const { validateFinancialInput, assertValid } = require("./utils/validation");
+
 class FinancialEngine {
   calculateFinancials({
     projectCost = 140000,
@@ -8,7 +10,30 @@ class FinancialEngine {
     estimatedMonthlyRevenue = null,
     estimatedMonthlyOpex = null,
     subsidyPercent = 0,
-  }) {
+  } = {}) {
+    const validated = assertValid(
+      validateFinancialInput({
+        projectCost,
+        promoterSharePercent,
+        annualInterestRate,
+        tenureMonths,
+        moratoriumMonths,
+        estimatedMonthlyRevenue,
+        estimatedMonthlyOpex,
+        subsidyPercent,
+      }),
+      "Invalid financial inputs",
+    );
+    ({
+      projectCost,
+      promoterSharePercent,
+      annualInterestRate,
+      tenureMonths,
+      moratoriumMonths,
+      estimatedMonthlyRevenue,
+      estimatedMonthlyOpex,
+      subsidyPercent,
+    } = validated);
     const cost = Math.max(10000, Number(projectCost));
     const marginPercent = Math.min(
       50,

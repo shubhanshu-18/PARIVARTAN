@@ -3,6 +3,13 @@ const db = require("../db");
 const engine = require("../engine");
 const pdfService = require("../pdfservice");
 const { schemes } = require("../data/schemes");
+const {
+  CATEGORY_KEYS,
+  trimText,
+  validateProfile,
+  validateFinancialInput,
+  assertValid,
+} = require("../utils/validation");
 
 const router = express.Router();
 const overpassUrl =
@@ -88,7 +95,20 @@ router.get("/businesses/nearby", async (req, res) => {
   const lng = Number(req.query.lng);
   const radius = Number(req.query.radius || 5);
   const category = req.query.category || null;
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return res.status(400).json({ error: "Valid lat and lng are required" });
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    lat < -90 ||
+    lat > 90 ||
+    lng < -180 ||
+    lng > 180 ||
+    !Number.isFinite(radius) ||
+    radius <= 0 ||
+    radius > 100 ||
+    (category && !CATEGORY_KEYS.includes(category))
+  ) {
+    return res.status(400).json({ error: "Valid location, radius, and category are required" });
+  }
   try {
     const businesses = await findLiveBusinesses(lat, lng, radius, category);
     res.json({ dataMode: "live", dataSources: ["OpenStreetMap"], businesses: db.findNearbyCompetitors(lat, lng, radius, category, businesses) });
@@ -129,6 +149,16 @@ router.get("/market-intelligence", async (req, res) => {
     : defaultMarketLocation.lng;
   const category = req.query.category || "dairy";
   const radius = Number(req.query.radius || 5);
+  if (
+    (Number.isFinite(requestedLat) && (requestedLat < -90 || requestedLat > 90)) ||
+    (Number.isFinite(requestedLng) && (requestedLng < -180 || requestedLng > 180)) ||
+    !CATEGORY_KEYS.includes(category) ||
+    !Number.isFinite(radius) ||
+    radius <= 0 ||
+    radius > 100
+  ) {
+    return res.status(400).json({ error: "Valid location, radius, and category are required" });
+  }
 
   try {
     const businesses = await findLiveBusinesses(lat, lng, radius, category);
@@ -166,7 +196,7 @@ router.get("/market-intelligence", async (req, res) => {
 });
 
 router.get("/location/geocode", async (req, res) => {
-  const query = String(req.query.q || "").trim();
+  const query = trimText(req.query.q, 120);
   if (query.length < 3) return res.status(400).json({ error: "A location query is required" });
   try {
     const encoded = encodeURIComponent(query);
@@ -186,7 +216,9 @@ router.get("/location/geocode", async (req, res) => {
 // 5. Financial Calculation
 router.post("/financials/calculate", (req, res) => {
   try {
-    const result = engine.calculateFinancials(req.body || {});
+    const result = engine.calculateFinancials(
+      assertValid(validateFinancialInput(req.body || {}), "Invalid financial inputs"),
+    );
     res.json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -196,6 +228,22 @@ router.post("/financials/calculate", (req, res) => {
 // 6. AI Business Advisory
 router.post("/advisory", (req, res) => {
   try {
+    const profile = assertValid(
+      validateProfile({
+        applicantName: "Rural Entrepreneur",
+        businessIdea: "Rural Enterprise",
+        businessCategory: "dairy",
+        state: "Madhya Pradesh",
+        district: "Sehore",
+        beneficiaryCategory: "OBC",
+        capitalAvailable: 20000,
+        expectedInvestment: 140000,
+        gender: "female",
+        experience: "beginner",
+        ...req.body,
+      }),
+      "Invalid advisory inputs",
+    );
     const {
       businessIdea = "Rural Enterprise",
       businessCategory = "dairy",
@@ -206,7 +254,7 @@ router.post("/advisory", (req, res) => {
       gender = "female",
       experience = "beginner",
       isFirstTimeEntrepreneur = true,
-    } = req.body || {};
+    } = profile;
 
     // Intelligent domain advisory rules by category
     const categoryAdvisories = {
@@ -528,6 +576,22 @@ router.post("/advisory", (req, res) => {
 // 7. Scheme Match
 router.post("/schemes/match", (req, res) => {
   try {
+    const profile = assertValid(
+      validateProfile({
+        applicantName: "Rural Entrepreneur",
+        businessIdea: "Rural Enterprise",
+        businessCategory: "dairy",
+        state: "Madhya Pradesh",
+        district: "Sehore",
+        beneficiaryCategory: "OBC",
+        expectedInvestment: 140000,
+        capitalAvailable: 14000,
+        gender: "female",
+        experience: "beginner",
+        ...req.body,
+      }),
+      "Invalid scheme matching inputs",
+    );
     const {
       beneficiaryCategory = "OBC",
       businessCategory = "dairy",
@@ -536,7 +600,7 @@ router.post("/schemes/match", (req, res) => {
       gender = "female",
       isFirstTimeEntrepreneur = true,
       state = "Madhya Pradesh",
-    } = req.body || {};
+    } = profile;
 
     const cost = Number(expectedInvestment) || 140000;
     const margin = Number(capitalAvailable) || 14000;
@@ -643,7 +707,9 @@ router.post("/assessments", async (req, res, next) => {
     return res.status(400).json({ error: "Assessment data is required" });
   }
   try {
-    const saved = await db.saveAssessment(req.body);
+    const saved = await db.saveAssessment(
+      assertValid(validateProfile(req.body), "Invalid assessment data"),
+    );
     res.status(201).json(saved);
   } catch (error) {
     next(error);
@@ -705,7 +771,11 @@ router.get("/admin/stats", async (req, res, next) => {
 // 10. PDF Report Generation
 router.post("/reports/pdf", (req, res) => {
   try {
-    const pdfBuffer = pdfService.generateFeasibilityReport(req.body || {});
+    const payload = assertValid(
+      validateProfile(req.body || {}, { partial: true }),
+      "Invalid report data",
+    );
+    const pdfBuffer = pdfService.generateFeasibilityReport(payload);
     res.type("application/pdf");
     res.set({
       "Content-Disposition":

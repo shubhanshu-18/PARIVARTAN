@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { trimText } from "../utils/validation-client";
 import { useAuth } from "../context/AuthContext";
 import { useApp } from "../context/AppContext";
 import { ApiService } from "../services/api";
@@ -284,7 +285,7 @@ export function AdminDashboard() {
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(trimText(e.target.value, 100))}
               placeholder="Search by name, enterprise, ref ID, or district..."
               className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />

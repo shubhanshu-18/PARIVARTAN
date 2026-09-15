@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { CATEGORY_KEYS } from "../utils/validation-client";
 import { useApp } from "../context/AppContext";
 import { t, CATEGORIES } from "../utils/translations";
 import {
@@ -376,7 +377,10 @@ export function MarketIntelView() {
               {/* Category mini-filter */}
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) =>
+                  CATEGORY_KEYS.includes(e.target.value) &&
+                  setSelectedCategory(e.target.value)
+                }
                 className="text-[11px] px-2 py-1 rounded border border-slate-300 bg-white text-slate-700"
               >
                 <option value="all">

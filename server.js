@@ -106,6 +106,7 @@ app.use((err, req, res, next) => {
   console.error("Unhandled server error:", err);
   res.status(err.status || 500).json({
     error: err.message || "Internal server error occurred",
+    ...(err.validationErrors ? { validationErrors: err.validationErrors } : {}),
     timestamp: new Date().toISOString(),
   });
 });

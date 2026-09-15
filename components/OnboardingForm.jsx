@@ -7,6 +7,7 @@ import {
   BENEFICIARY_CATEGORIES,
 } from "../utils/translations";
 import { SpeechHelper } from "../speech";
+import * as validation from "../utils/validation-client";
 import {
   Building2,
   MapPin,
@@ -22,6 +23,9 @@ import {
   HelpCircle,
   Briefcase,
 } from "lucide-react";
+
+const { lettersAndSpaces, locationText, digitsOnly, trimText, validateProfile } =
+  validation;
 
 export function OnboardingForm() {
   const {
@@ -44,11 +48,25 @@ export function OnboardingForm() {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let cleanedValue = value;
+    if (name === "applicantName") cleanedValue = lettersAndSpaces(value);
+    if (name === "village") cleanedValue = locationText(value);
+    if (name === "expectedInvestment" || name === "capitalAvailable") {
+      cleanedValue = digitsOnly(value);
+    }
+    if (name === "businessIdea") cleanedValue = trimText(value, 200);
     updateProfile({
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : cleanedValue,
     });
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  const handleInputBlur = (name) => {
+    const result = validateProfile(profile, { partial: true });
+    if (result.errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: result.errors[name] }));
     }
   };
 
@@ -126,29 +144,8 @@ export function OnboardingForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {};
-
-    if (!profile.businessIdea || profile.businessIdea.trim().length < 3) {
-      newErrors.businessIdea =
-        language === "hi"
-          ? "कृपया व्यवसाय का नाम या विचार लिखें"
-          : "Please enter a valid business idea";
-    }
-    if (
-      !profile.expectedInvestment ||
-      Number(profile.expectedInvestment) < 5000
-    ) {
-      newErrors.expectedInvestment =
-        language === "hi"
-          ? "न्यूनतम निवेश ₹5,000 होना चाहिए"
-          : "Project cost must be at least ₹5,000";
-    }
-    if (Number(profile.capitalAvailable) > Number(profile.expectedInvestment)) {
-      newErrors.capitalAvailable =
-        language === "hi"
-          ? "उपलब्ध पूंजी कुल लागत से अधिक नहीं हो सकती"
-          : "Own margin cannot exceed total project cost";
-    }
+    const validationResult = validateProfile(profile);
+    const newErrors = validationResult.errors;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -161,8 +158,9 @@ export function OnboardingForm() {
       return;
     }
 
+    updateProfile(validationResult.value);
     // Run assessment engine
-    await runAssessmentPipeline(profile);
+    await runAssessmentPipeline(validationResult.value);
     setActiveStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -235,20 +233,27 @@ export function OnboardingForm() {
             {/* Applicant Name */}
             <div>
               <label className="block text-xs font-bold text-slate-800 mb-1">
-                {t("form.applicantName", language)}
+                {t("form.applicantName", language)}{" "}
+                <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 name="applicantName"
                 value={profile.applicantName}
                 onChange={handleInputChange}
+                onBlur={() => handleInputBlur("applicantName")}
                 placeholder={
                   language === "hi"
                     ? "उदा. सुनीता शर्मा / रमेश वर्मा"
                     : "e.g. Sunita Sharma"
                 }
-                className="w-full px-3.5 py-2.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-govblue/30 focus:border-govblue transition"
+                className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition ${
+                  errors.applicantName ? "border-rose-400 bg-rose-50/40" : "border-slate-300"
+                } focus:outline-none focus:ring-2 focus:ring-govblue/30 focus:border-govblue`}
               />
+              {errors.applicantName && (
+                <p className="text-[11px] text-rose-600 mt-1">{errors.applicantName}</p>
+              )}
             </div>
 
             {/* Business Idea with Voice Button */}
@@ -282,6 +287,7 @@ export function OnboardingForm() {
                 name="businessIdea"
                 value={profile.businessIdea}
                 onChange={handleInputChange}
+                onBlur={() => handleInputBlur("businessIdea")}
                 placeholder={t("form.businessIdeaPlaceholder", language)}
                 className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition ${
                   errors.businessIdea
@@ -403,9 +409,15 @@ export function OnboardingForm() {
                 name="village"
                 value={profile.village}
                 onChange={handleInputChange}
+                onBlur={() => handleInputBlur("village")}
                 placeholder={t("form.villagePlaceholder", language)}
-                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-govblue/30"
+                className={`w-full px-3 py-2 text-xs rounded-lg border ${
+                  errors.village ? "border-rose-400 bg-rose-50/40" : "border-slate-300"
+                } focus:outline-none focus:ring-2 focus:ring-govblue/30`}
               />
+              {errors.village && (
+                <p className="text-[11px] text-rose-600 mt-1">{errors.village}</p>
+              )}
             </div>
           </div>
 
@@ -480,6 +492,7 @@ export function OnboardingForm() {
                   name="expectedInvestment"
                   value={profile.expectedInvestment}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur("expectedInvestment")}
                   step="5000"
                   min="5000"
                   max="10000000"
@@ -517,6 +530,7 @@ export function OnboardingForm() {
                   name="capitalAvailable"
                   value={profile.capitalAvailable}
                   onChange={handleInputChange}
+                  onBlur={() => handleInputBlur("capitalAvailable")}
                   step="1000"
                   min="0"
                   className={`w-full pl-7 pr-3 py-2 text-xs rounded-lg border ${

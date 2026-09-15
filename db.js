@@ -1,4 +1,5 @@
 const { pool } = require("./database");
+const { trimText, validateProfile, assertValid } = require("./utils/validation");
 
 class SpatialDatabase {
   calculateDistanceKm(lat1, lon1, lat2, lon2) {
@@ -221,12 +222,16 @@ class SpatialDatabase {
   }
 
   async saveAssessment(data) {
+    const cleaned = assertValid(
+      validateProfile(data, { partial: true }),
+      "Invalid assessment data",
+    );
     const id = `PRV-${Date.now().toString(36).toUpperCase()}`;
     const assessment = {
       id,
       createdAt: new Date().toISOString(),
-      ...data,
-      status: data.status || "Assessment Completed",
+      ...cleaned,
+      status: trimText(data.status || "Assessment Completed", 50),
     };
     await pool.query(
       `INSERT INTO assessments
