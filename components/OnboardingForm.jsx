@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
 import {
   t,
@@ -46,6 +46,7 @@ export function OnboardingForm() {
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsSuccess, setGpsSuccess] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
+  const locationRequestRef = useRef(0);
 
   const districtsForState =
     STATES_DISTRICTS[profile.state] || STATES_DISTRICTS["Madhya Pradesh"];
@@ -97,11 +98,13 @@ export function OnboardingForm() {
       return;
     }
 
+    const requestId = ++locationRequestRef.current;
     setGpsLoading(true);
     setGpsSuccess(false);
     setLocationMessage("Detecting your location...");
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
+        if (requestId !== locationRequestRef.current) return;
         const latitude = Number(pos.coords.latitude);
         const longitude = Number(pos.coords.longitude);
         if (
@@ -124,35 +127,71 @@ export function OnboardingForm() {
           source: "gps",
         };
         setLocation(gpsLocation);
-        updateProfile({ lat: latitude, lng: longitude });
+        // Clear manual values before awaiting geocoding so they cannot be
+        // displayed as if they were derived from the GPS reading.
+        updateProfile({
+          lat: latitude,
+          lng: longitude,
+          state: "",
+          district: "",
+          village: "",
+        });
         setGpsLoading(false);
         setGpsSuccess(true);
-        setLocationMessage("Location detected successfully.");
-        showToast("Location detected successfully.", "success");
+        setLocationMessage("Location detected via GPS");
+        showToast("Location detected via GPS", "success");
         try {
           const geocoded = await ApiService.reverseGeocode(latitude, longitude);
+          if (requestId !== locationRequestRef.current) return;
+          const normalize = (value) =>
+            String(value || "")
+              .toLowerCase()
+              .replace(/district$/i, "")
+              .replace(/[^a-z0-9]+/g, "");
           const stateMatch = Object.keys(STATES_DISTRICTS).find(
-            (state) => state.toLowerCase() === String(geocoded.state || "").toLowerCase(),
+            (state) => normalize(state) === normalize(geocoded.state),
           );
           const districtMatch = stateMatch
             ? STATES_DISTRICTS[stateMatch].find(
-                (district) => district.toLowerCase() === String(geocoded.district || "").toLowerCase(),
+                (district) => normalize(district) === normalize(geocoded.district),
               )
             : null;
+          const locality =
+            geocoded.locality ||
+            geocoded.village ||
+            geocoded.town ||
+            geocoded.city ||
+            geocoded.municipality ||
+            geocoded.suburb ||
+            geocoded.neighbourhood ||
+            geocoded.district ||
+            "";
           updateProfile({
-            ...(stateMatch ? { state: stateMatch } : {}),
-            ...(districtMatch ? { district: districtMatch } : {}),
-            ...(geocoded.village ? { village: geocoded.village } : {}),
+            state: stateMatch || "",
+            district: districtMatch || "",
+            village: locality,
           });
+          if (!stateMatch || !districtMatch || !locality) {
+            setGpsSuccess(false);
+            setLocationMessage(
+              "Location captured accurately, but readable address could not be found.",
+            );
+          }
         } catch {
-          setLocationMessage("Location detected, but the readable address could not be found.");
+          if (requestId !== locationRequestRef.current) return;
+          updateProfile({ state: "", district: "", village: "" });
+          setGpsSuccess(false);
+          setLocationMessage(
+            "Location captured accurately, but readable address could not be found.",
+          );
         }
       },
       (err) => {
+        if (requestId !== locationRequestRef.current) return;
         setGpsLoading(false);
         const message =
           err.code === 1
-            ? "Location permission was denied. Please allow location access or select your location manually."
+            ? "Location permission denied. Please enable location access or select manually."
             : err.code === 3
               ? "Location request timed out. Please try again."
               : "Unable to determine your location. Please select your location manually.";
