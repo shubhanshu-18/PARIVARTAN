@@ -14,6 +14,7 @@ import { FinancialCalculatorView } from "./components/FinancialCalculatorView";
 import { SchemeRouterView } from "./components/SchemeRouterView";
 import { FeasibilityReportView } from "./components/FeasibilityReportView";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { WelcomeSplash } from "./components/WelcomeSplash";
 import { Shield } from "lucide-react";
 
 function AppContent() {
@@ -21,16 +22,17 @@ function AppContent() {
   const { isOfficer } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-900 selection:bg-orange-500 selection:text-white relative">
+    <div className="app-shell min-h-screen flex flex-col bg-slate-100 text-slate-900 selection:bg-orange-500 selection:text-white relative">
+      <WelcomeSplash />
       <Navbar />
       <OfflineNotice />
       <ConsentModal />
 
       {/* Floating Global Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce-short">
+        <div className="global-toast fixed bottom-6 right-6 z-50 animate-bounce-short" role="status" aria-live="polite">
           <div
-            className={`px-4 py-3 rounded-2xl shadow-xl border text-xs font-semibold flex items-center space-x-2 text-white ${
+            className={`toast-card px-4 py-3 rounded-2xl shadow-xl border text-xs font-semibold flex items-center space-x-2 text-white ${
               toast.type === "success"
                 ? "bg-emerald-700 border-emerald-600"
                 : toast.type === "error"
@@ -51,7 +53,7 @@ function AppContent() {
         ) : (
           <>
             <StepWizard />
-            <div className="mt-4">
+            <div key={activeStep} className="page-stage mt-4">
               {activeStep === 1 && <OnboardingForm />}
               {activeStep === 2 && <MarketIntelView />}
               {activeStep === 3 && <AdvisoryView />}

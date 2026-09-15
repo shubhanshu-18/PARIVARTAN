@@ -87,3 +87,323 @@ footer { margin-top: 4rem; padding: 2rem; background: #172033; color: #cbd5e1; t
     height: 1.5rem;
   }
 }
+
+/* ProjectPulse-inspired polish for the existing Tailwind UI. */
+:root {
+  --parivartan-ink: #172b4d;
+  --parivartan-line: #d9e1e8;
+  --parivartan-blue: #0f4c81;
+  --parivartan-mint: #0e7c3a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f4f7f5;
+  background-image:
+    linear-gradient(135deg, rgba(47, 124, 246, 0.035), transparent 35%, rgba(101, 211, 155, 0.045)),
+    linear-gradient(rgba(18, 59, 99, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 59, 99, 0.025) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(47, 124, 246, 0.28);
+  outline-offset: 2px;
+}
+
+.app-shell {
+  isolation: isolate;
+}
+
+.app-shell::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 12% 8%, rgba(47, 124, 246, 0.08), transparent 26rem),
+    radial-gradient(circle at 90% 35%, rgba(101, 211, 155, 0.06), transparent 24rem);
+}
+
+.welcome-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(46, 125, 140, 0.28), transparent 24rem),
+    linear-gradient(135deg, #071026, #0f4c81 58%, #0e7c3a);
+  animation: welcomeSplashExit 420ms ease 1.05s forwards;
+  pointer-events: none;
+}
+
+.welcome-splash-glow {
+  position: absolute;
+  width: 22rem;
+  height: 22rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3rem rgba(255, 255, 255, 0.025),
+    0 0 0 7rem rgba(255, 255, 255, 0.02);
+  animation: welcomeGlow 1.4s ease-out both;
+}
+
+.welcome-splash-content {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  padding: 1.5rem;
+  text-align: center;
+  animation: welcomeContentIn 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.welcome-splash-mark {
+  position: relative;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1.35rem;
+  background: linear-gradient(145deg, #f97316, #d97706);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  font-size: 2rem;
+  font-weight: 800;
+  animation: welcomeMarkIn 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.welcome-splash-orbit {
+  position: absolute;
+  inset: -0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 1.7rem;
+  transform: rotate(18deg);
+}
+
+.welcome-splash-orbit-two {
+  inset: -1rem;
+  border-color: rgba(101, 211, 155, 0.35);
+  transform: rotate(-28deg);
+}
+
+.welcome-splash-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+  font-size: clamp(1.25rem, 4vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.welcome-splash-title svg {
+  color: #fbbf24;
+}
+
+.welcome-splash-content p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.78rem;
+}
+
+.welcome-splash-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@keyframes welcomeContentIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes welcomeMarkIn {
+  from { opacity: 0; transform: scale(0.72) rotate(-8deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes welcomeGlow {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes welcomeSplashExit {
+  to { opacity: 0; visibility: hidden; }
+}
+
+.page-stage {
+  animation: pageStageIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes pageStageIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Give the existing cards a consistent, restrained dashboard lift. */
+.app-shell .rounded-xl,
+.app-shell .rounded-3xl {
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.app-shell .rounded-xl:hover,
+.app-shell .rounded-3xl:hover {
+  border-color: rgba(15, 76, 129, 0.22);
+  box-shadow: 0 12px 30px rgba(18, 59, 99, 0.08);
+}
+
+.app-shell .sticky {
+  backdrop-filter: blur(12px);
+}
+
+.app-shell .sticky > div:last-child {
+  transition: background-color 180ms ease;
+}
+
+.mobile-step-grid button {
+  min-height: 54px;
+  will-change: transform;
+}
+
+.mobile-step-grid button:hover {
+  box-shadow: 0 6px 15px rgba(18, 59, 99, 0.1);
+}
+
+.mobile-step-grid button[title^="Step"]::after {
+  position: absolute;
+  right: 8px;
+  bottom: 7px;
+  width: 22px;
+  height: 2px;
+  content: "";
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.14;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.mobile-step-grid button:hover::after {
+  transform: scaleX(1);
+}
+
+.global-toast {
+  animation: toastIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.toast-card {
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.2);
+  animation: toastPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastPulse {
+  0%, 100% { box-shadow: 0 14px 32px rgba(15, 23, 42, 0.2); }
+  50% { box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28); }
+}
+
+.fixed.inset-0 {
+  animation: overlayIn 220ms ease both;
+}
+
+.fixed.inset-0 > div {
+  animation: modalIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 639px) {
+  .global-toast {
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+  }
+
+  .toast-card {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
