@@ -7,29 +7,11 @@ export function AuthProvider({ children }) {
   const [officer, setOfficer] = useState(null);
   const [loginError, setLoginError] = useState("");
 
-  const loginOfficer = (username, password) => {
-    setLoginError("");
-    // Demo officer credentials
-    if (
-      (username === "officer" || username === "admin") &&
-      (password === "demo123" || password === "sih2026" || password === "admin")
-    ) {
-      const officerData = {
-        id: "OFFICER-MP-2026-08",
-        name: "Priya Sharma",
-        designation: "General Manager, District Industries Centre (DIC)",
-        department: "Ministry of Social Justice & Empowerment / MP MSME",
-        jurisdiction: "Sehore & Bhopal Districts",
-      };
-      setIsOfficer(true);
-      setOfficer(officerData);
-      return true;
-    } else {
-      setLoginError(
-        "Invalid demo credentials. Use username: officer, password: demo123",
-      );
-      return false;
-    }
+  const loginOfficer = () => {
+    setLoginError("Officer login is disabled for this project.");
+    setIsOfficer(false);
+    setOfficer(null);
+    return false;
   };
 
   const logoutOfficer = () => {
@@ -38,10 +20,23 @@ export function AuthProvider({ children }) {
     setLoginError("");
   };
 
+  const setOfficerAccess = (value) => {
+    if (value === false) {
+      setIsOfficer(false);
+      setOfficer(null);
+      setLoginError("");
+      return;
+    }
+
+    setLoginError("Officer login is disabled for this project.");
+    setIsOfficer(false);
+    setOfficer(null);
+  };
+
   const value = useMemo(
     () => ({
       isOfficer,
-      setIsOfficer,
+      setIsOfficer: setOfficerAccess,
       officer,
       loginError,
       loginOfficer,

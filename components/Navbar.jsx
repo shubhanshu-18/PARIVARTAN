@@ -9,7 +9,6 @@ import {
   Mic,
   MicOff,
   ShieldCheck,
-  UserCheck,
   Sparkles,
   Volume2,
   VolumeX,
@@ -32,7 +31,7 @@ export function Navbar() {
     setConsentGiven,
   } = useApp();
 
-  const { isOfficer, setIsOfficer, officer, logoutOfficer } = useAuth();
+  const { isOfficer, officer, logoutOfficer } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleLanguage = () => {
@@ -186,8 +185,8 @@ export function Navbar() {
             <span>{language === "hi" ? "English" : "हिंदी"}</span>
           </button>
 
-          {/* Beneficiary / Officer Mode Toggle */}
-          {isOfficer ? (
+          {/* Officer access is disabled for all users */}
+          {isOfficer && (
             <div className="flex items-center space-x-2">
               <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold">
                 Officer: {officer?.name || "Priya Sharma"}
@@ -199,15 +198,6 @@ export function Navbar() {
                 <span>Exit Officer View</span>
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setIsOfficer(true)}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#167C5A] hover:bg-[#105D44] text-white border border-emerald-400/30 shadow-sm transition"
-            >
-              <UserCheck className="w-3.5 h-3.5 text-emerald-200" />
-              <span className="hidden sm:inline">Officer Portal</span>
-              <span className="sm:hidden">Officer</span>
-            </button>
           )}
         </div>
 
@@ -265,20 +255,12 @@ export function Navbar() {
             <Globe2 className="w-4 h-4 text-sky-400" />
             <span>{language === "hi" ? "English" : "हिंदी"}</span>
           </button>
-          {isOfficer ? (
+          {isOfficer && (
             <button
               onClick={logoutOfficer}
               className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
             >
               Exit Officer View
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsOfficer(true)}
-              className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-emerald-700 text-white border border-emerald-500/40"
-            >
-              <UserCheck className="w-4 h-4 text-emerald-200" />
-              <span>Officer Login</span>
             </button>
           )}
         </div>
