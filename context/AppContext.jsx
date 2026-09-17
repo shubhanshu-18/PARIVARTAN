@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { ApiService } from "../services/api";
+import { validateProfile } from "../utils/validation-client";
 
 const AppContext = createContext(null);
 
@@ -36,7 +37,7 @@ const DEFAULT_PROFILE = {
 };
 
 export function AppProvider({ children }) {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStepState] = useState(1);
   const [language, setLanguage] = useState("hi");
   const [consentGiven, setConsentGiven] = useState(
     () => localStorage.getItem("parivartan-consent") === "true",
@@ -141,9 +142,56 @@ export function AppProvider({ children }) {
     setProfile((prev) => ({ ...prev, ...fields }));
   }, []);
 
+  const canAdvanceFromStep = useCallback(
+    (step) => {
+      switch (step) {
+        case 1:
+          return Object.keys(validateProfile(profile).errors).length === 0;
+        case 2:
+          return marketData !== null;
+        case 3:
+          return advisory !== null;
+        case 4:
+          return financials !== null;
+        case 5:
+          return financials !== null && matchedSchemes !== null;
+        default:
+          return false;
+      }
+    },
+    [advisory, financials, marketData, matchedSchemes, profile],
+  );
+
+  const setActiveStep = useCallback(
+    (requestedStep) => {
+      if (
+        !Number.isInteger(requestedStep) ||
+        requestedStep < 1 ||
+        requestedStep > 6
+      ) {
+        return false;
+      }
+
+      // Users can always go back, but may only advance one validated step.
+      if (requestedStep <= activeStep) {
+        setActiveStepState(requestedStep);
+        return true;
+      }
+
+      if (requestedStep !== activeStep + 1 || !canAdvanceFromStep(activeStep)) {
+        showToast("Complete and validate this step before continuing.", "warning");
+        return false;
+      }
+
+      setActiveStepState(requestedStep);
+      return true;
+    },
+    [activeStep, canAdvanceFromStep, showToast],
+  );
+
   const resetAll = useCallback(() => {
     setProfile(DEFAULT_PROFILE);
-    setActiveStep(1);
+    setActiveStepState(1);
     runAssessmentPipeline(DEFAULT_PROFILE);
     showToast("Assessment form reset", "info");
   }, [runAssessmentPipeline, showToast]);
@@ -183,6 +231,7 @@ export function AppProvider({ children }) {
     }),
     [
       activeStep,
+      setActiveStep,
       language,
       consentGiven,
       isOffline,

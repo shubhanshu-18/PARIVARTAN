@@ -73,12 +73,15 @@ export function StepWizard() {
               <button
                 key={step.id}
                 onClick={() => setActiveStep(step.id)}
+                disabled={step.id > activeStep}
+                aria-current={isCurrent ? "step" : undefined}
+                aria-disabled={step.id > activeStep}
                 className={`relative flex flex-col sm:flex-row items-center justify-center p-2 rounded-lg transition text-left group border ${
                   isCurrent
                     ? "bg-[#123B5D] text-white border-[#123B5D] shadow-sm ring-2 ring-[#123B5D]/20"
                     : isCompleted
                       ? "bg-[#E8F6F1] text-[#105D44] hover:bg-[#D3EFE5] border-[#A9DDCB]"
-                      : "bg-[#F7F9F7] text-[#667085] hover:bg-slate-100/80 border-[#DCE4E8]"
+                      : "bg-[#F7F9F7] text-[#667085] border-[#DCE4E8] cursor-not-allowed opacity-75"
                 }`}
                 title={`Step ${step.id}: ${step.shortEn}`}
               >
