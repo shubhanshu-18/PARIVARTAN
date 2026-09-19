@@ -121,20 +121,24 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
         {/* Logo & Brand Identity */}
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-black shadow-md border border-amber-300/40">
-            <span className="text-xl tracking-tighter">P</span>
+          <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md border border-[#DCE4E8] shrink-0 transition-transform hover:scale-105">
+            <img
+              src="/logo.png"
+              alt="PARIVARTAN"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
               <span className="text-lg sm:text-xl font-black tracking-tight text-white font-sans">
-                Gram Sarthi AI
+                PARIVARTAN
               </span>
-              <span className="text-xs sm:text-sm font-bold text-amber-400 font-devanagari">
-                Rural-Tech Advisory
+              <span className="text-xs sm:text-sm font-bold text-[#F59E0B] font-devanagari">
+                परिवर्तन
               </span>
             </div>
             <p className="text-[10.5px] sm:text-[11px] text-slate-300 line-clamp-1 font-medium">
-              AI Hyper-Local Business Advisory & Financial Structuring
+              AI Rural Business Advisory & Financial Structuring
             </p>
           </div>
         </div>

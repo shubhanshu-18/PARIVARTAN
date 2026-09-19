@@ -209,7 +209,7 @@ export function FeasibilityReportView() {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 print:p-0 print:max-w-none">
       {/* Top Header & Export Toolbar */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-6 print:border-none print:shadow-none print:p-0">
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center space-x-1.5 bg-[#167C5A]/10 text-[#167C5A] text-xs font-bold px-3 py-1 rounded-full border border-[#167C5A]/20">
               <ShieldCheck className="w-3.5 h-3.5 text-[#167C5A]" />
@@ -226,11 +226,25 @@ export function FeasibilityReportView() {
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17212B] tracking-tight">
-            {language === "hi"
-              ? "परियोजना व्यवहार्यता एवं बैंक ऋण मूल्यांकन"
-              : "Comprehensive Project Feasibility Dossier"}
-          </h1>
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 p-1.5 flex items-center justify-center shadow-sm border border-[#DCE4E8] shrink-0">
+              <img
+                src="/logo.png"
+                alt="PARIVARTAN Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#17212B] tracking-tight">
+                {language === "hi"
+                  ? "परियोजना व्यवहार्यता एवं बैंक ऋण मूल्यांकन"
+                  : "Comprehensive Project Feasibility Dossier"}
+              </h1>
+              <span className="text-xs font-semibold text-[#167C5A]">
+                PARIVARTAN SIH26091 • Appraisal Dossier
+              </span>
+            </div>
+          </div>
           <p className="text-xs sm:text-sm text-[#667085] max-w-2xl leading-relaxed">
             {language === "hi"
               ? `सामाजिक न्याय एवं अधिकारिता मंत्रालय (MoSJE) एवं भारतीय रिजर्व बैंक (RBI) प्राथमिकता प्राप्त क्षेत्र ऋण (PSL) मानकों के अनुरूप तैयार औपचारिक रिपोर्ट।`

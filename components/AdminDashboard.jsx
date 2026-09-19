@@ -168,7 +168,7 @@ export function AdminDashboard() {
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Officer Command Bar */}
       <div className="bg-gradient-to-br from-[#123B5D] via-[#0E2F4A] to-[#123B5D] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-900/50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center space-x-1.5 bg-[#F59E0B]/20 text-[#F59E0B] text-xs font-bold px-3 py-1 rounded-full border border-[#F59E0B]/30">
               <Shield className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -179,9 +179,23 @@ export function AdminDashboard() {
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Officer Appraisal & Sanctions Dashboard
-          </h1>
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-lg border border-white/20 shrink-0">
+              <img
+                src="/logo.png"
+                alt="PARIVARTAN Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Officer Appraisal & Sanctions Dashboard
+              </h1>
+              <span className="text-xs text-[#F59E0B] font-semibold">
+                PARIVARTAN (परिवर्तन) Institutional Desk
+              </span>
+            </div>
+          </div>
           <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
             Welcome, <strong>{officerName}</strong> ({officerId}) • Direct
             facilitation desk for NBCFDC, NSFDC, NSKFDC and PMEGP credit-linked
@@ -494,20 +508,26 @@ export function AdminDashboard() {
             {/* Modal Profile Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50/80 p-4 rounded-2xl text-xs border border-slate-100">
               <div>
-                <span className="text-[#667085] block font-semibold">Category</span>
+                <span className="text-[#667085] block font-semibold">
+                  Category
+                </span>
                 <span className="font-bold text-[#17212B]">
                   {selectedAssessment.beneficiaryCategory} (
                   {selectedAssessment.gender})
                 </span>
               </div>
               <div>
-                <span className="text-[#667085] block font-semibold">Location</span>
+                <span className="text-[#667085] block font-semibold">
+                  Location
+                </span>
                 <span className="font-bold text-[#17212B]">
                   {selectedAssessment.district}, {selectedAssessment.state}
                 </span>
               </div>
               <div>
-                <span className="text-[#667085] block font-semibold">Project Outlay</span>
+                <span className="text-[#667085] block font-semibold">
+                  Project Outlay
+                </span>
                 <span className="font-bold text-[#17212B]">
                   ₹
                   {Number(
@@ -516,7 +536,9 @@ export function AdminDashboard() {
                 </span>
               </div>
               <div>
-                <span className="text-[#667085] block font-semibold">DSCR Safety</span>
+                <span className="text-[#667085] block font-semibold">
+                  DSCR Safety
+                </span>
                 <span className="font-black text-[#167C5A]">
                   {selectedAssessment.dscr || 2.14}x (Grade A)
                 </span>
