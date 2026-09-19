@@ -11,14 +11,18 @@ app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.join(__dirname, "dist");
 const frontendIndexPath = path.join(frontendDistPath, "index.html");
-const allowedOrigins = (
-  process.env.FRONTEND_URL ||
-  process.env.FRONTEND_ORIGIN ||
-  "https://parivartan-tau.vercel.app"
-)
-  .split(",")
-  .map((value) => value.trim())
+const normalizeOrigin = (value) => value.trim().replace(/\/+$/, "");
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_ORIGIN,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+  "https://parivartan-tau.vercel.app",
+]
+  .filter(Boolean)
+  .flatMap((value) => value.split(","))
+  .map(normalizeOrigin)
   .filter(Boolean);
+const allowedOrigins = [...new Set(configuredOrigins)];
 if (process.env.NODE_ENV !== "production") {
   allowedOrigins.push("http://localhost:5173");
 }
@@ -35,7 +39,9 @@ app.use(
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
       return callback(new Error("Origin is not allowed by CORS"));
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
