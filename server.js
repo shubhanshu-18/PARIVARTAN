@@ -11,7 +11,11 @@ app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.join(__dirname, "dist");
 const frontendIndexPath = path.join(frontendDistPath, "index.html");
-const allowedOrigins = (process.env.FRONTEND_URL || "https://parivartan-tau.vercel.app")
+const allowedOrigins = (
+  process.env.FRONTEND_URL ||
+  process.env.FRONTEND_ORIGIN ||
+  "https://parivartan-tau.vercel.app"
+)
   .split(",")
   .map((value) => value.trim())
   .filter(Boolean);
