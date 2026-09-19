@@ -124,17 +124,17 @@ export function Navbar() {
           <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-md border border-[#DCE4E8] shrink-0 transition-transform hover:scale-105">
             <img
               src="/logo.png"
-              alt="PARIVARTAN"
+              alt="GRAM SARTHI AI"
               className="w-full h-full object-contain"
             />
           </div>
           <div>
             <div className="flex items-baseline space-x-2">
               <span className="text-lg sm:text-xl font-black tracking-tight text-white font-sans">
-                PARIVARTAN
+                GRAM SARTHI AI
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#F59E0B] font-devanagari">
-                परिवर्तन
+                ग्राम सारथी AI
               </span>
             </div>
             <p className="text-[10.5px] sm:text-[11px] text-slate-300 line-clamp-1 font-medium">

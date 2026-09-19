@@ -183,7 +183,7 @@ export function AdminDashboard() {
             <div className="w-12 h-12 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-lg border border-white/20 shrink-0">
               <img
                 src="/logo.png"
-                alt="PARIVARTAN Logo"
+                alt="GRAM SARTHI AI Logo"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -192,7 +192,7 @@ export function AdminDashboard() {
                 Officer Appraisal & Sanctions Dashboard
               </h1>
               <span className="text-xs text-[#F59E0B] font-semibold">
-                PARIVARTAN (परिवर्तन) Institutional Desk
+                GRAM SARTHI AI (ग्राम सारथी AI) Institutional Desk
               </span>
             </div>
           </div>

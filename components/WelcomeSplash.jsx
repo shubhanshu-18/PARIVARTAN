@@ -20,14 +20,14 @@ export function WelcomeSplash() {
     <div
       className="welcome-splash"
       role="status"
-      aria-label="Opening PARIVARTAN"
+      aria-label="Opening GRAM SARTHI AI"
     >
       <div className="welcome-splash-glow" aria-hidden="true" />
       <div className="welcome-splash-content">
         <div className="welcome-splash-mark" aria-hidden="true">
           <img
             src="/logo.png"
-            alt="PARIVARTAN Logo"
+            alt="GRAM SARTHI AI Logo"
             className="w-12 h-12 object-contain drop-shadow-md relative z-10"
           />
           <i className="welcome-splash-orbit welcome-splash-orbit-one" />
@@ -35,7 +35,7 @@ export function WelcomeSplash() {
         </div>
         <div className="welcome-splash-title">
           <Sparkles size={16} className="text-[#F59E0B]" aria-hidden="true" />
-          <span>PARIVARTAN (परिवर्तन)</span>
+          <span>GRAM SARTHI AI (ग्राम सारथी AI)</span>
         </div>
         <p>AI-Driven Hyper-Local Business Advisory & Financial Structuring</p>
         <div className="welcome-splash-location">

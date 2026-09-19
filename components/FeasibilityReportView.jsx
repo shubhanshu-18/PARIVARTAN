@@ -230,7 +230,7 @@ export function FeasibilityReportView() {
             <div className="w-12 h-12 rounded-2xl bg-slate-50 p-1.5 flex items-center justify-center shadow-sm border border-[#DCE4E8] shrink-0">
               <img
                 src="/logo.png"
-                alt="PARIVARTAN Logo"
+                alt="GRAM SARTHI AI Logo"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -241,7 +241,7 @@ export function FeasibilityReportView() {
                   : "Comprehensive Project Feasibility Dossier"}
               </h1>
               <span className="text-xs font-semibold text-[#167C5A]">
-                PARIVARTAN SIH26091 • Appraisal Dossier
+                GRAM SARTHI AI SIH26091 • Appraisal Dossier
               </span>
             </div>
           </div>

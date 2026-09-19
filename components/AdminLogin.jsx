@@ -29,15 +29,15 @@ export function AdminLogin() {
 
   return (
     <main className="admin-login-page">
-      <section className="admin-login-brand" aria-label="PARIVARTAN brand">
+      <section className="admin-login-brand" aria-label="GRAM SARTHI AI brand">
         <div className="admin-brand-mark bg-white p-1 rounded-2xl border border-white/40 shadow-md">
           <img
             src="/logo.png"
-            alt="PARIVARTAN Logo"
+            alt="GRAM SARTHI AI Logo"
             className="w-10 h-10 object-contain"
           />
         </div>
-        <p className="admin-eyebrow">PARIVARTAN (परिवर्तन)</p>
+        <p className="admin-eyebrow">GRAM SARTHI AI (ग्राम सारथी AI)</p>
         <h1>Intelligent Digital Support for Rural Entrepreneurship</h1>
         <p className="admin-brand-copy">
           Administrative intelligence for local opportunity, community growth,
