@@ -1,48 +1,52 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
+import { ApiService } from "../services/api";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [isOfficer, setIsOfficer] = useState(false);
-  const [officer, setOfficer] = useState(null);
+  const [admin, setAdmin] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
 
-  const loginOfficer = () => {
-    setLoginError("Officer login is disabled for this project.");
-    setIsOfficer(false);
-    setOfficer(null);
-    return false;
-  };
+  useEffect(() => {
+    ApiService.getAdmin()
+      .then(setAdmin)
+      .catch(() => setAdmin(null))
+      .finally(() => setAuthLoading(false));
+  }, []);
 
-  const logoutOfficer = () => {
-    setIsOfficer(false);
-    setOfficer(null);
+  const loginAdmin = async (email, password) => {
     setLoginError("");
+    try {
+      const result = await ApiService.adminLogin(email, password);
+      setAdmin(result.admin);
+      return true;
+    } catch (error) {
+      setLoginError(error.message);
+      return false;
+    }
   };
 
-  const setOfficerAccess = (value) => {
-    if (value === false) {
-      setIsOfficer(false);
-      setOfficer(null);
-      setLoginError("");
-      return;
-    }
-
-    setLoginError("Officer login is disabled for this project.");
-    setIsOfficer(false);
-    setOfficer(null);
+  const logoutAdmin = async () => {
+    await ApiService.adminLogout();
+    setAdmin(null);
+    setLoginError("");
   };
 
   const value = useMemo(
     () => ({
-      isOfficer,
-      setIsOfficer: setOfficerAccess,
-      officer,
+      isOfficer: Boolean(admin),
+      officer: admin,
+      officerName: admin?.name || "",
+      officerId: admin?.id || "",
+      admin,
+      authLoading,
       loginError,
-      loginOfficer,
-      logoutOfficer,
+      loginAdmin,
+      logoutAdmin,
+      logoutOfficer: logoutAdmin,
     }),
-    [isOfficer, officer, loginError],
+    [admin, authLoading, loginError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

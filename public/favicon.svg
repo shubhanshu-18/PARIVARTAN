@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gram Sarthi AI">
+  <rect width="64" height="64" rx="16" fill="#123B5D"/>
+  <path d="M43 17a20 20 0 1 0 3 28" fill="none" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
+  <path d="M43 17v17H29" fill="none" stroke="#F59E0B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 48c4-5 8-7 12-7s8 2 12 7" fill="none" stroke="#58B894" stroke-width="4" stroke-linecap="round"/>
+</svg>

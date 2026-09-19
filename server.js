@@ -7,9 +7,17 @@ const path = require("path");
 const apiRoutes = require("./routes/api");
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.join(__dirname, "dist");
 const frontendIndexPath = path.join(frontendDistPath, "index.html");
+const allowedOrigins = (process.env.FRONTEND_URL || "https://parivartan-tau.vercel.app")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+if (process.env.NODE_ENV !== "production") {
+  allowedOrigins.push("http://localhost:5173");
+}
 
 // Security & headers
 app.use(
@@ -22,9 +30,13 @@ app.use(
 // CORS setup
 app.use(
   cors({
-    origin: "https://parivartan-tau.vercel.app",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Origin is not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   }),
 );
 

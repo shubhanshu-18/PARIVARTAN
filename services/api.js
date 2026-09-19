@@ -1,6 +1,29 @@
 const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export const ApiService = {
+  async adminLogin(email, password) {
+    const res = await fetch(`${API_BASE}/api/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "Unable to sign in");
+    return body;
+  },
+
+  async adminLogout() {
+    await fetch(`${API_BASE}/api/admin/logout`, { method: "POST", credentials: "include" });
+  },
+
+  async getAdmin() {
+    const res = await fetch(`${API_BASE}/api/admin/me`, { credentials: "include" });
+    if (res.status === 401 || res.status === 403) return null;
+    if (!res.ok) throw new Error("Unable to verify admin session");
+    return (await res.json()).admin;
+  },
+
   async reverseGeocode(latitude, longitude) {
     const lat = Number(latitude);
     const lng = Number(longitude);
@@ -239,7 +262,7 @@ export const ApiService = {
   },
 
   async getAssessments() {
-    const res = await fetch(`${API_BASE}/api/assessments`);
+    const res = await fetch(`${API_BASE}/api/assessments`, { credentials: "include" });
     if (!res.ok) throw new Error("Failed to fetch assessments");
     return await res.json();
   },
@@ -247,19 +270,19 @@ export const ApiService = {
   async deleteAssessment(id) {
     let res = await fetch(
       `${API_BASE}/api/assessments/${encodeURIComponent(id)}`,
-      { method: "DELETE" },
+      { method: "DELETE", credentials: "include" },
     );
     if (res.status === 404 || res.status === 405) {
       res = await fetch(
         `${API_BASE}/api/assessments/${encodeURIComponent(id)}/delete`,
-        { method: "POST" },
+        { method: "POST", credentials: "include" },
       );
     }
     if (!res.ok) throw new Error("Failed to delete assessment");
   },
 
   async getAdminStats() {
-    const res = await fetch(`${API_BASE}/api/admin/stats`);
+    const res = await fetch(`${API_BASE}/api/admin/stats`, { credentials: "include" });
     if (!res.ok) throw new Error("Failed to fetch admin stats");
     return await res.json();
   },

@@ -14,12 +14,27 @@ import { FinancialCalculatorView } from "./components/FinancialCalculatorView";
 import { SchemeRouterView } from "./components/SchemeRouterView";
 import { FeasibilityReportView } from "./components/FeasibilityReportView";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { AdminLogin } from "./components/AdminLogin";
 import { WelcomeSplash } from "./components/WelcomeSplash";
 import { Shield } from "lucide-react";
 
 function AppContent() {
   const { activeStep, toast } = useApp();
-  const { isOfficer } = useAuth();
+  const { isOfficer, authLoading } = useAuth();
+  const isAdminPath = window.location.pathname.startsWith("/admin");
+
+  if (authLoading && isAdminPath) return <div className="admin-auth-loading">Checking secure session...</div>;
+  if (isAdminPath) {
+    if (window.location.pathname === "/admin/login" && isOfficer) {
+      window.location.replace("/admin/dashboard");
+      return null;
+    }
+    if (window.location.pathname === "/admin/dashboard" && !isOfficer) {
+      window.location.replace("/admin/login");
+      return null;
+    }
+    return window.location.pathname === "/admin/dashboard" ? <AdminDashboard /> : <AdminLogin />;
+  }
 
   return (
     <div className="app-shell min-h-screen flex flex-col bg-slate-100 text-slate-900 selection:bg-orange-500 selection:text-white relative">

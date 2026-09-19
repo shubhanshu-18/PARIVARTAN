@@ -1,5 +1,9 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const db = require("../db");
+const { pool } = require("../database");
+const { COOKIE_NAME, requireAdmin } = require("../middleware/adminAuth");
 const engine = require("../engine");
 const pdfService = require("../pdfservice");
 const { schemes } = require("../data/schemes");
@@ -12,6 +16,13 @@ const {
 } = require("../utils/validation");
 
 const router = express.Router();
+const authCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production" || process.env.COOKIE_SECURE === "true",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 8 * 60 * 60 * 1000,
+  path: "/",
+};
 const overpassUrl =
   process.env.OVERPASS_URL || "https://overpass-api.de/api/interpreter";
 const defaultMarketLocation = { lat: 23.2032, lng: 77.0844 };
@@ -77,6 +88,45 @@ router.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
     service: "Gram Sarthi AI Rural Enterprise Advisory API",
     version: "2.0.0",
+  });
+
+  router.post("/admin/login", async (req, res, next) => {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const password = typeof req.body?.password === "string" ? req.body.password : "";
+    if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
+
+    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+    if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
+
+    try {
+      const result = await pool.query(
+        "SELECT id, name, email, password_hash, role FROM admin_users WHERE email = $1 LIMIT 1",
+        [email],
+      );
+      const admin = result.rows[0];
+      const valid = admin && admin.role === "admin" && await bcrypt.compare(password, admin.password_hash);
+      if (!valid) return res.status(401).json({ error: "Invalid email or password" });
+
+      await pool.query("UPDATE admin_users SET last_login = NOW(), updated_at = NOW() WHERE id = $1", [admin.id]);
+      const token = jwt.sign(
+        { name: admin.name, email: admin.email, role: admin.role },
+        secret,
+        { subject: String(admin.id), expiresIn: "8h" },
+      );
+      res.cookie(COOKIE_NAME, token, authCookieOptions);
+      return res.json({ authenticated: true, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
+    } catch (error) {
+      return next(error);
+    }
+  });
+
+  router.post("/admin/logout", (req, res) => {
+    res.clearCookie(COOKIE_NAME, { ...authCookieOptions, maxAge: undefined });
+    res.json({ authenticated: false });
+  });
+
+  router.get("/admin/me", requireAdmin, (req, res) => {
+    res.json({ authenticated: true, admin: req.admin });
   });
 });
 
@@ -765,7 +815,7 @@ router.post("/assessments", async (req, res, next) => {
   }
 });
 
-router.get("/assessments", async (req, res, next) => {
+router.get("/assessments", requireAdmin, async (req, res, next) => {
   try {
     res.json(await db.getAllAssessments());
   } catch (error) {
@@ -773,7 +823,7 @@ router.get("/assessments", async (req, res, next) => {
   }
 });
 
-router.delete("/assessments/:id", async (req, res, next) => {
+router.delete("/assessments/:id", requireAdmin, async (req, res, next) => {
   const { id } = req.params;
   if (!id || id.length > 100) {
     return res.status(400).json({ error: "A valid assessment ID is required" });
@@ -791,7 +841,7 @@ router.delete("/assessments/:id", async (req, res, next) => {
 });
 
 // POST fallback for deployments or proxies that do not forward DELETE requests.
-router.post("/assessments/:id/delete", async (req, res, next) => {
+router.post("/assessments/:id/delete", requireAdmin, async (req, res, next) => {
   const { id } = req.params;
   if (!id || id.length > 100) {
     return res.status(400).json({ error: "A valid assessment ID is required" });
@@ -809,7 +859,7 @@ router.post("/assessments/:id/delete", async (req, res, next) => {
 });
 
 // 9. Officer Admin Stats
-router.get("/admin/stats", async (req, res, next) => {
+router.get("/admin/stats", requireAdmin, async (req, res, next) => {
   try {
     res.json(await db.getAdminStats());
   } catch (error) {

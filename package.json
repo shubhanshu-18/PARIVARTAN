@@ -9,6 +9,7 @@
     "start": "node server.js",
     "db:init": "node scripts/init-db.js",
     "db:seed": "node scripts/seed-db.js",
+    "admin:create": "node scripts/seed-admin.js",
     "db:test": "node scripts/test-db.js"
   },
   "dependencies": {

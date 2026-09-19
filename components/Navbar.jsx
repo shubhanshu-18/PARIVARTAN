@@ -185,7 +185,15 @@ export function Navbar() {
             <span>{language === "hi" ? "English" : "हिंदी"}</span>
           </button>
 
-          {/* Officer access is disabled for all users */}
+          <a
+            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
+            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
+          </a>
+
           {isOfficer && (
             <div className="flex items-center space-x-2">
               <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold">
@@ -255,6 +263,14 @@ export function Navbar() {
             <Globe2 className="w-4 h-4 text-sky-400" />
             <span>{language === "hi" ? "English" : "हिंदी"}</span>
           </button>
+          <a
+            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
+            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
+          </a>
           {isOfficer && (
             <button
               onClick={logoutOfficer}
