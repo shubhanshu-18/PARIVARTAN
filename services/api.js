@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_URL || "https://parivartan-production.up.railway.app").replace(/\/$/, "");
 
 export const ApiService = {
   async adminLogin(email, password) {
