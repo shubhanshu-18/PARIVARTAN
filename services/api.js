@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL || "https://parivartan-production.up.railway.app").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export const ApiService = {
   async adminLogin(email, password) {
@@ -14,11 +14,16 @@ export const ApiService = {
   },
 
   async adminLogout() {
-    await fetch(`${API_BASE}/api/admin/logout`, { method: "POST", credentials: "include" });
+    await fetch(`${API_BASE}/api/admin/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
   },
 
   async getAdmin() {
-    const res = await fetch(`${API_BASE}/api/admin/me`, { credentials: "include" });
+    const res = await fetch(`${API_BASE}/api/admin/me`, {
+      credentials: "include",
+    });
     if (res.status === 401 || res.status === 403) return null;
     if (!res.ok) throw new Error("Unable to verify admin session");
     return (await res.json()).admin;
@@ -27,8 +32,14 @@ export const ApiService = {
   async reverseGeocode(latitude, longitude) {
     const lat = Number(latitude);
     const lng = Number(longitude);
-    if (!Number.isFinite(lat) || lat < -90 || lat > 90 ||
-        !Number.isFinite(lng) || lng < -180 || lng > 180) {
+    if (
+      !Number.isFinite(lat) ||
+      lat < -90 ||
+      lat > 90 ||
+      !Number.isFinite(lng) ||
+      lng < -180 ||
+      lng > 180
+    ) {
       throw new Error("Invalid coordinates");
     }
     const res = await fetch(
@@ -262,7 +273,9 @@ export const ApiService = {
   },
 
   async getAssessments() {
-    const res = await fetch(`${API_BASE}/api/assessments`, { credentials: "include" });
+    const res = await fetch(`${API_BASE}/api/assessments`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error("Failed to fetch assessments");
     return await res.json();
   },
@@ -282,7 +295,9 @@ export const ApiService = {
   },
 
   async getAdminStats() {
-    const res = await fetch(`${API_BASE}/api/admin/stats`, { credentials: "include" });
+    const res = await fetch(`${API_BASE}/api/admin/stats`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error("Failed to fetch admin stats");
     return await res.json();
   },
