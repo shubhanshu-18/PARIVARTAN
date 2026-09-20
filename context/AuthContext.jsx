@@ -28,9 +28,13 @@ export function AuthProvider({ children }) {
   };
 
   const logoutAdmin = async () => {
-    await ApiService.adminLogout();
-    setAdmin(null);
-    setLoginError("");
+    try {
+      await ApiService.adminLogout();
+    } finally {
+      setAdmin(null);
+      setLoginError("");
+      window.location.assign("/");
+    }
   };
 
   const value = useMemo(
