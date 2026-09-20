@@ -89,45 +89,45 @@ router.get("/health", (req, res) => {
     service: "Gram Sarthi AI Rural Enterprise Advisory API",
     version: "2.0.0",
   });
+});
 
-  router.post("/admin/login", async (req, res, next) => {
-    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-    const password = typeof req.body?.password === "string" ? req.body.password : "";
-    if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
+router.post("/admin/login", async (req, res, next) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
 
-    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
-    if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
+  const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+  if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
 
-    try {
-      const result = await pool.query(
-        "SELECT id, name, email, password_hash, role FROM admin_users WHERE email = $1 LIMIT 1",
-        [email],
-      );
-      const admin = result.rows[0];
-      const valid = admin && admin.role === "admin" && await bcrypt.compare(password, admin.password_hash);
-      if (!valid) return res.status(401).json({ error: "Invalid email or password" });
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email, password_hash, role FROM admin_users WHERE email = $1 LIMIT 1",
+      [email],
+    );
+    const admin = result.rows[0];
+    const valid = admin && admin.role === "admin" && await bcrypt.compare(password, admin.password_hash);
+    if (!valid) return res.status(401).json({ error: "Invalid email or password" });
 
-      await pool.query("UPDATE admin_users SET last_login = NOW(), updated_at = NOW() WHERE id = $1", [admin.id]);
-      const token = jwt.sign(
-        { name: admin.name, email: admin.email, role: admin.role },
-        secret,
-        { subject: String(admin.id), expiresIn: "8h" },
-      );
-      res.cookie(COOKIE_NAME, token, authCookieOptions);
-      return res.json({ authenticated: true, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
-    } catch (error) {
-      return next(error);
-    }
-  });
+    await pool.query("UPDATE admin_users SET last_login = NOW(), updated_at = NOW() WHERE id = $1", [admin.id]);
+    const token = jwt.sign(
+      { name: admin.name, email: admin.email, role: admin.role },
+      secret,
+      { subject: String(admin.id), expiresIn: "8h" },
+    );
+    res.cookie(COOKIE_NAME, token, authCookieOptions);
+    return res.json({ authenticated: true, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
+  } catch (error) {
+    return next(error);
+  }
+});
 
-  router.post("/admin/logout", (req, res) => {
-    res.clearCookie(COOKIE_NAME, { ...authCookieOptions, maxAge: undefined });
-    res.json({ authenticated: false });
-  });
+router.post("/admin/logout", (req, res) => {
+  res.clearCookie(COOKIE_NAME, { ...authCookieOptions, maxAge: undefined });
+  res.json({ authenticated: false });
+});
 
-  router.get("/admin/me", requireAdmin, (req, res) => {
-    res.json({ authenticated: true, admin: req.admin });
-  });
+router.get("/admin/me", requireAdmin, (req, res) => {
+  res.json({ authenticated: true, admin: req.admin });
 });
 
 // 2. All businesses

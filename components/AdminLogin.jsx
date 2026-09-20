@@ -23,8 +23,9 @@ export function AdminLogin() {
     if (!email.trim()) return setValidationError("Please enter your email.");
     if (!password) return setValidationError("Please enter your password.");
     setIsSubmitting(true);
-    await loginAdmin(email, password);
+    const authenticated = await loginAdmin(email, password);
     setIsSubmitting(false);
+    if (authenticated) window.location.assign("/admin/dashboard");
   }
 
   return (
@@ -68,6 +69,7 @@ export function AdminLogin() {
             id="admin-email"
             type="email"
             autoComplete="username"
+            required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
@@ -77,6 +79,7 @@ export function AdminLogin() {
               id="admin-password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
+              required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
