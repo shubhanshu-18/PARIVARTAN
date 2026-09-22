@@ -119,6 +119,16 @@ export const ApiService = {
     }
   },
 
+  async getSuppliers({ lat, lng, radius = 5, businessCategory, supplierCategory, product }) {
+    const params = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: String(radius), businessCategory });
+    if (supplierCategory) params.set("supplierCategory", supplierCategory);
+    if (product) params.set("product", product);
+    const res = await fetch(`${API_BASE}/api/suppliers/nearby?${params}`);
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "Supplier search is currently unavailable");
+    return body;
+  },
+
   async calculateFinancials(params) {
     try {
       const res = await fetch(`${API_BASE}/api/financials/calculate`, {

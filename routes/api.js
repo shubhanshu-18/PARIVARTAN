@@ -7,6 +7,7 @@ const { COOKIE_NAME, requireAdmin } = require("../middleware/adminAuth");
 const engine = require("../engine");
 const pdfService = require("../pdfservice");
 const { schemes } = require("../data/schemes");
+const { BUSINESS_REQUIREMENTS, MATCH_WEIGHTS } = require("../data/businessRequirements");
 const {
   CATEGORY_KEYS,
   trimText,
@@ -81,6 +82,41 @@ async function findLiveBusinesses(lat, lng, radiusKm, category) {
   });
 }
 
+function validSupplierQuery(query) {
+  const lat = Number(query.lat ?? query.latitude);
+  const lng = Number(query.lng ?? query.longitude);
+  const radius = Number(query.radius || 5);
+  const businessCategory = trimText(query.businessCategory, 40);
+  const supplierCategory = trimText(query.supplierCategory, 80);
+  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180 || ![1, 3, 5, 10, 25].includes(radius) || !CATEGORY_KEYS.includes(businessCategory)) return null;
+  const allowed = (BUSINESS_REQUIREMENTS[businessCategory] || []).map((item) => item.key);
+  if (supplierCategory && !allowed.includes(supplierCategory)) return null;
+  return { lat, lng, radius, businessCategory, supplierCategory, product: trimText(query.product, 100) };
+}
+
+function supplierScore(supplier, requirement, radius) {
+  const haystack = `${supplier.category} ${(supplier.products || []).join(" ")}`.toLowerCase();
+  const terms = [requirement?.label, ...(requirement?.osmTerms || [])].filter(Boolean).map((term) => term.toLowerCase());
+  const categoryRelevance = terms.some((term) => supplier.category.toLowerCase().includes(term)) ? 40 : 24;
+  const productMatch = terms.some((term) => haystack.includes(term)) ? 30 : 0;
+  const distance = Math.max(0, Math.round(20 * (1 - supplier.distanceKm / radius)));
+  const delivery = supplier.deliveryAvailable === true ? 10 : 0;
+  return { score: categoryRelevance + productMatch + distance + delivery, factors: { categoryRelevance, productMatch, distance, deliveryAvailable: delivery } };
+}
+
+async function findLiveSuppliers(lat, lng, radius, requirements) {
+  const terms = [...new Set(requirements.flatMap((item) => item.osmTerms || []))].slice(0, 20);
+  if (!terms.length) return [];
+  const clauses = terms.map((term) => `nwr(around:${radius * 1000},${lat},${lng})[name]["name"~"${term.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&")}",i];`).join("");
+  const data = await fetchJson(overpassUrl, { method: "POST", headers: { Accept: "*/*", "Content-Type": "application/x-www-form-urlencoded", "User-Agent": overpassUserAgent }, body: `data=[out:json][timeout:12];(${clauses});out center tags;` }, 15000);
+  return (data.elements || []).flatMap((element) => {
+    const point = element.center || element; const tags = element.tags || {};
+    if (!Number.isFinite(point.lat) || !Number.isFinite(point.lon) || !tags.name) return [];
+    const address = [tags["addr:housenumber"], tags["addr:street"], tags["addr:city"]].filter(Boolean).join(", ");
+    return [{ id: `osm-${element.type}-${element.id}`, name: tags.name, category: tags.shop || tags.craft || tags.amenity || "Local business", products: [], address: address || null, lat: point.lat, lng: point.lon, phone: tags.phone || tags["contact:phone"] || null, website: tags.website || tags["contact:website"] || null, deliveryAvailable: null, source: "OpenStreetMap", sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`, verified: false, updatedAt: null }];
+  });
+}
+
 // 1. Health check
 router.get("/health", (req, res) => {
   res.json({
@@ -128,6 +164,39 @@ router.post("/admin/logout", (req, res) => {
 
 router.get("/admin/me", requireAdmin, (req, res) => {
   res.json({ authenticated: true, admin: req.admin });
+});
+
+// Supplier Discovery: requirements are configuration-driven; records remain source-labelled.
+router.get("/suppliers/requirements", (req, res) => {
+  const category = trimText(req.query.businessCategory, 40);
+  if (category && !CATEGORY_KEYS.includes(category)) return res.status(400).json({ error: "Valid businessCategory is required" });
+  res.json({ businessCategory: category || null, requirements: category ? BUSINESS_REQUIREMENTS[category] || [] : BUSINESS_REQUIREMENTS, matchWeights: MATCH_WEIGHTS });
+});
+
+router.get("/suppliers/categories", (req, res) => {
+  const category = trimText(req.query.businessCategory, 40);
+  if (!CATEGORY_KEYS.includes(category)) return res.status(400).json({ error: "Valid businessCategory is required" });
+  res.json({ categories: BUSINESS_REQUIREMENTS[category] || [] });
+});
+
+router.get(["/suppliers", "/suppliers/nearby"], async (req, res) => {
+  const query = validSupplierQuery(req.query);
+  if (!query) return res.status(400).json({ error: "Valid latitude, longitude, radius (1, 3, 5, 10, or 25), and businessCategory are required" });
+  const requirements = (BUSINESS_REQUIREMENTS[query.businessCategory] || []).filter((item) => !query.supplierCategory || item.key === query.supplierCategory);
+  if (!requirements.length) return res.json({ suppliers: [], requirements: [], matchWeights: MATCH_WEIGHTS, message: "No configured procurement requirements for this business category." });
+  let databaseSuppliers = []; let liveSuppliers = []; let liveWarning = null;
+  try { databaseSuppliers = await db.getNearbySuppliers(query.lat, query.lng, query.radius, query.supplierCategory); } catch (error) { liveWarning = "Supplier database is currently unavailable."; }
+  try { liveSuppliers = await findLiveSuppliers(query.lat, query.lng, query.radius, requirements); } catch (error) { liveWarning = liveWarning || "OpenStreetMap supplier search is currently unavailable."; }
+  const all = [...databaseSuppliers, ...liveSuppliers]
+    .map((supplier) => ({ ...supplier, distanceKm: db.calculateDistanceKm(query.lat, query.lng, supplier.lat, supplier.lng) }))
+    .filter((supplier) => supplier.distanceKm <= query.radius)
+    .filter((supplier, index, source) => source.findIndex((item) => item.id === supplier.id) === index)
+    .map((supplier) => {
+      const requirement = requirements.find((item) => `${supplier.category} ${(supplier.products || []).join(" ")}`.toLowerCase().includes(item.label.toLowerCase())) || requirements[0];
+      return { ...supplier, matchedRequirement: requirement.key, match: supplierScore(supplier, requirement, query.radius) };
+    })
+    .sort((a, b) => b.match.score - a.match.score || a.distanceKm - b.distanceKm);
+  res.json({ suppliers: all, requirements, matchWeights: MATCH_WEIGHTS, dataSources: [...new Set(all.map((item) => item.source))], warning: liveWarning, message: all.length ? null : `No relevant suppliers found within ${query.radius} km.`, searchLocation: { lat: query.lat, lng: query.lng, radius: query.radius } });
 });
 
 // 2. All businesses
