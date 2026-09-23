@@ -113,6 +113,22 @@ class SpatialDatabase {
       .sort((a, b) => a.distanceKm - b.distanceKm);
   }
 
+  async getNearbySuppliers(lat, lng, radiusKm, supplierCategory = null) {
+    const { rows } = await pool.query(
+      `SELECT id, name, category, products, address, village, district, state, lat, lng,
+              phone, website, delivery_available AS "deliveryAvailable", source, verified,
+              updated_at AS "updatedAt"
+       FROM suppliers
+       WHERE lat BETWEEN $1 AND $2 AND lng BETWEEN $3 AND $4
+       ORDER BY updated_at DESC`,
+      [lat - radiusKm / 111, lat + radiusKm / 111, lng - radiusKm / 111, lng + radiusKm / 111],
+    );
+    return rows
+      .map((supplier) => ({ ...supplier, distanceKm: this.calculateDistanceKm(lat, lng, supplier.lat, supplier.lng) }))
+      .filter((supplier) => supplier.distanceKm <= radiusKm)
+      .filter((supplier) => !supplierCategory || supplier.category === supplierCategory);
+  }
+
   async getMarketIntelligence(
     lat,
     lng,

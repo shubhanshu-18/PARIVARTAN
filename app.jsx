@@ -11,6 +11,7 @@ import { OnboardingForm } from "./components/OnboardingForm";
 import { MarketIntelView } from "./components/MarketIntelView";
 import { AdvisoryView } from "./components/AdvisoryView";
 import { FinancialCalculatorView } from "./components/FinancialCalculatorView";
+import { SupplierDiscoveryView } from "./components/SupplierDiscoveryView";
 import { SchemeRouterView } from "./components/SchemeRouterView";
 import { FeasibilityReportView } from "./components/FeasibilityReportView";
 import { AdminDashboard } from "./components/AdminDashboard";
@@ -72,7 +73,7 @@ function AppContent() {
               {activeStep === 1 && <OnboardingForm />}
               {activeStep === 2 && <MarketIntelView />}
               {activeStep === 3 && <AdvisoryView />}
-              {activeStep === 4 && <FinancialCalculatorView />}
+              {activeStep === 4 && <><FinancialCalculatorView /><SupplierDiscoveryView /></>}
               {activeStep === 5 && <SchemeRouterView />}
               {activeStep === 6 && <FeasibilityReportView />}
             </div>
