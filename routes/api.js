@@ -14,6 +14,7 @@ const {
   validateFinancialInput,
   assertValid,
 } = require("../utils/validation");
+const { evaluateLocationForBusinesses } = require("../utils/businessPreferenceEngine");
 
 const router = express.Router();
 const authCookieOptions = {
@@ -242,6 +243,42 @@ router.get("/market-intelligence", async (req, res) => {
         dataSources: [{ name: "OpenStreetMap Overpass API", type: "real" }],
       });
     }
+  }
+});
+
+router.post("/business-preferences", async (req, res) => {
+  const { lat, lng, state, district, village } = req.body;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return res.status(400).json({ error: "Valid latitude and longitude are required" });
+  }
+
+  try {
+    // Attempt to get live businesses for competition factor, with a timeout or fallback
+    let liveBusinesses = null;
+    try {
+      // Find all live businesses in 5km radius (combining shops and crafts)
+      liveBusinesses = await findLiveBusinesses(lat, lng, 5, "all");
+    } catch (err) {
+      // It's okay if OSM fails, we'll fall back to database
+    }
+
+    const recommendations = await evaluateLocationForBusinesses({
+      lat,
+      lng,
+      state,
+      district,
+      village,
+      liveBusinesses
+    });
+
+    res.json({
+      location: { lat, lng, state, district, village },
+      recommendations,
+      dataMode: liveBusinesses ? "live" : "database",
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to evaluate business preferences", details: error.message });
   }
 });
 

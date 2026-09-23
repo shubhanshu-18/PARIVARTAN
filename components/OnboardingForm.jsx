@@ -48,6 +48,9 @@ export function OnboardingForm() {
   } = useApp();
 
   const [errors, setErrors] = useState({});
+  const [entryMode, setEntryMode] = useState("manual");
+  const [autoRecommendations, setAutoRecommendations] = useState(null);
+  const [isAutoLoading, setIsAutoLoading] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsSuccess, setGpsSuccess] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
@@ -231,6 +234,46 @@ export function OnboardingForm() {
     );
   };
 
+
+  const handleAutoAnalyzeLocation = async () => {
+    if (!profile.lat || !profile.lng) {
+      showToast(language === "hi" ? "कृपया पहले GPS से स्थान प्राप्त करें" : "Please detect location via GPS first", "warning");
+      return;
+    }
+    setIsAutoLoading(true);
+    setAutoRecommendations(null);
+    try {
+      const response = await fetch("/api/business-preferences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lat: profile.lat,
+          lng: profile.lng,
+          state: profile.state,
+          district: profile.district,
+          village: profile.village
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to analyze local market");
+      setAutoRecommendations(data.recommendations);
+      showToast(language === "hi" ? "बाज़ार विश्लेषण पूर्ण हुआ" : "Market analysis complete", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+    } finally {
+      setIsAutoLoading(false);
+    }
+  };
+
+  const handleSelectRecommendation = (rec) => {
+    updateProfile({
+      businessCategory: rec.businessCategory,
+      businessIdea: language === "hi" ? `${rec.businessNameHi} उद्यम` : `${rec.businessName} Enterprise`
+    });
+    setEntryMode("manual");
+    showToast(language === "hi" ? "व्यवसाय का चयन किया गया" : "Business selected successfully", "success");
+  };
+
   const startVoiceDictation = () => {
     if (!SpeechHelper.isSpeechRecognitionSupported()) {
       showToast("Voice input requires Chrome, Edge or Safari", "warning");
@@ -328,6 +371,42 @@ export function OnboardingForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* SECTION 1: BUSINESS IDEA & SECTOR */}
+        
+        {/* MODE TOGGLE */}
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-sm font-bold text-[#17212B]">
+              {language === "hi" ? "आप कैसे शुरुआत करना चाहेंगे?" : "How would you like to start?"}
+            </h2>
+            <p className="text-[11px] text-[#667085]">
+              {language === "hi" 
+                ? "क्या आपके पास पहले से कोई विचार है, या हम आपके स्थान के आधार पर सुझाव दें?" 
+                : "Do you have an idea, or should we suggest one based on your location?"}
+            </p>
+          </div>
+          <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setEntryMode("manual")}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition ${entryMode === "manual" ? "bg-white text-[#123B5D] shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"}`}
+            >
+              {language === "hi" ? "मेरे पास विचार है" : "I have an idea"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setEntryMode("auto")}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition ${entryMode === "auto" ? "bg-white text-[#167C5A] shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700"}`}
+            >
+              <MapPin className="w-3 h-3 inline mr-1" />
+              {language === "hi" ? "मेरे स्थान के लिए सुझाव दें" : "Suggest for my location"}
+            </button>
+          </div>
+        </div>
+
+
+        {entryMode === "manual" ? (
+          <>
+{/* SECTION 1: BUSINESS IDEA & SECTOR */}
         <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
           <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
             <div className="w-8 h-8 rounded-lg bg-[#FFF7E6] text-[#F59E0B] border border-[#F59E0B]/20 flex items-center justify-center font-bold">
@@ -600,6 +679,228 @@ export function OnboardingForm() {
         </div>
 
         {/* SECTION 3: CAPITAL & LOAN REQUIREMENT */}
+        
+          </>
+        ) : (
+          <>
+{/* SECTION 2: LOCATION & GEOLOCATION */}
+        <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
+          <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF4FA] text-[#123B5D] border border-[#123B5D]/20 flex items-center justify-center font-bold">
+              <MapPin className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-[#17212B]">
+                {language === "hi"
+                  ? "2. स्थान एवं जीपीएस मैपिंग"
+                  : "2. Location & Spatial Mapping"}
+              </h2>
+              <p className="text-[11px] text-[#667085]">
+                {language === "hi"
+                  ? "हाइपर-लोकल प्रतियोगी घनत्व एवं ग्रामीण बाज़ार पहुंच का निर्धारण"
+                  : "Enables 1-5km radius competitor matching and mandi distance calculation"}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            {/* State */}
+            <div>
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
+                {t("form.state", language)}
+              </label>
+              <select
+                name="state"
+                value={profile.state}
+                onChange={handleStateChange}
+                className="w-full px-3 py-2 text-xs rounded-lg border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]"
+              >
+                <option value="">Select state</option>
+                {Object.keys(STATES_DISTRICTS).map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* District */}
+            <div>
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
+                {t("form.district", language)}
+              </label>
+              <select
+                name="district"
+                value={profile.district}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 text-xs rounded-lg border border-[#DCE4E8] bg-white text-[#17212B] focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]"
+              >
+                <option value="">Select district</option>
+                {districtsForState.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Village / Town */}
+            <div>
+              <label className="block text-xs font-bold text-[#17212B] mb-1.5">
+                {t("form.village", language)}
+              </label>
+              <input
+                type="text"
+                name="village"
+                value={profile.village}
+                onChange={handleInputChange}
+                onBlur={() => handleInputBlur("village")}
+                placeholder={t("form.villagePlaceholder", language)}
+                className={`w-full px-3 py-2 text-xs rounded-lg border transition bg-white ${
+                  errors.village
+                    ? "border-[#DC2626] bg-[#FEF2F2]/50 ring-1 ring-[#DC2626]/20"
+                    : "border-[#DCE4E8] hover:border-slate-400"
+                } focus:outline-none focus:ring-2 focus:ring-[#123B5D]/15 focus:border-[#123B5D]`}
+              />
+              {errors.village && (
+                <p className="text-[11px] text-[#DC2626] font-medium flex items-center space-x-1 mt-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{errors.village}</span>
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* GPS Detector button */}
+          <div className="mt-4 pt-3 border-t border-[#DCE4E8]/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="text-[11px] text-[#667085] flex items-center space-x-1.5">
+              <Compass className="w-3.5 h-3.5 text-[#667085]" />
+              <span>
+                Coordinates:{" "}
+                <strong className="text-[#17212B]">
+                  {location
+                    ? `${location.latitude.toFixed(4)}°N, ${location.longitude.toFixed(4)}°E`
+                    : "Not detected"}
+                </strong>
+              </span>
+              {locationMessage && (
+                <span
+                  className={
+                    gpsSuccess
+                      ? "text-[#167C5A] font-semibold"
+                      : "text-[#F59E0B] font-semibold"
+                  }
+                >
+                  {locationMessage}
+                </span>
+              )}
+              {gpsSuccess && (
+                <span className="text-[#167C5A] font-semibold bg-[#E8F6F1] px-2 py-0.5 rounded text-[10px] border border-[#167C5A]/30">
+                  {t("form.locationDetected", language)}
+                </span>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={detectLocation}
+              disabled={gpsLoading}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 border border-[#DCE4E8] hover:border-[#123B5D] text-[#123B5D] flex items-center space-x-1.5 transition shadow-xs disabled:opacity-50"
+            >
+              <Compass
+                className={`w-3.5 h-3.5 text-[#123B5D] ${gpsLoading ? "animate-spin" : ""}`}
+              />
+              <span>
+                {gpsLoading
+                  ? "Capturing GPS..."
+                  : t("form.detectLocation", language)}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        
+        {entryMode === "auto" && (
+          <div className="bg-[#F8FAFC] rounded-xl shadow-subtle border border-[#123B5D]/20 p-5 sm:p-6 mb-6">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-3 border border-slate-200">
+                <Sparkles className="w-6 h-6 text-[#123B5D]" />
+              </div>
+              <h2 className="text-sm font-bold text-[#17212B] mb-2">
+                {language === "hi" ? "आपके स्थान के लिए सर्वश्रेष्ठ व्यवसाय" : "Best Businesses for Your Location"}
+              </h2>
+              <p className="text-xs text-[#667085] mb-5 max-w-md mx-auto">
+                {language === "hi" 
+                  ? "हम आपके आस-पास के बाजार की मांग, प्रतिस्पर्धा और बुनियादी ढांचे का विश्लेषण करके सुझाव देंगे।"
+                  : "We'll analyze nearby market demand, competition, and infrastructure to recommend the most viable options."}
+              </p>
+              
+              {!autoRecommendations && (
+                <button
+                  type="button"
+                  onClick={handleAutoAnalyzeLocation}
+                  disabled={isAutoLoading || !profile.lat}
+                  className="px-5 py-2.5 bg-[#123B5D] text-white text-xs font-bold rounded-lg shadow-sm hover:bg-[#0D2E49] disabled:opacity-50 transition flex items-center space-x-2 mx-auto"
+                >
+                  {isAutoLoading ? <Compass className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+                  <span>{isAutoLoading ? (language === "hi" ? "विश्लेषण कर रहे हैं..." : "Analyzing Market...") : (language === "hi" ? "बाज़ार विश्लेषण शुरू करें" : "Analyze Local Market")}</span>
+                </button>
+              )}
+            </div>
+
+            {autoRecommendations && (
+              <div className="mt-6 space-y-4">
+                <h3 className="text-xs font-bold text-[#17212B] uppercase tracking-wider mb-3 border-b pb-2">
+                  {language === "hi" ? "शीर्ष सुझाव" : "Top Recommendations"}
+                </h3>
+                {autoRecommendations.map((rec, idx) => (
+                  <div key={rec.businessCategory} className="bg-white rounded-lg border border-slate-200 p-4 hover:border-[#123B5D] transition">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-3">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="w-6 h-6 rounded bg-[#EEF4FA] text-[#123B5D] flex items-center justify-center text-xs font-bold">
+                            #{idx + 1}
+                          </span>
+                          <h4 className="text-sm font-bold text-[#17212B]">{language === "hi" ? rec.businessNameHi : rec.businessName}</h4>
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-1 flex space-x-3">
+                          <span>Demand: {rec.demandScore}/100</span>
+                          <span>Comp: {rec.competitionScore}/100</span>
+                          <span>Access: {rec.accessibilityScore}/100</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-lg font-extrabold text-[#167C5A]">{rec.overallScore}/100</span>
+                        <span className="text-[10px] text-[#667085]">Suitability</span>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-50 rounded p-3 text-xs text-slate-700 space-y-1 mb-3">
+                      {rec.reasons.slice(0,3).map((r, i) => (
+                        <p key={i} className="flex items-start space-x-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-[#167C5A] mt-0.5 shrink-0" />
+                          <span>{r}</span>
+                        </p>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSelectRecommendation(rec)}
+                      className="w-full py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-xs font-bold hover:bg-emerald-100 transition"
+                    >
+                      {language === "hi" ? "यह व्यवसाय चुनें" : "Choose this Business"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+          </>
+        )}
+{/* SECTION 3: CAPITAL & LOAN REQUIREMENT */}
         <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-5 sm:p-6">
           <div className="flex items-center space-x-3 pb-3 mb-5 border-b border-[#DCE4E8]/70">
             <div className="w-8 h-8 rounded-lg bg-[#E8F6F1] text-[#167C5A] border border-[#167C5A]/20 flex items-center justify-center font-bold">
