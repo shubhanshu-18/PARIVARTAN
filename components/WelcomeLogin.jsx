@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 
 const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
-export function WelcomeLogin() {
+export function WelcomeLogin({ onBack }) {
   const { language, setLanguage } = useApp();
   const { loginUser, registerUser } = useAuth();
   const [isSignUp, setIsSignUp] = useState(window.location.pathname === "/signup");
@@ -68,6 +68,16 @@ export function WelcomeLogin() {
   return (
     <main className="minimal-login-page">
       <div className="minimal-login-card">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-4 inline-flex items-center text-xs font-bold text-[#167C5A] hover:text-[#105D44] transition-colors"
+          >
+            ← Back to Portal Selection
+          </button>
+        )}
+
         <div className="minimal-login-brand">
           <span className="minimal-login-mark">
             <img src="/favicon.png" alt="" />

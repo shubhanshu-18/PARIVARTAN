@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-export function AdminLogin() {
+export function AdminLogin({ onBack }) {
   const { loginAdmin, loginError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,6 +59,15 @@ export function AdminLogin() {
 
       <section className="admin-login-panel">
         <form className="admin-login-card" onSubmit={handleSubmit} noValidate>
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="mb-4 inline-flex items-center text-xs font-bold text-[#123B5D] hover:text-[#0D2E49] transition-colors"
+            >
+              ← Back to Portal Selection
+            </button>
+          )}
           <p className="admin-eyebrow">ADMINISTRATIVE INTELLIGENCE PORTAL</p>
           <h2>Welcome Back</h2>
           <p className="admin-login-subtitle">
@@ -109,3 +118,5 @@ export function AdminLogin() {
     </main>
   );
 }
+
+export default AdminLogin;
