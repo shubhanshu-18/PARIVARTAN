@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "../context/AppContext";
 import { t } from "../utils/translations";
 import { SpeechHelper } from "../speech";
+import { ApiService } from "../services/api";
 import {
   Sparkles,
   Volume2,
@@ -18,6 +19,8 @@ import {
   ListOrdered,
   Clock,
   Zap,
+  PlayCircle,
+  Video,
 } from "lucide-react";
 
 export function AdvisoryView() {
@@ -30,6 +33,39 @@ export function AdvisoryView() {
     setIsSpeaking,
     showToast,
   } = useApp();
+
+  const [videos, setVideos] = useState([]);
+  const [loadingVideos, setLoadingVideos] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videoError, setVideoError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadVideos() {
+      if (!profile?.businessIdea) return;
+      setLoadingVideos(true);
+      setVideoError(null);
+      try {
+        const response = await ApiService.getAdvisoryVideos(profile);
+        if (isMounted) {
+          if (response?.videos?.length > 0) {
+            setVideos(response.videos);
+            setSelectedVideo(response.videos[0]);
+          } else {
+            setVideos([]);
+          }
+        }
+      } catch (err) {
+        if (isMounted) setVideoError(err.message);
+      } finally {
+        if (isMounted) setLoadingVideos(false);
+      }
+    }
+    loadVideos();
+    return () => {
+      isMounted = false;
+    };
+  }, [profile?.businessIdea]);
 
   const adv = advisory || {
     strengths: [
@@ -446,6 +482,123 @@ export function AdvisoryView() {
         </div>
       </div>
 
+      {/* BUSINESS STRATEGY VIDEO GUIDANCE */}
+      <div className="bg-white rounded-xl border border-[#DCE4E8] shadow-subtle p-5 sm:p-6 mb-6">
+        <div className="flex items-center space-x-2.5 pb-3 mb-4 border-b border-[#DCE4E8]/70">
+          <Video className="w-5 h-5 text-[#123B5D]" />
+          <div>
+            <h2 className="text-sm font-bold text-[#17212B] uppercase tracking-wide">
+              Business Strategy Video Guidance
+            </h2>
+            <p className="text-[11px] text-[#667085] mt-0.5">
+              Learn how to start, manage, market and grow your selected business
+              with curated video guidance.
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <span className="text-[11px] text-[#667085] block font-semibold mb-1">
+            SELECTED BUSINESS
+          </span>
+          <div className="inline-block bg-[#E8F6F1] text-[#167C5A] border border-[#167C5A]/20 rounded-md px-3 py-1.5 text-xs font-bold">
+            {profile?.businessIdea || "Rural Enterprise"}
+          </div>
+        </div>
+
+        {loadingVideos ? (
+          <div className="flex items-center justify-center p-8 bg-[#F7F9F7] rounded-xl border border-[#DCE4E8] border-dashed">
+            <div className="text-center space-y-3">
+              <div className="w-8 h-8 rounded-full border-2 border-[#123B5D] border-t-transparent animate-spin mx-auto"></div>
+              <p className="text-xs text-[#667085] font-semibold">
+                Finding relevant business strategy videos...
+              </p>
+            </div>
+          </div>
+        ) : videoError || videos.length === 0 ? (
+          <div className="flex items-center justify-center p-8 bg-[#F7F9F7] rounded-xl border border-[#DCE4E8] border-dashed">
+            <div className="text-center space-y-2">
+              <AlertCircle className="w-8 h-8 text-[#9A6500] mx-auto opacity-70" />
+              <p className="text-xs text-[#667085] font-semibold">
+                {videoError
+                  ? "Video guidance is temporarily unavailable."
+                  : "No highly relevant videos were found for this business idea yet."}
+              </p>
+              <p className="text-[11px] text-[#667085]">
+                Your AI business strategy is still available above.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-3">
+              <h3 className="text-xs font-bold text-[#17212B] uppercase">
+                Featured Guidance
+              </h3>
+              {selectedVideo && (
+                <div className="rounded-xl overflow-hidden border border-[#DCE4E8] shadow-sm bg-black aspect-video relative">
+                  <iframe
+                    className="w-full h-full absolute top-0 left-0"
+                    src={`https://www.youtube-nocookie.com/embed/${selectedVideo.videoId}`}
+                    title={selectedVideo.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              )}
+              {selectedVideo && (
+                <div className="pt-2">
+                  <h4 className="text-sm font-bold text-[#17212B] line-clamp-2">
+                    {selectedVideo.title}
+                  </h4>
+                  <p className="text-[11px] text-[#667085] mt-1">
+                    {selectedVideo.channelTitle}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-[#17212B] uppercase">
+                Recommended Guidance
+              </h3>
+              <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                {videos.map((video) => (
+                  <button
+                    key={video.videoId}
+                    onClick={() => setSelectedVideo(video)}
+                    className={`w-full text-left flex flex-col p-2.5 rounded-lg border transition group ${selectedVideo?.videoId === video.videoId ? "bg-[#F7F9F7] border-[#123B5D]/40" : "bg-white border-[#DCE4E8] hover:border-[#123B5D]/40"}`}
+                  >
+                    <div className="flex gap-3 w-full">
+                      <div className="relative w-24 h-16 rounded overflow-hidden flex-shrink-0 bg-slate-100">
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 flex items-center justify-center transition">
+                          <PlayCircle className="w-6 h-6 text-white opacity-80" />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                        <h5 className="text-[11px] font-bold text-[#17212B] line-clamp-2 leading-snug">
+                          {video.title}
+                        </h5>
+                        <div>
+                          <span className="text-[9px] font-bold text-[#167C5A] uppercase bg-[#E8F6F1] px-1.5 py-0.5 rounded block w-max mt-1">
+                            {video.query}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       {/* NAVIGATION BAR */}
       <div className="bg-white rounded-xl shadow-card border border-[#DCE4E8] p-4 flex items-center justify-between">
         <button

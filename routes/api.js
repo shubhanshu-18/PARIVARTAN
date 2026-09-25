@@ -7,7 +7,10 @@ const { COOKIE_NAME, requireAdmin } = require("../middleware/adminAuth");
 const engine = require("../engine");
 const pdfService = require("../pdfservice");
 const { schemes } = require("../data/schemes");
-const { BUSINESS_REQUIREMENTS, MATCH_WEIGHTS } = require("../data/businessRequirements");
+const {
+  BUSINESS_REQUIREMENTS,
+  MATCH_WEIGHTS,
+} = require("../data/businessRequirements");
 const {
   CATEGORY_KEYS,
   trimText,
@@ -15,12 +18,16 @@ const {
   validateFinancialInput,
   assertValid,
 } = require("../utils/validation");
-const { evaluateLocationForBusinesses } = require("../utils/businessPreferenceEngine");
+const {
+  evaluateLocationForBusinesses,
+} = require("../utils/businessPreferenceEngine");
 
 const router = express.Router();
 const authCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production" || process.env.COOKIE_SECURE === "true",
+  secure:
+    process.env.NODE_ENV === "production" ||
+    process.env.COOKIE_SECURE === "true",
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 8 * 60 * 60 * 1000,
   path: "/",
@@ -40,7 +47,8 @@ async function fetchJson(url, options = {}, timeoutMs = 10000) {
       signal: controller.signal,
       headers: { Accept: "application/json", ...(options.headers || {}) },
     });
-    if (!response.ok) throw new Error(`External service returned ${response.status}`);
+    if (!response.ok)
+      throw new Error(`External service returned ${response.status}`);
     return await response.json();
   } finally {
     clearTimeout(timeout);
@@ -70,16 +78,18 @@ async function findLiveBusinesses(lat, lng, radiusKm, category) {
     const point = element.center || element;
     if (!Number.isFinite(point.lat) || !Number.isFinite(point.lon)) return [];
     const tags = element.tags || {};
-    return [{
-      id: `OSM-${element.type}-${element.id}`,
-      name: tags.name || "Unnamed public business",
-      category: tags.shop || tags.craft || category,
-      categoryKey: category,
-      lat: point.lat,
-      lng: point.lon,
-      source: "OpenStreetMap",
-      sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
-    }];
+    return [
+      {
+        id: `OSM-${element.type}-${element.id}`,
+        name: tags.name || "Unnamed public business",
+        category: tags.shop || tags.craft || category,
+        categoryKey: category,
+        lat: point.lat,
+        lng: point.lon,
+        source: "OpenStreetMap",
+        sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
+      },
+    ];
   });
 }
 
@@ -89,32 +99,117 @@ function validSupplierQuery(query) {
   const radius = Number(query.radius || 5);
   const businessCategory = trimText(query.businessCategory, 40);
   const supplierCategory = trimText(query.supplierCategory, 80);
-  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180 || ![1, 3, 5, 10, 25].includes(radius) || !CATEGORY_KEYS.includes(businessCategory)) return null;
-  const allowed = (BUSINESS_REQUIREMENTS[businessCategory] || []).map((item) => item.key);
+  if (
+    !Number.isFinite(lat) ||
+    lat < -90 ||
+    lat > 90 ||
+    !Number.isFinite(lng) ||
+    lng < -180 ||
+    lng > 180 ||
+    ![1, 3, 5, 10, 25].includes(radius) ||
+    !CATEGORY_KEYS.includes(businessCategory)
+  )
+    return null;
+  const allowed = (BUSINESS_REQUIREMENTS[businessCategory] || []).map(
+    (item) => item.key,
+  );
   if (supplierCategory && !allowed.includes(supplierCategory)) return null;
-  return { lat, lng, radius, businessCategory, supplierCategory, product: trimText(query.product, 100) };
+  return {
+    lat,
+    lng,
+    radius,
+    businessCategory,
+    supplierCategory,
+    product: trimText(query.product, 100),
+  };
 }
 
 function supplierScore(supplier, requirement, radius) {
-  const haystack = `${supplier.category} ${(supplier.products || []).join(" ")}`.toLowerCase();
-  const terms = [requirement?.label, ...(requirement?.osmTerms || [])].filter(Boolean).map((term) => term.toLowerCase());
-  const categoryRelevance = terms.some((term) => supplier.category.toLowerCase().includes(term)) ? 40 : 24;
+  const haystack =
+    `${supplier.category} ${(supplier.products || []).join(" ")}`.toLowerCase();
+  const terms = [requirement?.label, ...(requirement?.osmTerms || [])]
+    .filter(Boolean)
+    .map((term) => term.toLowerCase());
+  const categoryRelevance = terms.some((term) =>
+    supplier.category.toLowerCase().includes(term),
+  )
+    ? 40
+    : 24;
   const productMatch = terms.some((term) => haystack.includes(term)) ? 30 : 0;
-  const distance = Math.max(0, Math.round(20 * (1 - supplier.distanceKm / radius)));
+  const distance = Math.max(
+    0,
+    Math.round(20 * (1 - supplier.distanceKm / radius)),
+  );
   const delivery = supplier.deliveryAvailable === true ? 10 : 0;
-  return { score: categoryRelevance + productMatch + distance + delivery, factors: { categoryRelevance, productMatch, distance, deliveryAvailable: delivery } };
+  return {
+    score: categoryRelevance + productMatch + distance + delivery,
+    factors: {
+      categoryRelevance,
+      productMatch,
+      distance,
+      deliveryAvailable: delivery,
+    },
+  };
 }
 
 async function findLiveSuppliers(lat, lng, radius, requirements) {
-  const terms = [...new Set(requirements.flatMap((item) => item.osmTerms || []))].slice(0, 20);
+  const terms = [
+    ...new Set(requirements.flatMap((item) => item.osmTerms || [])),
+  ].slice(0, 20);
   if (!terms.length) return [];
-  const clauses = terms.map((term) => `nwr(around:${radius * 1000},${lat},${lng})[name]["name"~"${term.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&")}",i];`).join("");
-  const data = await fetchJson(overpassUrl, { method: "POST", headers: { Accept: "*/*", "Content-Type": "application/x-www-form-urlencoded", "User-Agent": overpassUserAgent }, body: `data=[out:json][timeout:12];(${clauses});out center tags;` }, 15000);
+  const clauses = terms
+    .map(
+      (term) =>
+        `nwr(around:${radius * 1000},${lat},${lng})[name]["name"~"${term.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&")}",i];`,
+    )
+    .join("");
+  const data = await fetchJson(
+    overpassUrl,
+    {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": overpassUserAgent,
+      },
+      body: `data=[out:json][timeout:12];(${clauses});out center tags;`,
+    },
+    15000,
+  );
   return (data.elements || []).flatMap((element) => {
-    const point = element.center || element; const tags = element.tags || {};
-    if (!Number.isFinite(point.lat) || !Number.isFinite(point.lon) || !tags.name) return [];
-    const address = [tags["addr:housenumber"], tags["addr:street"], tags["addr:city"]].filter(Boolean).join(", ");
-    return [{ id: `osm-${element.type}-${element.id}`, name: tags.name, category: tags.shop || tags.craft || tags.amenity || "Local business", products: [], address: address || null, lat: point.lat, lng: point.lon, phone: tags.phone || tags["contact:phone"] || null, website: tags.website || tags["contact:website"] || null, deliveryAvailable: null, source: "OpenStreetMap", sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`, verified: false, updatedAt: null }];
+    const point = element.center || element;
+    const tags = element.tags || {};
+    if (
+      !Number.isFinite(point.lat) ||
+      !Number.isFinite(point.lon) ||
+      !tags.name
+    )
+      return [];
+    const address = [
+      tags["addr:housenumber"],
+      tags["addr:street"],
+      tags["addr:city"],
+    ]
+      .filter(Boolean)
+      .join(", ");
+    return [
+      {
+        id: `osm-${element.type}-${element.id}`,
+        name: tags.name,
+        category: tags.shop || tags.craft || tags.amenity || "Local business",
+        products: [],
+        address: address || null,
+        lat: point.lat,
+        lng: point.lon,
+        phone: tags.phone || tags["contact:phone"] || null,
+        website: tags.website || tags["contact:website"] || null,
+        deliveryAvailable: null,
+        source: "OpenStreetMap",
+        sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
+        verified: false,
+        updatedAt: null,
+      },
+    ];
   });
 }
 
@@ -129,12 +224,20 @@ router.get("/health", (req, res) => {
 });
 
 router.post("/admin/login", async (req, res, next) => {
-  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-  const password = typeof req.body?.password === "string" ? req.body.password : "";
-  if (!email || !password) return res.status(400).json({ error: "Email and password are required" });
+  const email =
+    typeof req.body?.email === "string"
+      ? req.body.email.trim().toLowerCase()
+      : "";
+  const password =
+    typeof req.body?.password === "string" ? req.body.password : "";
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password are required" });
 
   const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
-  if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
+  if (!secret)
+    return res
+      .status(500)
+      .json({ error: "Authentication is not configured on the server" });
 
   try {
     const result = await pool.query(
@@ -142,17 +245,32 @@ router.post("/admin/login", async (req, res, next) => {
       [email],
     );
     const admin = result.rows[0];
-    const valid = admin && admin.role === "admin" && await bcrypt.compare(password, admin.password_hash);
-    if (!valid) return res.status(401).json({ error: "Invalid email or password" });
+    const valid =
+      admin &&
+      admin.role === "admin" &&
+      (await bcrypt.compare(password, admin.password_hash));
+    if (!valid)
+      return res.status(401).json({ error: "Invalid email or password" });
 
-    await pool.query("UPDATE admin_users SET last_login = NOW(), updated_at = NOW() WHERE id = $1", [admin.id]);
+    await pool.query(
+      "UPDATE admin_users SET last_login = NOW(), updated_at = NOW() WHERE id = $1",
+      [admin.id],
+    );
     const token = jwt.sign(
       { name: admin.name, email: admin.email, role: admin.role },
       secret,
       { subject: String(admin.id), expiresIn: "8h" },
     );
     res.cookie(COOKIE_NAME, token, authCookieOptions);
-    return res.json({ authenticated: true, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
+    return res.json({
+      authenticated: true,
+      admin: {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
+    });
   } catch (error) {
     return next(error);
   }
@@ -170,34 +288,114 @@ router.get("/admin/me", requireAdmin, (req, res) => {
 // Supplier Discovery: requirements are configuration-driven; records remain source-labelled.
 router.get("/suppliers/requirements", (req, res) => {
   const category = trimText(req.query.businessCategory, 40);
-  if (category && !CATEGORY_KEYS.includes(category)) return res.status(400).json({ error: "Valid businessCategory is required" });
-  res.json({ businessCategory: category || null, requirements: category ? BUSINESS_REQUIREMENTS[category] || [] : BUSINESS_REQUIREMENTS, matchWeights: MATCH_WEIGHTS });
+  if (category && !CATEGORY_KEYS.includes(category))
+    return res
+      .status(400)
+      .json({ error: "Valid businessCategory is required" });
+  res.json({
+    businessCategory: category || null,
+    requirements: category
+      ? BUSINESS_REQUIREMENTS[category] || []
+      : BUSINESS_REQUIREMENTS,
+    matchWeights: MATCH_WEIGHTS,
+  });
 });
 
 router.get("/suppliers/categories", (req, res) => {
   const category = trimText(req.query.businessCategory, 40);
-  if (!CATEGORY_KEYS.includes(category)) return res.status(400).json({ error: "Valid businessCategory is required" });
+  if (!CATEGORY_KEYS.includes(category))
+    return res
+      .status(400)
+      .json({ error: "Valid businessCategory is required" });
   res.json({ categories: BUSINESS_REQUIREMENTS[category] || [] });
 });
 
 router.get(["/suppliers", "/suppliers/nearby"], async (req, res) => {
   const query = validSupplierQuery(req.query);
-  if (!query) return res.status(400).json({ error: "Valid latitude, longitude, radius (1, 3, 5, 10, or 25), and businessCategory are required" });
-  const requirements = (BUSINESS_REQUIREMENTS[query.businessCategory] || []).filter((item) => !query.supplierCategory || item.key === query.supplierCategory);
-  if (!requirements.length) return res.json({ suppliers: [], requirements: [], matchWeights: MATCH_WEIGHTS, message: "No configured procurement requirements for this business category." });
-  let databaseSuppliers = []; let liveSuppliers = []; let liveWarning = null;
-  try { databaseSuppliers = await db.getNearbySuppliers(query.lat, query.lng, query.radius, query.supplierCategory); } catch (error) { liveWarning = "Supplier database is currently unavailable."; }
-  try { liveSuppliers = await findLiveSuppliers(query.lat, query.lng, query.radius, requirements); } catch (error) { liveWarning = liveWarning || "OpenStreetMap supplier search is currently unavailable."; }
+  if (!query)
+    return res.status(400).json({
+      error:
+        "Valid latitude, longitude, radius (1, 3, 5, 10, or 25), and businessCategory are required",
+    });
+  const requirements = (
+    BUSINESS_REQUIREMENTS[query.businessCategory] || []
+  ).filter(
+    (item) => !query.supplierCategory || item.key === query.supplierCategory,
+  );
+  if (!requirements.length)
+    return res.json({
+      suppliers: [],
+      requirements: [],
+      matchWeights: MATCH_WEIGHTS,
+      message:
+        "No configured procurement requirements for this business category.",
+    });
+  let databaseSuppliers = [];
+  let liveSuppliers = [];
+  let liveWarning = null;
+  try {
+    databaseSuppliers = await db.getNearbySuppliers(
+      query.lat,
+      query.lng,
+      query.radius,
+      query.supplierCategory,
+    );
+  } catch (error) {
+    liveWarning = "Supplier database is currently unavailable.";
+  }
+  try {
+    liveSuppliers = await findLiveSuppliers(
+      query.lat,
+      query.lng,
+      query.radius,
+      requirements,
+    );
+  } catch (error) {
+    liveWarning =
+      liveWarning || "OpenStreetMap supplier search is currently unavailable.";
+  }
   const all = [...databaseSuppliers, ...liveSuppliers]
-    .map((supplier) => ({ ...supplier, distanceKm: db.calculateDistanceKm(query.lat, query.lng, supplier.lat, supplier.lng) }))
+    .map((supplier) => ({
+      ...supplier,
+      distanceKm: db.calculateDistanceKm(
+        query.lat,
+        query.lng,
+        supplier.lat,
+        supplier.lng,
+      ),
+    }))
     .filter((supplier) => supplier.distanceKm <= query.radius)
-    .filter((supplier, index, source) => source.findIndex((item) => item.id === supplier.id) === index)
+    .filter(
+      (supplier, index, source) =>
+        source.findIndex((item) => item.id === supplier.id) === index,
+    )
     .map((supplier) => {
-      const requirement = requirements.find((item) => `${supplier.category} ${(supplier.products || []).join(" ")}`.toLowerCase().includes(item.label.toLowerCase())) || requirements[0];
-      return { ...supplier, matchedRequirement: requirement.key, match: supplierScore(supplier, requirement, query.radius) };
+      const requirement =
+        requirements.find((item) =>
+          `${supplier.category} ${(supplier.products || []).join(" ")}`
+            .toLowerCase()
+            .includes(item.label.toLowerCase()),
+        ) || requirements[0];
+      return {
+        ...supplier,
+        matchedRequirement: requirement.key,
+        match: supplierScore(supplier, requirement, query.radius),
+      };
     })
-    .sort((a, b) => b.match.score - a.match.score || a.distanceKm - b.distanceKm);
-  res.json({ suppliers: all, requirements, matchWeights: MATCH_WEIGHTS, dataSources: [...new Set(all.map((item) => item.source))], warning: liveWarning, message: all.length ? null : `No relevant suppliers found within ${query.radius} km.`, searchLocation: { lat: query.lat, lng: query.lng, radius: query.radius } });
+    .sort(
+      (a, b) => b.match.score - a.match.score || a.distanceKm - b.distanceKm,
+    );
+  res.json({
+    suppliers: all,
+    requirements,
+    matchWeights: MATCH_WEIGHTS,
+    dataSources: [...new Set(all.map((item) => item.source))],
+    warning: liveWarning,
+    message: all.length
+      ? null
+      : `No relevant suppliers found within ${query.radius} km.`,
+    searchLocation: { lat: query.lat, lng: query.lng, radius: query.radius },
+  });
 });
 
 // 2. All businesses
@@ -227,18 +425,31 @@ router.get("/businesses/nearby", async (req, res) => {
     radius > 100 ||
     (category && !CATEGORY_KEYS.includes(category))
   ) {
-    return res.status(400).json({ error: "Valid location, radius, and category are required" });
+    return res
+      .status(400)
+      .json({ error: "Valid location, radius, and category are required" });
   }
   try {
     const businesses = await findLiveBusinesses(lat, lng, radius, category);
-    res.json({ dataMode: "live", dataSources: ["OpenStreetMap"], businesses: db.findNearbyCompetitors(lat, lng, radius, category, businesses) });
+    res.json({
+      dataMode: "live",
+      dataSources: ["OpenStreetMap"],
+      businesses: db.findNearbyCompetitors(
+        lat,
+        lng,
+        radius,
+        category,
+        businesses,
+      ),
+    });
   } catch (error) {
     try {
       const databaseBusinesses = await db.getBusinesses();
       res.json({
         dataMode: "database",
         dataSources: ["PostgreSQL businesses"],
-        warning: "OpenStreetMap data is currently unavailable; showing PostgreSQL business records.",
+        warning:
+          "OpenStreetMap data is currently unavailable; showing PostgreSQL business records.",
         businesses: db.findNearbyCompetitors(
           lat,
           lng,
@@ -249,7 +460,8 @@ router.get("/businesses/nearby", async (req, res) => {
       });
     } catch (databaseError) {
       res.status(503).json({
-        error: "Live competitor data and PostgreSQL business data are unavailable",
+        error:
+          "Live competitor data and PostgreSQL business data are unavailable",
         details: `${error.message}; database: ${databaseError.message}`,
         dataMode: "unavailable",
       });
@@ -270,14 +482,18 @@ router.get("/market-intelligence", async (req, res) => {
   const category = req.query.category || "dairy";
   const radius = Number(req.query.radius || 5);
   if (
-    (Number.isFinite(requestedLat) && (requestedLat < -90 || requestedLat > 90)) ||
-    (Number.isFinite(requestedLng) && (requestedLng < -180 || requestedLng > 180)) ||
+    (Number.isFinite(requestedLat) &&
+      (requestedLat < -90 || requestedLat > 90)) ||
+    (Number.isFinite(requestedLng) &&
+      (requestedLng < -180 || requestedLng > 180)) ||
     !CATEGORY_KEYS.includes(category) ||
     !Number.isFinite(radius) ||
     radius <= 0 ||
     radius > 100
   ) {
-    return res.status(400).json({ error: "Valid location, radius, and category are required" });
+    return res
+      .status(400)
+      .json({ error: "Valid location, radius, and category are required" });
   }
 
   try {
@@ -317,8 +533,17 @@ router.get("/market-intelligence", async (req, res) => {
 
 router.post("/business-preferences", async (req, res) => {
   const { lat, lng, state, district, village } = req.body;
-  if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-    return res.status(400).json({ error: "Valid latitude and longitude are required" });
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    lat < -90 ||
+    lat > 90 ||
+    lng < -180 ||
+    lng > 180
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Valid latitude and longitude are required" });
   }
 
   try {
@@ -337,36 +562,57 @@ router.post("/business-preferences", async (req, res) => {
       state,
       district,
       village,
-      liveBusinesses
+      liveBusinesses,
     });
 
     res.json({
       location: { lat, lng, state, district, village },
       recommendations,
       dataMode: liveBusinesses ? "live" : "database",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to evaluate business preferences", details: error.message });
+    res.status(500).json({
+      error: "Failed to evaluate business preferences",
+      details: error.message,
+    });
   }
 });
 
 router.get("/location/geocode", async (req, res) => {
   const query = trimText(req.query.q, 120);
-  if (query.length < 3) return res.status(400).json({ error: "A location query is required" });
+  if (query.length < 3)
+    return res.status(400).json({ error: "A location query is required" });
   try {
     const encoded = encodeURIComponent(query);
-    const results = await fetchJson(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encoded}`, {
-      headers: { "User-Agent": process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-development" },
-    });
+    const results = await fetchJson(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=${encoded}`,
+      {
+        headers: {
+          "User-Agent":
+            process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-development",
+        },
+      },
+    );
 
     res.json({
       dataMode: "live",
-      dataSource: { name: "Nominatim / OpenStreetMap", url: "https://nominatim.openstreetmap.org/" },
-      results: results.map((item) => ({ displayName: item.display_name, lat: Number(item.lat), lng: Number(item.lon), type: item.type })),
+      dataSource: {
+        name: "Nominatim / OpenStreetMap",
+        url: "https://nominatim.openstreetmap.org/",
+      },
+      results: results.map((item) => ({
+        displayName: item.display_name,
+        lat: Number(item.lat),
+        lng: Number(item.lon),
+        type: item.type,
+      })),
     });
   } catch (error) {
-    res.status(503).json({ error: "Location lookup is currently unavailable", details: error.message });
+    res.status(503).json({
+      error: "Location lookup is currently unavailable",
+      details: error.message,
+    });
   }
 });
 
@@ -381,14 +627,17 @@ router.get("/location/reverse-geocode", async (req, res) => {
     lng < -180 ||
     lng > 180
   ) {
-    return res.status(400).json({ error: "Valid latitude and longitude are required" });
+    return res
+      .status(400)
+      .json({ error: "Valid latitude and longitude are required" });
   }
   try {
     const result = await fetchJson(
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
       {
         headers: {
-          "User-Agent": process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-production",
+          "User-Agent":
+            process.env.NOMINATIM_USER_AGENT || "gram-sarthi-ai-production",
         },
       },
     );
@@ -414,7 +663,9 @@ router.get("/location/reverse-geocode", async (req, res) => {
       longitude: lng,
     });
   } catch (error) {
-    res.status(503).json({ error: "Reverse geocoding is currently unavailable" });
+    res
+      .status(503)
+      .json({ error: "Reverse geocoding is currently unavailable" });
   }
 });
 
@@ -422,7 +673,10 @@ router.get("/location/reverse-geocode", async (req, res) => {
 router.post("/financials/calculate", (req, res) => {
   try {
     const result = engine.calculateFinancials(
-      assertValid(validateFinancialInput(req.body || {}), "Invalid financial inputs"),
+      assertValid(
+        validateFinancialInput(req.body || {}),
+        "Invalid financial inputs",
+      ),
     );
     res.json(result);
   } catch (error) {
@@ -773,6 +1027,123 @@ router.post("/advisory", (req, res) => {
       disclaimer:
         "This advisory is rule-based guidance from supplied inputs; it is not a guarantee, official market statistic, or financial approval.",
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+const { MOCK_VIDEOS, CATEGORY_TAGS } = require("../data/mockVideos");
+
+// 6b. AI Business Strategy Videos
+router.post("/advisory/videos", async (req, res) => {
+  try {
+    const {
+      businessIdea = "Rural Business",
+      businessCategory,
+      location = "India",
+    } = req.body || {};
+
+    // Strict fallback logic
+    const getFallback = () => {
+      if (businessCategory && MOCK_VIDEOS[businessCategory])
+        return MOCK_VIDEOS[businessCategory];
+      const lowerIdea = businessIdea.toLowerCase();
+      if (lowerIdea.includes("dairy")) return MOCK_VIDEOS.dairy;
+      if (lowerIdea.includes("flour") || lowerIdea.includes("food"))
+        return MOCK_VIDEOS.food_processing;
+      if (lowerIdea.includes("tailor")) return MOCK_VIDEOS.tailoring;
+      if (lowerIdea.includes("potter") || lowerIdea.includes("handicraft"))
+        return MOCK_VIDEOS.handicrafts;
+      if (lowerIdea.includes("poultry")) return MOCK_VIDEOS.poultry;
+      if (lowerIdea.includes("grocer") || lowerIdea.includes("kirana"))
+        return MOCK_VIDEOS.grocery;
+      return MOCK_VIDEOS.default;
+    };
+
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+      console.warn(
+        "YOUTUBE_API_KEY is missing. Using offline fallback videos.",
+      );
+      return res.json({ businessIdea, videos: getFallback() });
+    }
+
+    const topics = [
+      { label: "STARTING THE BUSINESS", suffix: "how to start business plan" },
+      { label: "MARKETING", suffix: "marketing customer acquisition" },
+      {
+        label: "FINANCIAL PLANNING",
+        suffix: "profitability financial planning",
+      },
+      { label: "BUSINESS GROWTH", suffix: "growth strategy" },
+    ];
+
+    const videoResults = await Promise.all(
+      topics.map(async (topic) => {
+        const query = encodeURIComponent(
+          `${businessIdea} ${topic.suffix} India`,
+        );
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=3&q=${query}&key=${apiKey}`;
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) return null;
+          const data = await response.json();
+          if (data.items && data.items.length > 0) {
+            // STRICT FILTERING LOGIC
+            const tags = CATEGORY_TAGS[businessCategory] || CATEGORY_TAGS.other;
+            let bestVideo = null;
+
+            for (const item of data.items) {
+              const textToSearch = (
+                item.snippet.title +
+                " " +
+                item.snippet.description
+              ).toLowerCase();
+              const isValid = tags.some((tag) => textToSearch.includes(tag));
+
+              if (
+                isValid ||
+                !businessCategory ||
+                businessCategory === "other"
+              ) {
+                bestVideo = item;
+                break;
+              }
+            }
+
+            if (!bestVideo) return null; // Discard if none pass validation
+
+            return {
+              videoId: bestVideo.id.videoId,
+              title: bestVideo.snippet.title,
+              channelTitle: bestVideo.snippet.channelTitle,
+              thumbnail:
+                bestVideo.snippet.thumbnails?.high?.url ||
+                bestVideo.snippet.thumbnails?.default?.url,
+              description: bestVideo.snippet.description,
+              publishedAt: bestVideo.snippet.publishedAt,
+              query: topic.label,
+            };
+          }
+        } catch (e) {
+          console.error("YouTube API error:", e);
+        }
+        return null;
+      }),
+    );
+
+    const videos = videoResults.filter(Boolean);
+
+    // If live search yielded completely irrelevant results, use safe fallback
+    if (videos.length === 0) {
+      console.warn(
+        "Strict filtering removed all results. Falling back to safe defaults.",
+      );
+      return res.json({ businessIdea, videos: getFallback() });
+    }
+
+    res.json({ businessIdea, videos });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

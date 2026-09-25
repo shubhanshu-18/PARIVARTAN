@@ -119,13 +119,26 @@ export const ApiService = {
     }
   },
 
-  async getSuppliers({ lat, lng, radius = 5, businessCategory, supplierCategory, product }) {
-    const params = new URLSearchParams({ lat: String(lat), lng: String(lng), radius: String(radius), businessCategory });
+  async getSuppliers({
+    lat,
+    lng,
+    radius = 5,
+    businessCategory,
+    supplierCategory,
+    product,
+  }) {
+    const params = new URLSearchParams({
+      lat: String(lat),
+      lng: String(lng),
+      radius: String(radius),
+      businessCategory,
+    });
     if (supplierCategory) params.set("supplierCategory", supplierCategory);
     if (product) params.set("product", product);
     const res = await fetch(`${API_BASE}/api/suppliers/nearby?${params}`);
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body.error || "Supplier search is currently unavailable");
+    if (!res.ok)
+      throw new Error(body.error || "Supplier search is currently unavailable");
     return body;
   },
 
@@ -251,6 +264,21 @@ export const ApiService = {
         err.message,
       );
       throw new Error(`AI advisory unavailable: ${err.message}`);
+    }
+  },
+
+  async getAdvisoryVideos(profile) {
+    try {
+      const res = await fetch(`${API_BASE}/api/advisory/videos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      });
+      if (!res.ok) throw new Error("Video API error");
+      return await res.json();
+    } catch (err) {
+      console.warn("Video API failed:", err.message);
+      return { videos: [] }; // Graceful fallback
     }
   },
 
