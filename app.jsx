@@ -12,16 +12,18 @@ import { MarketIntelView } from "./components/MarketIntelView";
 import { AdvisoryView } from "./components/AdvisoryView";
 import { FinancialCalculatorView } from "./components/FinancialCalculatorView";
 import { SupplierDiscoveryView } from "./components/SupplierDiscoveryView";
+import { FeedbackView } from "./components/FeedbackView";
 import { SchemeRouterView } from "./components/SchemeRouterView";
 import { FeasibilityReportView } from "./components/FeasibilityReportView";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { AdminLogin } from "./components/AdminLogin";
 import { WelcomeSplash } from "./components/WelcomeSplash";
+import { WelcomeLogin } from "./components/WelcomeLogin";
 import { Shield } from "lucide-react";
 
 function AppContent() {
   const { activeStep, toast } = useApp();
-  const { isOfficer, authLoading } = useAuth();
+  const { isOfficer, isUser, authLoading } = useAuth();
   const isAdminPath = window.location.pathname.startsWith("/admin");
 
   if (authLoading && isAdminPath) return <div className="admin-auth-loading">Checking secure session...</div>;
@@ -36,6 +38,17 @@ function AppContent() {
     }
     return window.location.pathname === "/admin/dashboard" ? <AdminDashboard /> : <AdminLogin />;
   }
+
+  if (window.location.pathname === "/feedback" && isUser) {
+    return <div className="app-shell min-h-screen bg-slate-100 text-slate-900"><Navbar /><FeedbackView /></div>;
+  }
+  if (authLoading) return <div className="min-h-screen bg-[#F7F9F7]" />;
+  const isAuthPath = window.location.pathname === "/login" || window.location.pathname === "/signup";
+  if (isUser && isAuthPath) {
+    window.location.replace("/");
+    return null;
+  }
+  if (!isUser) return <WelcomeLogin key={window.location.pathname} />;
 
   return (
     <div className="app-shell min-h-screen flex flex-col bg-slate-100 text-slate-900 selection:bg-orange-500 selection:text-white relative">

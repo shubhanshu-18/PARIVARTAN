@@ -68,6 +68,9 @@ const FIELD_LIMITS = {
   state: 80,
   district: 80,
 };
+const FEEDBACK_USER_TYPES = ["Entrepreneur", "Student", "Business Owner", "Government / Scheme Officer", "Mentor", "Other"];
+const FEEDBACK_CATEGORIES = ["Overall Experience", "Business Feasibility Analysis", "Financial Calculator", "Scheme Recommendation", "Location / GIS", "AI Advisory", "Supplier Discovery", "User Interface", "Performance", "Other"];
+const FEEDBACK_RECOMMENDATIONS = ["Yes", "Maybe", "No"];
 
 function text(value) {
   return typeof value === "string" ? value : "";
@@ -258,6 +261,35 @@ function validateFinancialInput(input = {}) {
   return { value, errors };
 }
 
+function validateFeedback(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const errors = {}; const value = {};
+  const name = lettersAndSpaces(source.name).slice(0, 100);
+  if (!name || !/^\p{L}+(?:\s+\p{L}+)*$/u.test(name)) errors.name = "Enter a valid name using letters and spaces only";
+  value.name = name;
+  const email = trimText(source.email, 254).toLowerCase();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = "Enter a valid email address";
+  value.email = email || null;
+  value.userType = trimText(source.userType, 50); if (!FEEDBACK_USER_TYPES.includes(value.userType)) errors.userType = "Choose a valid user type";
+  value.category = trimText(source.category, 60); if (!FEEDBACK_CATEGORIES.includes(value.category)) errors.category = "Choose a valid feedback category";
+  value.rating = Number(source.rating); if (!Number.isInteger(value.rating) || value.rating < 1 || value.rating > 5) errors.rating = "Choose a rating from 1 to 5";
+  value.message = trimText(source.message, 2000); if (value.message.length < 10) errors.message = "Feedback must contain at least 10 characters";
+  value.recommendation = trimText(source.recommendation, 10) || null; if (value.recommendation && !FEEDBACK_RECOMMENDATIONS.includes(value.recommendation)) errors.recommendation = "Choose a valid recommendation";
+  value.consent = source.consent === true;
+  return { value, errors };
+}
+
+function validateUserRegistration(input = {}) {
+  const name = lettersAndSpaces(input.name).slice(0, 100);
+  const emailResult = validateEmail(input.email);
+  const password = typeof input.password === "string" ? input.password : "";
+  const errors = {};
+  if (!name || !/^\p{L}+(?:\s+\p{L}+)*$/u.test(name)) errors.name = "Enter a valid name using letters and spaces only";
+  if (emailResult.error) errors.email = emailResult.error;
+  if (password.length < 12 || password.length > 72) errors.password = "Password must be 12 to 72 characters";
+  return { value: { name, email: emailResult.value, password }, errors };
+}
+
 function assertValid(result, message = "Please correct the highlighted fields") {
   if (Object.keys(result.errors).length) {
     const error = new Error(message);
@@ -281,5 +313,9 @@ module.exports = {
   validateEmail,
   validateProfile,
   validateFinancialInput,
+  validateFeedback,
+  FEEDBACK_USER_TYPES,
+  FEEDBACK_CATEGORIES,
+  validateUserRegistration,
   assertValid,
 };

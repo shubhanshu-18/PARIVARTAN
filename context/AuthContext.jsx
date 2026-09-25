@@ -5,13 +5,14 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [admin, setAdmin] = useState(null);
+  const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
-    ApiService.getAdmin()
-      .then(setAdmin)
-      .catch(() => setAdmin(null))
+    Promise.all([ApiService.getAdmin(), ApiService.getUser()])
+      .then(([adminAccount, userAccount]) => { setAdmin(adminAccount); setUser(userAccount); })
+      .catch(() => { setAdmin(null); setUser(null); })
       .finally(() => setAuthLoading(false));
   }, []);
 
@@ -36,6 +37,9 @@ export function AuthProvider({ children }) {
       window.location.assign("/");
     }
   };
+  const loginUser = async (email, password) => { const result = await ApiService.userLogin(email, password); setUser(result.user); return result.user; };
+  const registerUser = async (name, email, password) => { const result = await ApiService.userRegister(name, email, password); setUser(result.user); return result.user; };
+  const logoutUser = async () => { try { await ApiService.userLogout(); } finally { setUser(null); window.location.assign("/"); } };
 
   const value = useMemo(
     () => ({
@@ -44,13 +48,18 @@ export function AuthProvider({ children }) {
       officerName: admin?.name || "",
       officerId: admin?.id || "",
       admin,
+      user,
+      isUser: Boolean(user),
       authLoading,
       loginError,
       loginAdmin,
       logoutAdmin,
       logoutOfficer: logoutAdmin,
+      loginUser,
+      registerUser,
+      logoutUser,
     }),
-    [admin, authLoading, loginError],
+    [admin, user, authLoading, loginError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

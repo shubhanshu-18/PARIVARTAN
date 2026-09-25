@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const COOKIE_NAME = "gram_sarthi_admin";
+const USER_COOKIE_NAME = "gram_sarthi_user";
 
 function getToken(req) {
   const header = req.get("Authorization");

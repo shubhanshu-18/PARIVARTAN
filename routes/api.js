@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const db = require("../db");
 const { pool } = require("../database");
 const { COOKIE_NAME, requireAdmin } = require("../middleware/adminAuth");
@@ -13,6 +14,8 @@ const {
   trimText,
   validateProfile,
   validateFinancialInput,
+  validateFeedback,
+  validateUserRegistration,
   assertValid,
 } = require("../utils/validation");
 
@@ -24,6 +27,8 @@ const authCookieOptions = {
   maxAge: 8 * 60 * 60 * 1000,
   path: "/",
 };
+const USER_COOKIE_NAME = "gram_sarthi_user";
+const GOOGLE_STATE_COOKIE = "gram_sarthi_google_state";
 const overpassUrl =
   process.env.OVERPASS_URL || "https://overpass-api.de/api/interpreter";
 const defaultMarketLocation = { lat: 23.2032, lng: 77.0844 };
@@ -162,8 +167,147 @@ router.post("/admin/logout", (req, res) => {
   res.json({ authenticated: false });
 });
 
+router.post("/auth/register", async (req, res, next) => {
+  try {
+    const user = assertValid(validateUserRegistration(req.body), "Invalid registration data");
+    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+    if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
+    const passwordHash = await bcrypt.hash(user.password, 12);
+    const account = await db.createUser({ name: user.name, email: user.email, passwordHash });
+    const token = jwt.sign({ name: account.name, email: account.email, role: "user" }, secret, { subject: String(account.id), expiresIn: "8h" });
+    res.cookie(USER_COOKIE_NAME, token, authCookieOptions);
+    res.status(201).json({ authenticated: true, user: account });
+  } catch (error) {
+    if (error.code === "23505") return res.status(409).json({ error: "An account with this email already exists" });
+    console.error("User registration failed:", error);
+    return res.status(500).json({ error: "Unable to create account. Please try again." });
+  }
+});
+
+router.get("/auth/google", (req, res) => {
+  const { GOOGLE_CLIENT_ID: clientId, GOOGLE_REDIRECT_URI: configuredRedirect } = process.env;
+  if (!clientId) return res.status(503).send("Google sign-in is not configured.");
+  const redirectUri = configuredRedirect || `${req.protocol}://${req.get("host")}/api/auth/google/callback`;
+  const state = crypto.randomBytes(24).toString("hex");
+  res.cookie(GOOGLE_STATE_COOKIE, state, { ...authCookieOptions, httpOnly: true, maxAge: 10 * 60 * 1000 });
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: "openid email profile",
+    state,
+    prompt: "select_account",
+  });
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+});
+
+router.get("/auth/google/callback", async (req, res, next) => {
+  const { GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret, GOOGLE_REDIRECT_URI: configuredRedirect } = process.env;
+  const frontendOrigin = (process.env.FRONTEND_URL || process.env.FRONTEND_ORIGIN || "").split(",")[0].replace(/\/+$/, "");
+  const stateCookie = req.headers.cookie?.match(new RegExp(`${GOOGLE_STATE_COOKIE}=([^;]+)`))?.[1];
+  if (!clientId || !clientSecret || !stateCookie || !req.query.code || stateCookie !== req.query.state) {
+    return res.redirect(`${frontendOrigin || ""}/?authError=google`);
+  }
+  const redirectUri = configuredRedirect || `${req.protocol}://${req.get("host")}/api/auth/google/callback`;
+  try {
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code: req.query.code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+    });
+    if (!tokenResponse.ok) throw new Error("Google token exchange failed");
+    const tokens = await tokenResponse.json();
+    const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    });
+    if (!profileResponse.ok) throw new Error("Google profile request failed");
+    const profile = await profileResponse.json();
+    if (!profile.email || profile.email_verified !== true) throw new Error("Google account email is not verified");
+
+    const email = profile.email.toLowerCase();
+    let user = await db.getUserByEmail(email);
+    if (!user) {
+      user = await db.createUser({
+        name: profile.name || email.split("@")[0],
+        email,
+        passwordHash: await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 12),
+      });
+    }
+    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+    if (!secret) throw new Error("Authentication is not configured on the server");
+    const token = jwt.sign({ name: user.name, email: user.email, role: "user" }, secret, { subject: String(user.id), expiresIn: "8h" });
+    res.clearCookie(GOOGLE_STATE_COOKIE, { ...authCookieOptions, maxAge: undefined });
+    res.cookie(USER_COOKIE_NAME, token, authCookieOptions);
+    res.redirect(`${frontendOrigin || ""}/`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/auth/login", async (req, res, next) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  const password = typeof req.body?.password === "string" ? req.body.password : "";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !password) {
+    return res.status(400).json({ error: "Enter a valid email and password." });
+  }
+  try {
+    const result = await pool.query("SELECT id, name, email, password_hash FROM users WHERE email = $1 LIMIT 1", [email]);
+    const user = result.rows[0]; const valid = user && await bcrypt.compare(password, user.password_hash);
+    if (!valid) return res.status(401).json({ error: "Incorrect email or password." });
+    const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+    if (!secret) return res.status(500).json({ error: "Authentication is not configured on the server" });
+    await pool.query("UPDATE users SET last_login = NOW(), updated_at = NOW() WHERE id = $1", [user.id]);
+    const token = jwt.sign({ name: user.name, email: user.email, role: "user" }, secret, { subject: String(user.id), expiresIn: "8h" });
+    res.cookie(USER_COOKIE_NAME, token, authCookieOptions);
+    res.json({ authenticated: true, user: { id: user.id, name: user.name, email: user.email } });
+  } catch (error) {
+    console.error("User login failed:", error);
+    return res.status(500).json({ error: "Unable to sign in. Please try again." });
+  }
+});
+
+router.get("/auth/me", (req, res) => {
+  const cookies = (req.get("Cookie") || "").split(";").reduce((all, item) => { const index = item.indexOf("="); if (index > -1) all[item.slice(0, index).trim()] = decodeURIComponent(item.slice(index + 1).trim()); return all; }, {});
+  const secret = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+  if (!secret || !cookies[USER_COOKIE_NAME]) return res.status(401).json({ authenticated: false });
+  try { const claims = jwt.verify(cookies[USER_COOKIE_NAME], secret); if (claims.role !== "user") throw new Error(); res.json({ authenticated: true, user: { id: claims.sub, name: claims.name, email: claims.email } }); } catch { res.status(401).json({ authenticated: false }); }
+});
+
+router.post("/auth/logout", (req, res) => { res.clearCookie(USER_COOKIE_NAME, { ...authCookieOptions, maxAge: undefined }); res.json({ authenticated: false }); });
+
 router.get("/admin/me", requireAdmin, (req, res) => {
   res.json({ authenticated: true, admin: req.admin });
+});
+
+router.post("/feedback", async (req, res) => {
+  try {
+    const feedback = assertValid(validateFeedback(req.body), "Invalid feedback data");
+    const created = await db.createFeedback(feedback);
+    res.status(201).json({ id: created.id, createdAt: created.createdAt, message: "Your feedback has been recorded successfully." });
+  } catch (error) {
+    if (error.status === 400) return res.status(400).json({ error: error.message, validationErrors: error.validationErrors });
+    return res.status(500).json({ error: "Unable to submit feedback. Please try again." });
+  }
+});
+
+router.get("/feedback", requireAdmin, async (req, res, next) => {
+  try { res.json(await db.getFeedback()); } catch (error) { next(error); }
+});
+
+router.patch("/feedback/:id", requireAdmin, async (req, res, next) => {
+  const id = Number(req.params.id); const status = trimText(req.body?.status, 20);
+  if (!Number.isInteger(id) || id < 1 || !["new", "reviewed", "resolved"].includes(status)) return res.status(400).json({ error: "Valid feedback ID and status are required" });
+  try {
+    const feedback = await db.updateFeedbackStatus(id, status);
+    if (!feedback) return res.status(404).json({ error: "Feedback not found" });
+    res.json(feedback);
+  } catch (error) { next(error); }
 });
 
 // Supplier Discovery: requirements are configuration-driven; records remain source-labelled.

@@ -1,6 +1,16 @@
 const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export const ApiService = {
+  async userLogin(email, password) {
+    const res = await fetch(`${API_BASE}/api/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ email, password }) });
+    const body = await res.json().catch(() => ({})); if (!res.ok) throw new Error(body.error || "Unable to connect to the server. Please try again."); return body;
+  },
+  async userRegister(name, email, password) {
+    const res = await fetch(`${API_BASE}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ name, email, password }) });
+    const body = await res.json().catch(() => ({})); if (!res.ok) throw new Error(body.error || "Unable to create account."); return body;
+  },
+  async getUser() { const res = await fetch(`${API_BASE}/api/auth/me`, { credentials: "include" }); if (!res.ok) return null; return (await res.json()).user; },
+  async userLogout() { await fetch(`${API_BASE}/api/auth/logout`, { method: "POST", credentials: "include" }); },
   async adminLogin(email, password) {
     const res = await fetch(`${API_BASE}/api/admin/login`, {
       method: "POST",
@@ -127,6 +137,25 @@ export const ApiService = {
     const body = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(body.error || "Supplier search is currently unavailable");
     return body;
+  },
+
+  async submitFeedback(feedback) {
+    const res = await fetch(`${API_BASE}/api/feedback`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(feedback) });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) { const error = new Error(body.error || "Unable to submit feedback. Please try again."); error.validationErrors = body.validationErrors; throw error; }
+    return body;
+  },
+
+  async getFeedback() {
+    const res = await fetch(`${API_BASE}/api/feedback`, { credentials: "include" });
+    if (!res.ok) throw new Error("Unable to load feedback");
+    return res.json();
+  },
+
+  async updateFeedbackStatus(id, status) {
+    const res = await fetch(`${API_BASE}/api/feedback/${encodeURIComponent(id)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ status }) });
+    if (!res.ok) throw new Error("Unable to update feedback status");
+    return res.json();
   },
 
   async calculateFinancials(params) {

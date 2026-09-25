@@ -3,6 +3,7 @@ import { trimText } from "../utils/validation-client";
 import { useAuth } from "../context/AuthContext";
 import { useApp } from "../context/AppContext";
 import { ApiService } from "../services/api";
+import { AdminFeedbackPanel } from "./AdminFeedbackPanel";
 import {
   Shield,
   Building2,
@@ -476,6 +477,8 @@ export function AdminDashboard() {
           </table>
         </div>
       </div>
+
+      <AdminFeedbackPanel />
 
       {/* Detailed Inspection Modal */}
       {selectedAssessment && (

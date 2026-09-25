@@ -105,6 +105,31 @@ class SpatialDatabase {
       .filter((supplier) => !supplierCategory || supplier.category === supplierCategory);
   }
 
+  async createFeedback(feedback) {
+    const { rows } = await pool.query(`INSERT INTO feedback (name, email, user_type, category, rating, message, recommendation, consent) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, created_at AS "createdAt"`, [feedback.name, feedback.email, feedback.userType, feedback.category, feedback.rating, feedback.message, feedback.recommendation, feedback.consent]);
+    return rows[0];
+  }
+
+  async getFeedback() {
+    const { rows } = await pool.query(`SELECT id, name, email, user_type AS "userType", category, rating, message, recommendation, consent, status, created_at AS "createdAt", updated_at AS "updatedAt" FROM feedback ORDER BY created_at DESC`);
+    return rows;
+  }
+
+  async updateFeedbackStatus(id, status) {
+    const { rows } = await pool.query(`UPDATE feedback SET status = $2, updated_at = NOW() WHERE id = $1 RETURNING id, status, updated_at AS "updatedAt"`, [id, status]);
+    return rows[0] || null;
+  }
+
+  async createUser({ name, email, passwordHash }) {
+    const { rows } = await pool.query("INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email", [name, email, passwordHash]);
+    return rows[0];
+  }
+
+  async getUserByEmail(email) {
+    const { rows } = await pool.query("SELECT id, name, email, password_hash FROM users WHERE email = $1 LIMIT 1", [email]);
+    return rows[0] || null;
+  }
+
   async getMarketIntelligence(
     lat,
     lng,

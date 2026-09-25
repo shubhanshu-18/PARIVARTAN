@@ -15,6 +15,7 @@ import {
   Award,
   Menu,
   X,
+  MessageSquare,
 } from "lucide-react";
 
 export function Navbar() {
@@ -190,6 +191,15 @@ export function Navbar() {
           </button>
 
           <a
+            href="/feedback"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/25 transition"
+            aria-label="Share feedback"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Feedback</span>
+          </a>
+
+          <a
             href={isOfficer ? "/admin/dashboard" : "/admin/login"}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
             aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
@@ -267,6 +277,14 @@ export function Navbar() {
             <Globe2 className="w-4 h-4 text-sky-400" />
             <span>{language === "hi" ? "English" : "हिंदी"}</span>
           </button>
+          <a
+            href="/feedback"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-emerald-500/15 border border-emerald-400/40 text-emerald-200"
+            aria-label="Share feedback"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Feedback</span>
+          </a>
           <a
             href={isOfficer ? "/admin/dashboard" : "/admin/login"}
             className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
