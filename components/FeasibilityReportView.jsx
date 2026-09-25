@@ -827,19 +827,26 @@ export function FeasibilityReportView() {
           </div>
 
           {/* Official Verification Sign-off Box */}
-          <div className="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 space-y-3 text-xs text-[#667085]">
-            <div className="flex items-center justify-between font-bold text-[#17212B]">
-              <span>
-                {language === "hi"
-                  ? "आधिकारिक मुहर एवं हस्ताक्षर"
-                  : "Institutional Stamp & Sign-off"}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4 text-xs text-[#667085]">
+            <div className="flex items-center justify-between font-bold text-sm text-[#17212B] pb-3 border-b border-slate-100">
+              <span className="flex items-center space-x-2">
+                <Building2 className="w-4 h-4 text-[#123B5D]" />
+                <span>
+                  {language === "hi"
+                    ? "आधिकारिक मुहर एवं हस्ताक्षर"
+                    : "Institutional Stamp & Sign-off"}
+                </span>
               </span>
-              <Building2 className="w-4 h-4 text-[#667085]" />
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-[#667085] uppercase tracking-wider">
+                Official
+              </span>
             </div>
-            <div className="h-16 border-2 border-dashed border-[#DCE4E8] rounded-xl flex items-center justify-center text-[10px] text-[#667085] uppercase tracking-widest font-mono">
-              Branch Manager / DIC Officer Stamp
+            <div className="min-h-[88px] border-2 border-dashed border-[#DCE4E8] rounded-xl bg-[#F7F9F7]/70 flex flex-col items-center justify-center p-3 text-center">
+              <span className="text-[10px] sm:text-xs text-[#667085] uppercase tracking-widest font-mono font-bold">
+                BRANCH MANAGER / DIC OFFICER STAMP
+              </span>
             </div>
-            <p className="text-[10px] text-[#667085] text-center">
+            <p className="text-[10px] text-[#667085] text-center font-medium pt-1">
               Gram Sarthi AI SIH26091 • AI Feasibility Engine
             </p>
           </div>
