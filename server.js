@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const fs = require("fs");
 const path = require("path");
+const { pool } = require("./database");
 const apiRoutes = require("./routes/api");
 
 const app = express();
@@ -138,12 +139,32 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🏛️  Gram Sarthi AI API Server (SIH 2026 - PS 26091)`);
-  console.log(
-    `🚀  Port: ${PORT} | Mode: ${process.env.NODE_ENV || "development"}`,
-  );
-  console.log(`🌐  API Health: http://localhost:${PORT}/api/health`);
-  console.log(`====================================================`);
-});
+// Ensure the users table exists before accepting requests
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id BIGSERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_login TIMESTAMPTZ
+      );
+      CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
+    `);
+  } catch (err) {
+    console.warn("Auto-migration skipped (users table):", err.message);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`🏛️  Gram Sarthi AI API Server (SIH 2026 - PS 26091)`);
+    console.log(
+      `🚀  Port: ${PORT} | Mode: ${process.env.NODE_ENV || "development"}`,
+    );
+    console.log(`🌐  API Health: http://localhost:${PORT}/api/health`);
+    console.log(`====================================================`);
+  });
+})();
