@@ -25,6 +25,8 @@ const configuredOrigins = [
 const allowedOrigins = [...new Set(configuredOrigins)];
 if (process.env.NODE_ENV !== "production") {
   allowedOrigins.push("http://localhost:5173");
+  allowedOrigins.push("http://localhost:5174");
+  allowedOrigins.push("http://localhost:5175");
 }
 
 // Security & headers
@@ -39,7 +41,10 @@ app.use(
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+      if (!origin || process.env.NODE_ENV !== "production") {
+        return callback(null, true);
+      }
+      if (allowedOrigins.includes(normalizeOrigin(origin))) {
         return callback(null, true);
       }
       return callback(new Error("Origin is not allowed by CORS"));
