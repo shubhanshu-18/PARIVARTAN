@@ -32,7 +32,7 @@ export function Navbar() {
     setConsentGiven,
   } = useApp();
 
-  const { isOfficer, officer, logoutOfficer } = useAuth();
+  const { isOfficer, officer, logoutOfficer, user, logoutUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleLanguage = () => {
@@ -199,25 +199,31 @@ export function Navbar() {
             <span>Feedback</span>
           </a>
 
-          <a
-            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
-            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
-          </a>
-
-          {isOfficer && (
+          {isOfficer ? (
             <div className="flex items-center space-x-2">
               <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold">
-                Officer: {officer?.name || "Priya Sharma"}
+                Officer: {officer?.name || "Admin Officer"}
               </span>
               <button
                 onClick={logoutOfficer}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 transition"
               >
                 <span>Exit Officer View</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              {user && (
+                <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-white/10 text-slate-200 border border-white/15 text-[11px] font-medium">
+                  {user.name || user.email}
+                </span>
+              )}
+              <button
+                onClick={logoutUser}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 border border-white/15 text-slate-200 hover:text-white transition"
+                title="Sign out of Gram Sarthi AI"
+              >
+                <span>Sign Out</span>
               </button>
             </div>
           )}
@@ -285,20 +291,19 @@ export function Navbar() {
             <MessageSquare className="w-4 h-4" />
             <span>Feedback</span>
           </a>
-          <a
-            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
-            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
-          </a>
-          {isOfficer && (
+          {isOfficer ? (
             <button
               onClick={logoutOfficer}
               className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
             >
               Exit Officer View
+            </button>
+          ) : (
+            <button
+              onClick={logoutUser}
+              className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-navy-800/90 border border-navy-700 text-slate-200"
+            >
+              Sign Out
             </button>
           )}
         </div>

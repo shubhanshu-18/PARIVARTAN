@@ -60,10 +60,10 @@ export function StepWizard() {
   const { activeStep, setActiveStep, language } = useApp();
 
   return (
-    <nav className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2 w-full" aria-label="Workflow Steps">
+    <nav className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2">
       {/* Container card */}
       <div className="bg-white rounded-xl shadow-subtle border border-[#DCE4E8] p-2 sm:p-2.5">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 w-full">
+        <div className="mobile-step-grid grid grid-cols-6 gap-1.5 sm:gap-2">
           {STEPS.map((step) => {
             const Icon = step.icon;
             const isCurrent = activeStep === step.id;
@@ -72,25 +72,24 @@ export function StepWizard() {
             return (
               <button
                 key={step.id}
-                type="button"
                 onClick={() => setActiveStep(step.id)}
                 disabled={step.id > activeStep}
                 aria-current={isCurrent ? "step" : undefined}
                 aria-disabled={step.id > activeStep}
-                className={`w-full min-w-0 flex items-center p-2 sm:px-2.5 sm:py-2 rounded-lg transition-all duration-150 text-left border relative overflow-hidden select-none ${
+                className={`relative flex flex-col sm:flex-row items-center justify-center p-2 rounded-lg transition text-left group border ${
                   isCurrent
-                    ? "bg-[#123B5D] text-white border-[#123B5D] shadow-sm"
+                    ? "bg-[#123B5D] text-white border-[#123B5D] shadow-sm ring-2 ring-[#123B5D]/20"
                     : isCompleted
-                      ? "bg-[#E8F6F1] text-[#105D44] hover:bg-[#D3EFE5] border-[#A9DDCB] cursor-pointer"
+                      ? "bg-[#E8F6F1] text-[#105D44] hover:bg-[#D3EFE5] border-[#A9DDCB]"
                       : "bg-[#F7F9F7] text-[#667085] border-[#DCE4E8] cursor-not-allowed opacity-75"
                 }`}
                 title={`Step ${step.id}: ${step.shortEn}`}
               >
                 {/* Icon indicator */}
                 <div
-                  className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shrink-0 mr-2 text-xs font-bold transition-colors ${
+                  className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 mb-1 sm:mb-0 sm:mr-2 text-xs font-bold transition ${
                     isCurrent
-                      ? "bg-[#F59E0B] text-[#17212B] font-extrabold shadow-sm"
+                      ? "bg-[#F59E0B] text-[#17212B] shadow-inner font-extrabold"
                       : isCompleted
                         ? "bg-[#167C5A] text-white"
                         : "bg-[#E2E8F0] text-[#475569]"
@@ -104,9 +103,9 @@ export function StepWizard() {
                 </div>
 
                 {/* Text Label */}
-                <div className="min-w-0 flex-1 overflow-hidden flex flex-col justify-center">
+                <div className="text-center sm:text-left min-w-0">
                   <span
-                    className={`block text-[11px] sm:text-xs font-bold tracking-tight truncate leading-snug ${
+                    className={`block text-[11px] sm:text-xs font-bold tracking-tight truncate ${
                       isCurrent
                         ? "text-white"
                         : isCompleted
@@ -117,9 +116,9 @@ export function StepWizard() {
                     {language === "hi" ? step.shortHi : step.shortEn}
                   </span>
                   <span
-                    className={`hidden lg:block text-[10px] truncate leading-tight mt-0.5 ${
+                    className={`hidden lg:block text-[10px] truncate ${
                       isCurrent
-                        ? "text-blue-100/90 font-medium"
+                        ? "text-blue-200"
                         : isCompleted
                           ? "text-[#167C5A]"
                           : "text-[#667085]"
@@ -138,11 +137,16 @@ export function StepWizard() {
                     {step.id === 4 &&
                       (language === "hi" ? "ईएमआई व लाभ" : "EMI & Outlay")}
                     {step.id === 5 &&
-                      (language === "hi" ? "स्कीमों मिलान" : "Scheme Match")}
+                      (language === "hi" ? "सब्सिडी मिलान" : "MoSJE Subsidies")}
                     {step.id === 6 &&
-                      (language === "hi" ? "बैंक PDF रिपोर्ट" : "Bank Dossier")}
+                      (language === "hi" ? "बैंक PDF रिपोर्ट" : "Official PDF")}
                   </span>
                 </div>
+
+                {/* Micro accent pip */}
+                {isCurrent && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-1 bg-[#F59E0B] rounded-full sm:hidden"></span>
+                )}
               </button>
             );
           })}

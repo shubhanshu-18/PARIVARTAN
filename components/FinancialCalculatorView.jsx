@@ -612,6 +612,28 @@ export function FinancialCalculatorView() {
           </div>
         )}
       </div>
+
+      {/* NAVIGATION BAR */}
+      <div className="bg-white rounded-xl shadow-card border border-[#DCE4E8] p-4 flex items-center justify-between">
+        <button
+          onClick={() => setActiveStep(3)}
+          className="px-4 py-2.5 rounded-lg text-xs font-bold border border-[#DCE4E8] text-[#17212B] hover:bg-slate-50 flex items-center space-x-1.5 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>{t("form.back", language)}</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveStep(5);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="px-6 py-2.5 rounded-lg text-xs font-bold bg-[#123B5D] hover:bg-[#0D2E49] text-white shadow-sm flex items-center space-x-2 transition"
+        >
+          <span>Continue to Government Scheme Match</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }
