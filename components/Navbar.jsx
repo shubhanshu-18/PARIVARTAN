@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   MessageSquare,
+  LogOut,
 } from "lucide-react";
 
 export function Navbar() {
@@ -32,7 +33,7 @@ export function Navbar() {
     setConsentGiven,
   } = useApp();
 
-  const { isOfficer, officer, logoutOfficer } = useAuth();
+  const { isOfficer, officer, logoutOfficer, user, logoutUser } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleLanguage = () => {
@@ -199,19 +200,32 @@ export function Navbar() {
             <span>Feedback</span>
           </a>
 
+          {/* Authenticated User Name & Sign Out */}
+          {user && (
+            <div className="flex items-center space-x-2.5 pl-1.5 border-l border-white/15">
+              <span className="text-white text-xs sm:text-sm font-semibold tracking-tight">
+                {user.name}
+              </span>
+              <button
+                type="button"
+                onClick={logoutUser}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/15 border border-rose-400/40 text-rose-200 hover:bg-rose-500/25 transition"
+                title={language === "hi" ? "लॉग आउट करें" : "Sign Out"}
+                aria-label="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">
+                  {language === "hi" ? "लॉग आउट" : "Sign Out"}
+                </span>
+              </button>
+            </div>
+          )}
+
           {isOfficer && (
             <div className="flex items-center space-x-2">
               <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold">
                 Officer: {officer?.name || "Priya Sharma"}
               </span>
-              <a
-                href="/admin/dashboard"
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
-                aria-label="Open admin dashboard"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Dashboard</span>
-              </a>
               <button
                 onClick={logoutOfficer}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 transition"
@@ -284,23 +298,28 @@ export function Navbar() {
             <MessageSquare className="w-4 h-4" />
             <span>Feedback</span>
           </a>
-          {isOfficer && (
-            <>
-              <a
-                href="/admin/dashboard"
-                className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
-                aria-label="Open admin dashboard"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>Admin Dashboard</span>
-              </a>
+          {user && (
+            <div className="pt-2 border-t border-navy-800 flex items-center justify-between">
+              <span className="text-white text-xs font-semibold px-1">
+                {user.name}
+              </span>
               <button
-                onClick={logoutOfficer}
-                className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
+                type="button"
+                onClick={logoutUser}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/15 border border-rose-400/40 text-rose-200"
               >
-                Exit Officer View
+                <LogOut className="w-3.5 h-3.5" />
+                <span>{language === "hi" ? "लॉग आउट" : "Sign Out"}</span>
               </button>
-            </>
+            </div>
+          )}
+          {isOfficer && (
+            <button
+              onClick={logoutOfficer}
+              className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
+            >
+              Exit Officer View
+            </button>
           )}
         </div>
       )}
