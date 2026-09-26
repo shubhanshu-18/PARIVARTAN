@@ -199,20 +199,19 @@ export function Navbar() {
             <span>Feedback</span>
           </a>
 
-          <a
-            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
-            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
-          </a>
-
           {isOfficer && (
             <div className="flex items-center space-x-2">
               <span className="hidden md:inline-block px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold">
                 Officer: {officer?.name || "Priya Sharma"}
               </span>
+              <a
+                href="/admin/dashboard"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200 hover:bg-amber-500/25 transition"
+                aria-label="Open admin dashboard"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Dashboard</span>
+              </a>
               <button
                 onClick={logoutOfficer}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 transition"
@@ -285,21 +284,23 @@ export function Navbar() {
             <MessageSquare className="w-4 h-4" />
             <span>Feedback</span>
           </a>
-          <a
-            href={isOfficer ? "/admin/dashboard" : "/admin/login"}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
-            aria-label={isOfficer ? "Open admin dashboard" : "Open admin login"}
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>{isOfficer ? "Admin Dashboard" : "Admin Login"}</span>
-          </a>
           {isOfficer && (
-            <button
-              onClick={logoutOfficer}
-              className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
-            >
-              Exit Officer View
-            </button>
+            <>
+              <a
+                href="/admin/dashboard"
+                className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg text-xs font-semibold bg-amber-500/15 border border-amber-400/40 text-amber-200"
+                aria-label="Open admin dashboard"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Admin Dashboard</span>
+              </a>
+              <button
+                onClick={logoutOfficer}
+                className="w-full flex items-center justify-center px-3 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-600 text-slate-200"
+              >
+                Exit Officer View
+              </button>
+            </>
           )}
         </div>
       )}
