@@ -305,7 +305,11 @@ router.post("/auth/register", async (req, res, next) => {
 
 router.get("/auth/google", (req, res) => {
   const { GOOGLE_CLIENT_ID: clientId, GOOGLE_REDIRECT_URI: configuredRedirect } = process.env;
-  if (!clientId) return res.status(503).send("Google sign-in is not configured.");
+  if (!clientId) {
+    return res
+      .status(503)
+      .send("Google sign-in is not configured on this server. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI using the project setup instructions.");
+  }
   const redirectUri = configuredRedirect || `${req.protocol}://${req.get("host")}/api/auth/google/callback`;
   const state = crypto.randomBytes(24).toString("hex");
   res.cookie(GOOGLE_STATE_COOKIE, state, { ...authCookieOptions, httpOnly: true, maxAge: 10 * 60 * 1000 });

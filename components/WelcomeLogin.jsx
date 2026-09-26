@@ -419,11 +419,11 @@ export function WelcomeLogin() {
               </div>
             ) : (
               /* USER LOGIN / REGISTRATION FORM CARD */
-              <div className="w-full max-w-md bg-white/95 backdrop-blur-md rounded-2xl border border-[#DCE4E8] shadow-card p-6 sm:p-7 relative transition-all">
+              <div className="user-auth-card w-full max-w-md bg-white/95 backdrop-blur-md rounded-2xl border border-[#DCE4E8] shadow-card p-6 sm:p-7 relative transition-all">
                 <button
                   type="button"
                   onClick={() => setShowUserForm(false)}
-                  className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#167C5A] hover:text-[#105D44] mb-4 transition"
+                  className="user-auth-back inline-flex items-center space-x-1.5 text-xs font-bold text-[#167C5A] hover:text-[#105D44] mb-4 transition"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>
@@ -433,7 +433,7 @@ export function WelcomeLogin() {
                   </span>
                 </button>
 
-                <div className="mb-5">
+                <div className="user-auth-heading mb-5">
                   <h2 className="text-xl sm:text-2xl font-black text-[#17212B]">
                     {isSignUp
                       ? language === "hi"
@@ -490,7 +490,7 @@ export function WelcomeLogin() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@example.com"
                         autoComplete={isSignUp ? "email" : "username"}
-                        className="w-full h-10 pl-9 pr-3 rounded-lg border border-[#DCE4E8] bg-white text-sm text-[#17212B] focus:outline-none focus:border-[#167C5A] focus:ring-2 focus:ring-[#167C5A]/15"
+                        className="user-auth-input w-full h-10 pl-9 pr-3 rounded-lg border border-[#DCE4E8] bg-white text-sm text-[#17212B] focus:outline-none focus:border-[#167C5A] focus:ring-2 focus:ring-[#167C5A]/15"
                       />
                       <Mail className="w-4 h-4 text-[#667085] absolute left-3 top-3 pointer-events-none" />
                     </div>
@@ -513,7 +513,7 @@ export function WelcomeLogin() {
                         autoComplete={
                           isSignUp ? "new-password" : "current-password"
                         }
-                        className="w-full h-10 pl-3 pr-10 rounded-lg border border-[#DCE4E8] bg-white text-sm text-[#17212B] focus:outline-none focus:border-[#167C5A] focus:ring-2 focus:ring-[#167C5A]/15"
+                        className="user-auth-input w-full h-10 pl-3 pr-10 rounded-lg border border-[#DCE4E8] bg-white text-sm text-[#17212B] focus:outline-none focus:border-[#167C5A] focus:ring-2 focus:ring-[#167C5A]/15"
                       />
                       <button
                         type="button"
@@ -584,7 +584,7 @@ export function WelcomeLogin() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full h-10 mt-2 rounded-xl bg-[#167C5A] hover:bg-[#105D44] text-white font-bold text-sm shadow-sm transition flex items-center justify-center space-x-2 disabled:opacity-60"
+                    className="user-auth-submit w-full h-10 mt-2 rounded-xl bg-[#167C5A] hover:bg-[#105D44] text-white font-bold text-sm shadow-sm transition flex items-center justify-center space-x-2 disabled:opacity-60"
                   >
                     <span>
                       {loading
@@ -619,7 +619,7 @@ export function WelcomeLogin() {
                     onClick={() => {
                       window.location.assign(`${API_BASE}/api/auth/google`);
                     }}
-                    className="w-full h-10 rounded-xl bg-white border border-[#DCE4E8] hover:bg-slate-50 text-xs font-bold text-[#17212B] shadow-sm transition flex items-center justify-center space-x-2"
+                    className="user-auth-google w-full h-10 rounded-xl bg-white border border-[#DCE4E8] hover:bg-slate-50 text-xs font-bold text-[#17212B] shadow-sm transition flex items-center justify-center space-x-2"
                   >
                     <span
                       className="font-bold text-blue-600 text-sm"
@@ -631,7 +631,7 @@ export function WelcomeLogin() {
                   </button>
                 )}
 
-                <div className="mt-4 pt-3 border-t border-[#DCE4E8] flex items-center justify-between text-xs font-semibold">
+                <div className="user-auth-footer mt-4 pt-3 border-t border-[#DCE4E8] flex items-center justify-between text-xs font-semibold">
                   <button
                     type="button"
                     onClick={() => {

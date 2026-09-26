@@ -39,7 +39,7 @@ function AppContent() {
     return window.location.pathname === "/admin/dashboard" ? <AdminDashboard /> : <AdminLogin />;
   }
 
-  if (window.location.pathname === "/feedback" && isUser) {
+  if (window.location.pathname === "/feedback") {
     return <div className="app-shell min-h-screen bg-slate-100 text-slate-900"><Navbar /><FeedbackView /></div>;
   }
   if (authLoading) return <div className="min-h-screen bg-[#F7F9F7]" />;
